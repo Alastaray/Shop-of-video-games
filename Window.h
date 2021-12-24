@@ -8,6 +8,8 @@
 using namespace std;
 
 bool CompareStr(const char* value, const char* source);
+void Move(char key, int& x, int& y, int size_rows, int size_cols);
+
 
 enum position
 {
@@ -67,11 +69,14 @@ public:
 	void DrawTable();
 	void DrawCols();
 	void DrawRows();
-	void FillRow(int pos_x, int pos_y, bool show = true);
+	void FillRow(int pos_x, int pos_y);
 	void DrawHeadlines(const char** headlines);
+	
 
 	void DrawData(List<Customer>& list);
 	void DrawData(List<Product>& list);
+	void DrawElement(List<Product>& list, int row, int col, int x, int y);
+	void DrawActiveCell(List<Product>& list, int row, int col, int x, int y);
 
 	void DoTable(List<Customer>& list);
 	void DoTable(List<Product>& list);	
@@ -89,7 +94,8 @@ public:
 	{
 		strcpy(name, _name);
 	}
-	void DoButton();
+	void DrawActiveBut(int& x, int& y, int size_rows, int size_cols);
+	void DrawButton();
 
 
 private:

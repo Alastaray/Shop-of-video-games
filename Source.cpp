@@ -17,9 +17,8 @@ using namespace std;
 void main()
 {
 	AdminProducts cust;
+	
 	cust.Read();
 	cust.Show();
-	
-	getch();
 
 };
