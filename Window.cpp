@@ -279,104 +279,9 @@ void Table::DrawHeadlines(const char** headlines)
 };
 
 
-void Table::DoTable(List<Product>& list)
-{
-	char key;
-	int x = 0, y = 0;
-	Button sort("Sorting", 10, 3, RightTop, 0, 2);
-	Button search("Search", 10, 3, RightTop, 0, 8);
-	Button exit("Exit", 10, 3, RightBot);
 
-	while (true)
-	{
-		DrawData(list);
-		sort.DrawButton();
-		search.DrawButton();
-		exit.DrawButton();
-		if (!size_cols || !size_rows)break;
-		DrawActiveCell(list, y / size_rows, x / size_cols, x, y);
-		key = _getch();
-		if (key == 27)break;
-		if (key == 13)return;
-		Move(key, x, y, size_rows, size_cols);
-		while (x == size_cols * cols)
-		{
-			if (y <= rows % 3 + 1 && x == size_cols * cols)
-			{
-				DrawData(list);
-				search.DrawButton();
-				exit.DrawButton();
-				sort.DrawActiveBut(x, y, size_rows, size_cols);
-			}
-			if (y <= rows % 3 + 3 && x == size_cols * cols)
-			{
-				DrawData(list);
-				sort.DrawButton();
-				exit.DrawButton();
-				search.DrawActiveBut(x, y, size_rows, size_cols);
-			}
-			if (y <= rows % 3 + 5 && x == size_cols * cols)
-			{
-				DrawData(list);
-				sort.DrawButton();
-				search.DrawButton();
-				exit.DrawActiveBut(x, y, size_rows, size_cols);
-			}
-		}
-		
 
-		if (y >= size_rows * rows)y = 0;
-		if (y < 0)y = size_rows * (rows - 1);
-		if (x >= size_cols * cols)x = 0;		
-		if (x < 0)x = size_cols * (cols - 1);
-	}
 
-}
-void Table::DrawData(List<Product>& list)
-{
-	DrawTable();
-	int pos_y = 0;
-	int pos_x = 0;
-	for (int i = 0; i < rows; i++)
-	{		
-		pos_x = 0;
-		for (int j = 0; j < cols; j++)
-		{
-			DrawElement(list, i, j, pos_x, pos_y);
-			pos_x += size_cols;
-		}
-		pos_y += size_rows;
-	}
-	
-}
-void Table::DrawElement(List<Product>& list, int row, int col, int x, int y)
-{
-	switch (col)
-	{
-	case 0:
-		WriteLine(list[row].GetId(), x, y);
-		break;
-	case 1:
-		WriteLine(list[row].GetName(), x, y);
-		break;
-	case 2:
-		WriteLine(list[row].GetAmount(), x, y);
-		break;
-	case 3:
-		WriteLine(list[row].GetPrice(), x, y);
-		break;
-	case 4:
-		WriteLine(list[row].GetPurchasePrice(), x, y);
-		break;
-	}
-}
-void Table::DrawActiveCell(List<Product>& list, int row, int col, int x, int y)
-{
-	SetColor(activeTxcolor, activeBgcolor);
-	FillRow(x, y);
-	DrawElement(list, row, col, x, y);
-	SetColor(txcolor, bgcolor);
-}
 
 void Table::DoTable(List<Customer>& list)
 {
@@ -570,10 +475,10 @@ void Button::DrawActiveBut(int& x, int& y, int size_rows, int size_cols)
 	FillRow();
 	WriteLine(name);
 	SetColor(txcolor, bgcolor);
-	key = _getch();
-	Move(key, x, y, size_rows, size_cols);
-	if (key == 13)return;
-	if (key == 27)return;
+	//key = _getch();
+	//Move(key, x, y, size_rows, size_cols);
+	//if (key == 13)return;
+	//if (key == 27)return;
 
 }
 void Button::DrawButton()
@@ -613,8 +518,9 @@ bool CompareStr(const char* value, const char* source)
 	if (number_let == len_val)return true;
 	else return false;
 }
-void Move(char key, int& x, int& y, int size_rows, int size_cols)
+void Move(char &key, int& x, int& y, int size_rows, int size_cols)
 {
+	key = _getch();
 	if (key == 'w')y -= size_rows;
 	if (key == 's')y += size_rows;
 	if (key == 'd')x += size_cols;

@@ -36,10 +36,10 @@ protected:
 };
 
 
-class AdminProducts :public Management<Product>
+class AdminProducts :public Management<Product>, public Table
 {
 public:	
-	AdminProducts()
+	AdminProducts(unsigned int _width, unsigned int _height, int position, int _cols = 0, int _rows = 0, int indent_letf = 0, int indent_top = 0):Table(_width, _height, position,  _cols,  _rows, indent_letf, indent_top)
 	{ 
 		headlines[0] = "Id";
 		headlines[1] = "Name";		
@@ -52,7 +52,11 @@ public:
 	void Create();
 	void Search(const char* val = 0, bool ascending = true);
 	void Sort(const char* name = 0, int amount = 0, double price = 0, double purchase_price = 0, bool ascending = true);
-
+	void DoTable();
+	void DrawData();
+	void DrawElement(int row, int col, int x, int y);
+	void DrawActiveCell(int row, int col, int x, int y);
+	void Show();
 };
 
 class AdminCustomers :public Management<Customer>

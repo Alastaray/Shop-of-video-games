@@ -8,7 +8,7 @@
 using namespace std;
 
 bool CompareStr(const char* value, const char* source);
-void Move(char key, int& x, int& y, int size_rows, int size_cols);
+void Move(char &key, int& x, int& y, int size_rows, int size_cols);
 
 
 enum position
@@ -71,17 +71,13 @@ public:
 	void DrawRows();
 	void FillRow(int pos_x, int pos_y);
 	void DrawHeadlines(const char** headlines);
-	
 
-	void DrawData(List<Customer>& list);
-	void DrawData(List<Product>& list);
-	void DrawElement(List<Product>& list, int row, int col, int x, int y);
-	void DrawActiveCell(List<Product>& list, int row, int col, int x, int y);
+
 
 	void DoTable(List<Customer>& list);
-	void DoTable(List<Product>& list);	
+	void DrawData(List<Customer>& list);
 
-private:
+protected:
 	int cols, rows,
 		size_cols, size_rows;
 
@@ -90,9 +86,10 @@ private:
 class Button:public Window
 {
 public:
-	Button(const char*_name, unsigned int _width, unsigned int _height, int position, int indent_letf=0, int indent_top=0) : Window(_width, _height, position, indent_letf, indent_top) 
+	Button(const char*_name,unsigned int _width, unsigned int _height, int position, int indent_letf=0, int indent_top=0): Window(_width, _height, position, indent_letf, indent_top)
 	{
 		strcpy(name, _name);
+		
 	}
 	void DrawActiveBut(int& x, int& y, int size_rows, int size_cols);
 	void DrawButton();
