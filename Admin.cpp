@@ -1,7 +1,6 @@
 #include "Admin.h"
 
 
-
 void AdminProducts::Create()
 {
 	Window win(45, 5, CenterTop);
@@ -153,7 +152,7 @@ void AdminProducts::Search(const char* val, bool ascending)
 	Show(sort);
 
 }
-void AdminProducts::DrawElement(List<Product> l, int row, int col, int x, int y)
+void AdminProducts::DrawElement(List<Product>& l, int row, int col, int x, int y)
 {
 	switch (col)
 	{
@@ -195,20 +194,6 @@ void AdminProducts::DrawElement(int row, int col, int x, int y)
 		break;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //void AdminCustomers::Create()
@@ -323,8 +308,9 @@ void AdminCustomers::Search(const char* val, bool ascending)
 	Show(sort);
 
 }
-void AdminCustomers::DrawElement(List<Customer> l, int row, int col, int x, int y)
+void AdminCustomers::DrawElement(List<Customer>& l, int row, int col, int x, int y)
 {
+
 	switch (col)
 	{
 	case 0:
@@ -365,3 +351,4 @@ void AdminCustomers::DrawElement(int row, int col, int x, int y)
 		break;
 	}
 }
+

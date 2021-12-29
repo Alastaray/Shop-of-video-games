@@ -9,7 +9,7 @@ using namespace std;
 
 
 template <class type>
-class Management: public Table
+class Management: protected Table
 {
 public:
 
@@ -32,19 +32,18 @@ public:
 	void FileDelete();
 	type& operator[](int ind) { return list[ind]; }
 	void operator<<(const type& val) { list << val; }
-	void Show();
-	void Show(List<type> l);
+	
 protected:
 	void DoTable();
-	void DrawData(List<type> l);
-	void DoTable(List<type> l);
-
-	void DrawActiveCell(List<type> l, int row, int col, int x, int y);
+	void DrawData(List<type>& l);
+	void DoTable(List<type>& l);
+	void DrawActiveCell(List<type>& l, int row, int col, int x, int y);
 	void DrawData();
-
+	void Show();
+	void Show(List<type>& l);
 	void DrawActiveCell(int row, int col, int x, int y);
 
-	virtual void DrawElement(List<type> l, int row, int col, int x, int y) = 0;
+	virtual void DrawElement(List<type>& l, int row, int col, int x, int y) = 0;
 	virtual void DrawElement(int row, int col, int x, int y) = 0;
 
 	List<type> list;
@@ -56,7 +55,7 @@ protected:
 
 
 template <class type>
-void Management<type>::DoTable(List<type> l)
+void Management<type>::DoTable(List<type>& l)
 {
 	char key;
 	int x = 0, y = 0;
@@ -77,8 +76,10 @@ void Management<type>::DoTable(List<type> l)
 
 		while (x == size_cols * cols && y <= size_rows * rows)
 		{
+			
 			if (y == 0 && x == size_cols * cols)
 			{
+				Move(key, x, y, size_rows, size_cols);
 				DrawData(l);
 				search.DrawButton();
 				exit.DrawButton();
@@ -86,19 +87,21 @@ void Management<type>::DoTable(List<type> l)
 			}
 			if (y == size_rows && x == size_cols * cols)
 			{
+				Move(key, x, y, size_rows, size_cols);
 				DrawData(l);
 				sort.DrawButton();
 				exit.DrawButton();
 				search.DrawActiveBut(x, y, size_rows, size_cols);
 			}
 			if (y == size_rows * 2 && x == size_cols * cols)
-			{
+			{				
 				DrawData(l);
 				sort.DrawButton();
 				search.DrawButton();
 				exit.DrawActiveBut(x, y, size_rows, size_cols);
 			}
 			Move(key, x, y, size_rows, size_cols);
+
 			if (y >= size_rows * 3)y = 0;
 			if (y < 0)y = size_rows * 2;
 		}
@@ -113,7 +116,7 @@ void Management<type>::DoTable(List<type> l)
 }
 
 template <class type>
-void Management<type>::DrawData(List<type> l)
+void Management<type>::DrawData(List<type>& l)
 {
 	DrawTable();
 	int pos_y = 0;
@@ -133,7 +136,7 @@ void Management<type>::DrawData(List<type> l)
 
 
 template <class type>
-void Management<type>::DrawActiveCell(List<type> l, int row, int col, int x, int y)
+void Management<type>::DrawActiveCell(List<type>& l, int row, int col, int x, int y)
 {
 	SetColor(activeTxcolor, activeBgcolor);
 	FillRow(x, y);
@@ -242,7 +245,7 @@ void Management<type>::Show()
 }
 
 template <class type>
-void Management<type>::Show(List<type> l)
+void Management<type>::Show(List<type>& l)
 {
 	cls();
 	if (headlines)
@@ -255,9 +258,6 @@ void Management<type>::Show(List<type> l)
 	SetRows(l.GetCount());
 	DoTable(l);
 }
-
-
-
 
 template <class type>
 void Management<type>::FileDelete()

@@ -1,4 +1,5 @@
 #pragma once
+
 template <class type>
 class List
 {
@@ -55,7 +56,7 @@ public:
 	Node* GetTail() { return tail; }
 	Node* GetCertain(int ind)
 	{
-		if (ind >= count)throw ind;
+		if (ind >= count||!head)throw ind;
 		Node* st = head;
 		int pos = 0;
 		while (st)

@@ -12,14 +12,25 @@ using namespace std;
 #pragma warning(disable: 4996)
 
 
+void ManagProducts()
+{
+	AdminProducts prod("products.txt");
+	prod.Read();
+	//prod.Show(prod.GetList());
+	prod.Sort(0,3);
+	
+}
+void ManagCustomers()
+{
+	AdminCustomers cust("customers.txt");
+	cust.Read();
+	cust.Show();
+}
 
 
 
 void main()
 {
-	//Management<Product> manag("products.txt");
-	AdminCustomers cust("customers.txt");
-	cust.Read();
-	cust.Show();
+	ManagProducts();
 
 };
