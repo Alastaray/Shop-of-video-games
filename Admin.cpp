@@ -1,4 +1,4 @@
-#include "Management.h"
+#include "Admin.h"
 
 
 
@@ -143,7 +143,7 @@ void AdminProducts::Search(const char* val, bool ascending)
 				else sort.AddHead(list[i]);
 			}
 		}
-		
+
 	}
 	else if (!ascending)
 	{
@@ -151,76 +151,28 @@ void AdminProducts::Search(const char* val, bool ascending)
 			sort.AddHead(list[i]);
 	}
 	Show(sort);
-	
-}
-void AdminProducts::DoTable()
-{
-	char key;
-	int x = 0, y = 0;
-	while (true)
-	{
-		DrawData();
-		sort.DrawButton();
-		search.DrawButton();
-		exit.DrawButton();
-		if (!size_cols || !size_rows)break;
-		DrawActiveCell(y / size_rows, x / size_cols, x, y);
-		Move(key, x, y, size_rows, size_cols);
-		if (key == 27)break;
-		if (key == 13)return;
-		
-		while (x == size_cols * cols && y <= size_rows * rows)
-		{
-			if (y == 0 && x == size_cols * cols)
-			{
-				DrawData();
-				search.DrawButton();
-				exit.DrawButton();
-				sort.DrawActiveBut(x, y, size_rows, size_cols);
-			}
-			if (y == size_rows && x == size_cols * cols)
-			{
-				DrawData();
-				sort.DrawButton();
-				exit.DrawButton();
-				search.DrawActiveBut(x, y, size_rows, size_cols);
-			}
-			if (y == size_rows * 2 && x == size_cols * cols)
-			{
-				DrawData();
-				sort.DrawButton();
-				search.DrawButton();
-				exit.DrawActiveBut(x, y, size_rows, size_cols);
-			}
-			Move(key, x, y, size_rows, size_cols);
-			if (y >= size_rows * 3)y = 0;
-			if (y < 0)y = size_rows * 2;
-		}
-
-
-		if (y >= size_rows * rows)y = 0;
-		if (y < 0)y = size_rows * (rows - 1);
-		if (x >= size_cols * cols)x = 0;
-		if (x < 0)x = size_cols * (cols - 1);
-	}
 
 }
-void AdminProducts::DrawData()
+void AdminProducts::DrawElement(List<Product> l, int row, int col, int x, int y)
 {
-	DrawTable();
-	int pos_y = 0;
-	int pos_x = 0;
-	for (int i = 0; i < rows; i++)
+	switch (col)
 	{
-		pos_x = 0;
-		for (int j = 0; j < cols; j++)
-		{
-			DrawElement(i, j, pos_x, pos_y);
-			pos_x += size_cols;
-		}
-		pos_y += size_rows;
+	case 0:
+		WriteLine(l[row].GetId(), x, y);
+		break;
+	case 1:
+		WriteLine(l[row].GetName(), x, y);
+		break;
+	case 2:
+		WriteLine(l[row].GetAmount(), x, y);
+		break;
+	case 3:
+		WriteLine(l[row].GetPrice(), x, y);
+		break;
+	case 4:
+		WriteLine(l[row].GetPurchasePrice(), x, y);
+		break;
 	}
-
 }
 void AdminProducts::DrawElement(int row, int col, int x, int y)
 {
@@ -243,47 +195,6 @@ void AdminProducts::DrawElement(int row, int col, int x, int y)
 		break;
 	}
 }
-void AdminProducts::DrawActiveCell(int row, int col, int x, int y)
-{
-	SetColor(activeTxcolor, activeBgcolor);
-	FillRow(x, y);
-	DrawElement(row, col, x, y);
-	SetColor(txcolor, bgcolor);
-}
-void AdminProducts::Show()
-{
-	cls();
-	if (headlines)
-	{
-		Table hl(75, 4, LeftTop, 5);
-		hl.DrawHeadlines(headlines);
-	}
-	//Table table(75, l.GetCount() * 2 + 1, LeftTop, 5, l.GetCount(), 0, 2);
-	DoTable();
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -375,14 +286,14 @@ void AdminCustomers::Sort(const char* name, const char* prod_name, int amount, d
 				if (ascending)sort << list[i];
 				else sort.AddHead(list[i]);
 			}
-			
+
 		}
 	}
 	else if (!ascending)
 	{
 		for (int i = 0; i < list.GetCount(); i++)
 			sort.AddHead(list[i]);
-	}		
+	}
 	if (sort.GetCount())Show(sort);
 	else Show();
 }
@@ -412,4 +323,45 @@ void AdminCustomers::Search(const char* val, bool ascending)
 	Show(sort);
 
 }
-
+void AdminCustomers::DrawElement(List<Customer> l, int row, int col, int x, int y)
+{
+	switch (col)
+	{
+	case 0:
+		WriteLine(list[row].GetId(), x, y);
+		break;
+	case 1:
+		WriteLine(list[row].GetName(), x, y);
+		break;
+	case 2:
+		WriteLine(list[row].GetProdName(), x, y);
+		break;
+	case 3:
+		WriteLine(list[row].GetAmount(), x, y);
+		break;
+	case 4:
+		WriteLine(list[row].GetPrice(), x, y);
+		break;
+	}
+}
+void AdminCustomers::DrawElement(int row, int col, int x, int y)
+{
+	switch (col)
+	{
+	case 0:
+		WriteLine(list[row].GetId(), x, y);
+		break;
+	case 1:
+		WriteLine(list[row].GetName(), x, y);
+		break;
+	case 2:
+		WriteLine(list[row].GetProdName(), x, y);
+		break;
+	case 3:
+		WriteLine(list[row].GetAmount(), x, y);
+		break;
+	case 4:
+		WriteLine(list[row].GetPrice(), x, y);
+		break;
+	}
+}

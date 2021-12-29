@@ -58,12 +58,6 @@ void Window::DrawBox()
 	cout << borders[BotRightAngle] << endl;
 
 }
-template <class type>
-void Window::WriteLine(type val, int _x, int _y, int indent_letf, int indent_top)
-{
-	GotoXY(x + indent_letf + _x, y + indent_top + _y);
-	cout << val;
-}
 void Window::FillRow(int pos)
 {
 	GotoXY(GetX(),GetY() + pos);
@@ -277,107 +271,15 @@ void Table::DrawHeadlines(const char** headlines)
 	}
 
 };
-
-
-
-
-
-
-void Table::DoTable(List<Customer>& list)
+void Table::SetCols(int num_cols)
 {
-
-	char key;
-	int pos_y = 0, pos_x = 0,
-		col, row;
-	while (true)
-	{				
-		DrawData(list);
-		if (!size_cols || !size_rows)break;
-		SetColor(activeTxcolor, activeBgcolor);
-		FillRow(pos_x, pos_y);
-		col = pos_x / size_cols;
-		row = pos_y / size_rows;
-		switch (col)
-		{
-		case 0:
-			WriteLine(list[row].GetId(), pos_x, pos_y);
-			break;
-		case 1:
-			WriteLine(list[row].GetName(), pos_x, pos_y);
-			break;
-		case 2:
-			WriteLine(list[row].GetProdName(), pos_x, pos_y);
-			break;
-		case 3:
-			WriteLine(list[row].GetAmount(), pos_x, pos_y);
-			break;
-		case 4:
-			WriteLine(list[row].GetPrice(), pos_x, pos_y);
-			break;
-		
-		}
-		SetColor(txcolor, bgcolor);
-		key = _getch();
-		if (key == 27)break;
-		if (key == 13)
-		{
-			return;
-		}
-		if (key == 'w')pos_y -= size_rows;
-		if (key == 's')pos_y += size_rows;
-		if (key == 'd')pos_x += size_cols;
-		if (key == 'a')pos_x -= size_cols;
-		if (key == -32) {
-			key = _getch();
-			//down
-			if (key == 80) pos_y += size_rows;
-			//up
-			if (key == 72) pos_y -= size_rows;
-			//left
-			if (key == 75) pos_x -= size_cols;
-			//right
-			if (key == 77) pos_x += size_cols;
-		}
-		if (pos_y >= size_rows * rows)pos_y = 0;
-		if (pos_y < 0)pos_y = size_rows * (rows - 1);
-		if (pos_x >= size_cols * cols)pos_x = 0;
-		if (pos_x < 0)pos_x = size_cols * (cols - 1);
-	}
-
+	if (num_cols < 0)throw "Number of cols can't be the negative!";
+	cols = num_cols;
 }
-void Table::DrawData(List<Customer>& list)
+void Table::SetRows(int num_rows)
 {
-	DrawTable();
-	int pos_y = 0;
-	int pos_x = 0;
-	for (int i = 0; i < rows; i++)
-	{
-		pos_x = 0;
-		for (int j = 0; j < cols; j++)
-		{
-			switch (j)
-			{
-			case 0:
-				WriteLine(list[i].GetId(), pos_x, pos_y);
-				break;
-			case 1:
-				WriteLine(list[i].GetName(), pos_x, pos_y);
-				break;
-			case 2:
-				WriteLine(list[i].GetProdName(), pos_x, pos_y);
-				break;
-			case 3:
-				WriteLine(list[i].GetAmount(), pos_x, pos_y);
-				break;
-			case 4:
-				WriteLine(list[i].GetPrice(), pos_x, pos_y);
-				break;
-			}
-			pos_x += size_cols;
-		}
-		pos_y += size_rows;
-	}
-
+	if (num_rows < 0)throw "Number of cols can't be the negative!";
+	rows = num_rows;
 }
 
 

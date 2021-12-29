@@ -60,7 +60,12 @@ protected:
 	unsigned txcolor, bgcolor,
 		activeTxcolor, activeBgcolor;
 };
-
+template <class type>
+void Window::WriteLine(type val, int _x, int _y, int indent_letf, int indent_top)
+{
+	GotoXY(x + indent_letf + _x, y + indent_top + _y);
+	cout << val;
+}
 
 class Table:public Window
 {
@@ -69,6 +74,8 @@ public:
 	void DrawTable();
 	void DrawCols();
 	void DrawRows();
+	void SetCols(int num_cols);
+	void SetRows(int num_cols);
 	void FillRow(int pos_x, int pos_y);
 	void DrawHeadlines(const char** headlines);
 

@@ -6,6 +6,7 @@
 #include "Window.h"
 #include "List.h"
 #include "Management.h"
+#include "Admin.h"
 #include "Products and customers.h"
 using namespace std;
 #pragma warning(disable: 4996)
@@ -16,7 +17,8 @@ using namespace std;
 
 void main()
 {
-	AdminProducts cust;
+	//Management<Product> manag("products.txt");
+	AdminCustomers cust("customers.txt");
 	cust.Read();
 	cust.Show();
 

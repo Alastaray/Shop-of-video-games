@@ -9,25 +9,44 @@ using namespace std;
 
 
 template <class type>
-class Management
+class Management: public Table
 {
 public:
 
-	Management(const char* _filename = 0);
-	~Management();
+	Management(const char* _filename, unsigned int _width = 0, unsigned int _height = 0, int position = 0, int _cols = 0, int _rows = 0, int indent_letf = 0, int indent_top = 0) : Table(_width, _height, position, _cols, _rows, indent_letf, indent_top)
+	{
+		filename = _filename;
+		number_st = 0;
+	}
+	~Management()
+	{
+		if (filename)Write();
+	}
 	List<type>& GetList() { return list; }
 	void Write();
 	int Read();
 	void RemoveAll();
 	void RemoveAt(int ind);
-	void Show(List<type>& l);
-	void Show();
 	int GetCount() { return list.GetCount(); }
 	int GetNumberSt() { return number_st; }
 	void FileDelete();
 	type& operator[](int ind) { return list[ind]; }
 	void operator<<(const type& val) { list << val; }
+	void Show();
+	void Show(List<type> l);
 protected:
+	void DoTable();
+	void DrawData(List<type> l);
+	void DoTable(List<type> l);
+
+	void DrawActiveCell(List<type> l, int row, int col, int x, int y);
+	void DrawData();
+
+	void DrawActiveCell(int row, int col, int x, int y);
+
+	virtual void DrawElement(List<type> l, int row, int col, int x, int y) = 0;
+	virtual void DrawElement(int row, int col, int x, int y) = 0;
+
 	List<type> list;
 	const char* filename;
 	fstream file;
@@ -36,74 +55,175 @@ protected:
 };
 
 
-class AdminProducts :public Management<Product>, public Table
-{
-public:	
-	AdminProducts(unsigned int _width, unsigned int _height, int position, int _cols = 0, int _rows = 0, int indent_letf = 0, int indent_top = 0):Table(_width, _height, position,  _cols,  _rows, indent_letf, indent_top)
-	{ 
-		headlines[0] = "Id";
-		headlines[1] = "Name";		
-		headlines[2] = "Amount";
-		headlines[3] = "Price";
-		headlines[4] = "Purchase Price";
-		filename = "products.txt"; 
-	}
-	void Add(const char* name, int amount, double price, double puchase_price);
-	void Create();
-	void Search(const char* val = 0, bool ascending = true);
-	void Sort(const char* name = 0, int amount = 0, double price = 0, double purchase_price = 0, bool ascending = true);
-	void DoTable();
-	void DrawData();
-	void DrawElement(int row, int col, int x, int y);
-	void DrawActiveCell(int row, int col, int x, int y);
-	void Show();
-};
-
-class AdminCustomers :public Management<Customer>
-{
-public:
-	AdminCustomers() 
-	{ 
-		headlines[0] = "Id";
-		headlines[1] = "Name";
-		headlines[2] = "Product Name";
-		headlines[3] = "Amount";
-		headlines[4] = "Price";
-		filename = "customers.txt"; 
-	}
-	void Add(const char* name, const char* prod_name, int amount, double price);
-	void Create();
-	void Search(const char* val = 0, bool ascending = true);
-	void Sort(const char* name = 0, const char* prod_name = 0, int amount = 0, double price = 0, bool ascending = true);
-};
-
-
-
-
 template <class type>
-Management<type>::Management(const char* _filename)
+void Management<type>::DoTable(List<type> l)
 {
-	filename = _filename;
-	number_st = 0;
-}
-
-template <class type>
-Management<type>::~Management()
-{
-	if(filename)Write();
-}
-
-template <class type>
-void Management<type>::Show(List<type>& l)
-{
-	cls();
-	if (headlines)
+	char key;
+	int x = 0, y = 0;
+	Button sort("Sorting", 10, 3, RightTop, 0, 2);
+	Button search("Search", 10, 3, RightTop, 0, 8);
+	Button exit("Exit", 10, 3, RightBot);
+	while (true)
 	{
-		Table hl(75, 4, LeftTop, 5);
-		hl.DrawHeadlines(headlines);
+		DrawData(l);
+		sort.DrawButton();
+		search.DrawButton();
+		exit.DrawButton();
+		if (!size_cols || !size_rows)break;
+		DrawActiveCell(y / size_rows, x / size_cols, x, y);
+		Move(key, x, y, size_rows, size_cols);
+		if (key == 27)break;
+		if (key == 13)return;
+
+		while (x == size_cols * cols && y <= size_rows * rows)
+		{
+			if (y == 0 && x == size_cols * cols)
+			{
+				DrawData(l);
+				search.DrawButton();
+				exit.DrawButton();
+				sort.DrawActiveBut(x, y, size_rows, size_cols);
+			}
+			if (y == size_rows && x == size_cols * cols)
+			{
+				DrawData(l);
+				sort.DrawButton();
+				exit.DrawButton();
+				search.DrawActiveBut(x, y, size_rows, size_cols);
+			}
+			if (y == size_rows * 2 && x == size_cols * cols)
+			{
+				DrawData(l);
+				sort.DrawButton();
+				search.DrawButton();
+				exit.DrawActiveBut(x, y, size_rows, size_cols);
+			}
+			Move(key, x, y, size_rows, size_cols);
+			if (y >= size_rows * 3)y = 0;
+			if (y < 0)y = size_rows * 2;
+		}
+
+
+		if (y >= size_rows * rows)y = 0;
+		if (y < 0)y = size_rows * (rows - 1);
+		if (x >= size_cols * cols)x = 0;
+		if (x < 0)x = size_cols * (cols - 1);
 	}
-	Table table(75, l.GetCount() * 2 + 1, LeftTop, 5, l.GetCount(),0,2);
-	table.DoTable(l);
+
+}
+
+template <class type>
+void Management<type>::DrawData(List<type> l)
+{
+	DrawTable();
+	int pos_y = 0;
+	int pos_x = 0;
+	for (int i = 0; i < rows; i++)
+	{
+		pos_x = 0;
+		for (int j = 0; j < cols; j++)
+		{
+			DrawElement(l, i, j, pos_x, pos_y);
+			pos_x += size_cols;
+		}
+		pos_y += size_rows;
+	}
+
+}
+
+
+template <class type>
+void Management<type>::DrawActiveCell(List<type> l, int row, int col, int x, int y)
+{
+	SetColor(activeTxcolor, activeBgcolor);
+	FillRow(x, y);
+	DrawElement(l, row, col, x, y);
+	SetColor(txcolor, bgcolor);
+}
+
+template <class type>
+void Management<type>::DoTable()
+{
+	char key;
+	int x = 0, y = 0;
+	Button sort("Sorting", 10, 3, RightTop, 0, 2);
+	Button search("Search", 10, 3, RightTop, 0, 8);
+	Button exit("Exit", 10, 3, RightBot);
+	while (true)
+	{
+		DrawData();
+		sort.DrawButton();
+		search.DrawButton();
+		exit.DrawButton();
+		if (!size_cols || !size_rows)break;
+		DrawActiveCell(y / size_rows, x / size_cols, x, y);
+		Move(key, x, y, size_rows, size_cols);
+		if (key == 27)break;
+		if (key == 13)return;
+
+		while (x == size_cols * cols && y <= size_rows * rows)
+		{
+			if (y == 0 && x == size_cols * cols)
+			{
+				DrawData();
+				search.DrawButton();
+				exit.DrawButton();
+				sort.DrawActiveBut(x, y, size_rows, size_cols);
+			}
+			if (y == size_rows && x == size_cols * cols)
+			{
+				DrawData();
+				sort.DrawButton();
+				exit.DrawButton();
+				search.DrawActiveBut(x, y, size_rows, size_cols);
+			}
+			if (y == size_rows * 2 && x == size_cols * cols)
+			{
+				DrawData();
+				sort.DrawButton();
+				search.DrawButton();
+				exit.DrawActiveBut(x, y, size_rows, size_cols);
+			}
+			Move(key, x, y, size_rows, size_cols);
+			if (y >= size_rows * 3)y = 0;
+			if (y < 0)y = size_rows * 2;
+		}
+
+
+		if (y >= size_rows * rows)y = 0;
+		if (y < 0)y = size_rows * (rows - 1);
+		if (x >= size_cols * cols)x = 0;
+		if (x < 0)x = size_cols * (cols - 1);
+	}
+
+}
+
+template <class type>
+void Management<type>::DrawData()
+{
+	DrawTable();
+	int pos_y = 0;
+	int pos_x = 0;
+	for (int i = 0; i < rows; i++)
+	{
+		pos_x = 0;
+		for (int j = 0; j < cols; j++)
+		{
+			DrawElement(i, j, pos_x, pos_y);
+			pos_x += size_cols;
+		}
+		pos_y += size_rows;
+	}
+
+}
+
+template <class type>
+void Management<type>::DrawActiveCell(int row, int col, int x, int y)
+{
+	SetColor(activeTxcolor, activeBgcolor);
+	FillRow(x, y);
+	DrawElement(row, col, x, y);
+	SetColor(txcolor, bgcolor);
 }
 
 template <class type>
@@ -115,9 +235,29 @@ void Management<type>::Show()
 		Table hl(75, 4, LeftTop, 5);
 		hl.DrawHeadlines(headlines);
 	}
-	Table table(75, GetCount() * 2 + 1, LeftTop, 5, GetCount(), 0, 2);
-	table.DoTable(list);
+	SetWinParam(75, GetCount() * 2 + 1, LeftTop, 0, 2);
+	SetCols(5);
+	SetRows(GetCount());
+	DoTable();
 }
+
+template <class type>
+void Management<type>::Show(List<type> l)
+{
+	cls();
+	if (headlines)
+	{
+		Table hl(75, 4, LeftTop, 5);
+		hl.DrawHeadlines(headlines);
+	}
+	SetWinParam(75, l.GetCount() * 2 + 1, LeftTop, 0, 2);
+	SetCols(5);
+	SetRows(l.GetCount());
+	DoTable(l);
+}
+
+
+
 
 template <class type>
 void Management<type>::FileDelete()
