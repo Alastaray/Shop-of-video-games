@@ -14,10 +14,22 @@ using namespace std;
 
 void ManagProducts()
 {
-	AdminProducts prod("products.txt");
-	prod.Read();
-	prod.Show();
-	//prod.Sort(0,3);
+	
+	try
+	{
+		AdminProducts prod("products.txt");
+		prod.Read();
+		//prod.Add("dada", 4, 4, 4);
+		//prod.RemoveAt(0);
+		prod.Show();
+
+	}
+	catch (const char*er)
+	{
+		cls();
+		cout << er;
+	}
+	
 	
 }
 void ManagCustomers()

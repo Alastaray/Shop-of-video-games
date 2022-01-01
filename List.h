@@ -1,5 +1,6 @@
 #pragma once
-
+#include <iostream>
+using namespace std;
 template <class type>
 class List
 {
@@ -40,7 +41,7 @@ public:
 
 	}
 	void RemoveAt(int ind)
-	{
+	{		
 		Node* st = (*this).GetCertain(ind);
 		if (st)
 		{
@@ -56,7 +57,7 @@ public:
 	Node* GetTail() { return tail; }
 	Node* GetCertain(int ind)
 	{
-		if (ind >= count||!head)throw ind;
+		if (ind >= count||!head)throw "Index out of range";
 		Node* st = head;
 		int pos = 0;
 		while (st)
