@@ -194,6 +194,70 @@ void AdminProducts::DrawElement(int row, int col, int x, int y)
 		break;
 	}
 }
+bool AdminProducts::DrawButtons(Button& sort, Button& search, Button& exit, int& x, int& y)
+{
+	int jump_size = rows / 3;
+	while (x == size_cols * cols && y <= size_rows * rows)
+	{
+		if (y < size_rows*jump_size && x == size_cols * cols)
+		{
+			DrawData();
+			search.DrawButton();
+			exit.DrawButton();
+			sort.DrawActiveBut(x, y, size_rows, size_cols);
+		}
+		if (y >= size_rows * jump_size && y < size_rows * jump_size*2 && x == size_cols * cols)
+		{
+			DrawData();
+			sort.DrawButton();
+			exit.DrawButton();
+			search.DrawActiveBut(x, y, size_rows, size_cols);
+		}
+		if (y >= size_rows * jump_size * 2 && y <= size_rows * jump_size * 3 && x == size_cols * cols)
+		{
+			DrawData();
+			sort.DrawButton();
+			search.DrawButton();
+			exit.DrawActiveBut(x, y, size_rows, size_cols);
+		}
+		Move(key, x, y, size_rows, size_cols);
+		if (key == 13 && y < size_rows * jump_size && x == size_cols * cols)
+		{
+			cls();
+			getch();
+		}
+		if (key == 13 && y >= size_rows * jump_size && y < size_rows * jump_size * 2 && x == size_cols * cols)
+		{
+			cls();
+			getch();
+		}
+		if (key == 13 && y >= size_rows * jump_size * 2 && y <= size_rows * jump_size * 3 && x == size_cols * cols)return false;
+		if (key == 80||key=='s') y += size_rows * (jump_size);
+		if (key == 72||key=='w') y -= size_rows * (jump_size);
+		if (y > size_rows * rows)y = 0;
+		if (y < 0)y = size_rows * (rows - 1);
+	}
+	return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //void AdminCustomers::Create()
@@ -351,4 +415,34 @@ void AdminCustomers::DrawElement(int row, int col, int x, int y)
 		break;
 	}
 }
-
+bool AdminCustomers::DrawButtons(Button& sort, Button& search, Button& exit, int& x, int& y)
+{
+	while (x == size_cols * cols && y <= size_rows * rows)
+	{
+		if (y == 0 && x == size_cols * cols)
+		{
+			DrawData();
+			search.DrawButton();
+			exit.DrawButton();
+			sort.DrawActiveBut(x, y, size_rows, size_cols);
+		}
+		if (y == size_rows && x == size_cols * cols)
+		{
+			DrawData();
+			sort.DrawButton();
+			exit.DrawButton();
+			search.DrawActiveBut(x, y, size_rows, size_cols);
+		}
+		if (y == size_rows * 2 && x == size_cols * cols)
+		{
+			DrawData();
+			sort.DrawButton();
+			search.DrawButton();
+			exit.DrawActiveBut(x, y, size_rows, size_cols);
+		}
+		Move(key, x, y, size_rows, size_cols);
+		if (y >= size_rows * 3)y = 0;
+		if (y < 0)y = size_rows * 2;
+	}
+	return true;
+}

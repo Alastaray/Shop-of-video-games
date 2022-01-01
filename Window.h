@@ -79,14 +79,10 @@ public:
 	void FillRow(int pos_x, int pos_y);
 	void DrawHeadlines(const char** headlines);
 
-
-
-	void DoTable(List<Customer>& list);
-	void DrawData(List<Customer>& list);
-
 protected:
 	int cols, rows,
 		size_cols, size_rows;
+	char key;
 
 };
 

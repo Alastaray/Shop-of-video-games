@@ -16,8 +16,8 @@ void ManagProducts()
 {
 	AdminProducts prod("products.txt");
 	prod.Read();
-	//prod.Show(prod.GetList());
-	prod.Sort(0,3);
+	prod.Show();
+	//prod.Sort(0,3);
 	
 }
 void ManagCustomers()

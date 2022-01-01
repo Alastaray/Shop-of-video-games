@@ -25,8 +25,9 @@ public:
 	void Create();
 	void Search(const char* val = 0, bool ascending = true);
 	void Sort(const char* name = 0, int amount = 0, double price = 0, double purchase_price = 0, bool ascending = true);
-	void DrawElement(List<Product>& l, int row, int col, int x, int y);
-	void DrawElement(int row, int col, int x, int y);
+	virtual void DrawElement(List<Product>& l, int row, int col, int x, int y);
+	virtual void DrawElement(int row, int col, int x, int y);
+	virtual bool DrawButtons(Button& sort, Button& search, Button& exit, int& x, int& y);
 	friend void ManagProducts();
 };
 
@@ -48,5 +49,6 @@ public:
 	void Sort(const char* name = 0, const char* prod_name = 0, int amount = 0, double price = 0, bool ascending = true);
 	virtual void DrawElement(List<Customer>& l, int row, int col, int x, int y);
 	virtual void DrawElement(int row, int col, int x, int y);
+	virtual bool DrawButtons(Button& sort, Button& search, Button& exit, int& x, int& y);
 	friend void ManagCustomers();
 };

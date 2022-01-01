@@ -21,12 +21,13 @@ public:
 	~Management()
 	{
 		if (filename)Write();
+		else cls();
 	}
 	List<type>& GetList() { return list; }
 	void Write();
 	int Read();
-	void RemoveAll();
-	void RemoveAt(int ind);
+	void RemoveAt(int ind) { list.RemoveAt(ind); }
+	void RemoveAll() { list.RemoveAll(); }
 	int GetCount() { return list.GetCount(); }
 	int GetNumberSt() { return number_st; }
 	void FileDelete();
@@ -35,29 +36,53 @@ public:
 	
 protected:
 	void DoTable();
-	void DrawData(List<type>& l);
 	void DoTable(List<type>& l);
-	void DrawActiveCell(List<type>& l, int row, int col, int x, int y);
 	void DrawData();
+	void DrawData(List<type>& l);			
 	void Show();
 	void Show(List<type>& l);
 	void DrawActiveCell(int row, int col, int x, int y);
-
+	void DrawActiveCell(List<type>& l, int row, int col, int x, int y);
 	virtual void DrawElement(List<type>& l, int row, int col, int x, int y) = 0;
 	virtual void DrawElement(int row, int col, int x, int y) = 0;
+	virtual bool DrawButtons(Button& sort, Button& search, Button& exit, int& x, int& y)=0;
 
 	List<type> list;
 	const char* filename;
-	fstream file;
 	int number_st;
 	const char* headlines[5];
 };
 
+template <class type>
+void Management<type>::DoTable()
+{
+	int x = 0, y = 0;
+	Button sort("Sorting", 10, 3, RightTop, 0, 2);
+	Button search("Search", 10, 3, RightTop, 0, 8);
+	Button exit("Exit", 10, 3, RightBot);
+	while (true)
+	{
+		DrawData();
+		sort.DrawButton();
+		search.DrawButton();
+		exit.DrawButton();
+		if (!size_cols || !size_rows)break;
+		DrawActiveCell(y / size_rows, x / size_cols, x, y);
+		Move(key, x, y, size_rows, size_cols);
+		if (key == 27)break;
+		if (key == 13)return;
+		if(!DrawButtons(sort, search, exit,x,y))return;
+		if (y >= size_rows * rows)y = 0;
+		if (y < 0)y = size_rows * (rows - 1);
+		if (x >= size_cols * cols)x = 0;
+		if (x < 0)x = size_cols * (cols - 1);
+	}
+
+}
 
 template <class type>
 void Management<type>::DoTable(List<type>& l)
 {
-	char key;
 	int x = 0, y = 0;
 	Button sort("Sorting", 10, 3, RightTop, 0, 2);
 	Button search("Search", 10, 3, RightTop, 0, 8);
@@ -73,40 +98,7 @@ void Management<type>::DoTable(List<type>& l)
 		Move(key, x, y, size_rows, size_cols);
 		if (key == 27)break;
 		if (key == 13)return;
-
-		while (x == size_cols * cols && y <= size_rows * rows)
-		{
-			
-			if (y == 0 && x == size_cols * cols)
-			{
-				Move(key, x, y, size_rows, size_cols);
-				DrawData(l);
-				search.DrawButton();
-				exit.DrawButton();
-				sort.DrawActiveBut(x, y, size_rows, size_cols);
-			}
-			if (y == size_rows && x == size_cols * cols)
-			{
-				Move(key, x, y, size_rows, size_cols);
-				DrawData(l);
-				sort.DrawButton();
-				exit.DrawButton();
-				search.DrawActiveBut(x, y, size_rows, size_cols);
-			}
-			if (y == size_rows * 2 && x == size_cols * cols)
-			{				
-				DrawData(l);
-				sort.DrawButton();
-				search.DrawButton();
-				exit.DrawActiveBut(x, y, size_rows, size_cols);
-			}
-			Move(key, x, y, size_rows, size_cols);
-
-			if (y >= size_rows * 3)y = 0;
-			if (y < 0)y = size_rows * 2;
-		}
-
-
+		if (!DrawButtons(sort, search, exit, x, y))return;
 		if (y >= size_rows * rows)y = 0;
 		if (y < 0)y = size_rows * (rows - 1);
 		if (x >= size_cols * cols)x = 0;
@@ -134,7 +126,6 @@ void Management<type>::DrawData(List<type>& l)
 
 }
 
-
 template <class type>
 void Management<type>::DrawActiveCell(List<type>& l, int row, int col, int x, int y)
 {
@@ -142,63 +133,6 @@ void Management<type>::DrawActiveCell(List<type>& l, int row, int col, int x, in
 	FillRow(x, y);
 	DrawElement(l, row, col, x, y);
 	SetColor(txcolor, bgcolor);
-}
-
-template <class type>
-void Management<type>::DoTable()
-{
-	char key;
-	int x = 0, y = 0;
-	Button sort("Sorting", 10, 3, RightTop, 0, 2);
-	Button search("Search", 10, 3, RightTop, 0, 8);
-	Button exit("Exit", 10, 3, RightBot);
-	while (true)
-	{
-		DrawData();
-		sort.DrawButton();
-		search.DrawButton();
-		exit.DrawButton();
-		if (!size_cols || !size_rows)break;
-		DrawActiveCell(y / size_rows, x / size_cols, x, y);
-		Move(key, x, y, size_rows, size_cols);
-		if (key == 27)break;
-		if (key == 13)return;
-
-		while (x == size_cols * cols && y <= size_rows * rows)
-		{
-			if (y == 0 && x == size_cols * cols)
-			{
-				DrawData();
-				search.DrawButton();
-				exit.DrawButton();
-				sort.DrawActiveBut(x, y, size_rows, size_cols);
-			}
-			if (y == size_rows && x == size_cols * cols)
-			{
-				DrawData();
-				sort.DrawButton();
-				exit.DrawButton();
-				search.DrawActiveBut(x, y, size_rows, size_cols);
-			}
-			if (y == size_rows * 2 && x == size_cols * cols)
-			{
-				DrawData();
-				sort.DrawButton();
-				search.DrawButton();
-				exit.DrawActiveBut(x, y, size_rows, size_cols);
-			}
-			Move(key, x, y, size_rows, size_cols);
-			if (y >= size_rows * 3)y = 0;
-			if (y < 0)y = size_rows * 2;
-		}
-
-
-		if (y >= size_rows * rows)y = 0;
-		if (y < 0)y = size_rows * (rows - 1);
-		if (x >= size_cols * cols)x = 0;
-		if (x < 0)x = size_cols * (cols - 1);
-	}
-
 }
 
 template <class type>
@@ -262,7 +196,8 @@ void Management<type>::Show(List<type>& l)
 template <class type>
 void Management<type>::FileDelete()
 {
-	file.open(filename, ios::out | ios::in | ios::trunc | ios::binary);
+	fstream file;
+	file.open(filename, ios::out | ios::in | ios::trunc);
 	file.close();
 }
 
@@ -270,7 +205,7 @@ template <class type>
 int Management<type>::Read()
 {
 	type st;
-
+	fstream file;
 	file.open(filename, ios::out | ios::in | ios::binary | ios::app);
 	file.seekg(0, ios::end);
 	number_st = file.tellg() / sizeof(st);
@@ -293,30 +228,20 @@ int Management<type>::Read()
 
 template <class type>
 void Management<type>::Write()
-{
+{	
 	if (number_st == list.GetCount())return;
+	FileDelete();
+	fstream file;
 	type st;
-
 	file.open(filename, ios::out | ios::in | ios::binary | ios::app);
 	file.clear();
 	file.seekg(ios::beg);
-	for (int i = number_st; i < list.GetCount(); i++)
+	for (int i = 0; i < list.GetCount(); i++)
 	{
 		file.write((char*)&list[i], sizeof(list[i]));
 	}
 	file.close();
 }
 
-template <class type>
-void Management<type>::RemoveAt(int ind)
-{
-	list.RemoveAt(ind);
-}
-
-template <class type>
-void Management<type>::RemoveAll()
-{
-	list.RemoveAll();
-}
 
 
