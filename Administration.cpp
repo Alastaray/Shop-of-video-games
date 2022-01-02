@@ -1,4 +1,4 @@
-#include "Admin.h"
+#include "Administration.h"
 
 
 void AdminProducts::Create()
@@ -196,7 +196,7 @@ void AdminProducts::DrawElement(int row, int col, int x, int y)
 }
 bool AdminProducts::DrawButtons(Button& sort, Button& search, Button& exit, int& x, int& y)
 {
-	int jump_size = size_rows *(rows / 3);
+	int jump_size = size_rows * (rows / 3);
 	if (!jump_size)jump_size = 1;
 	while (x == size_cols * cols && y <= size_rows * rows)
 	{
@@ -207,14 +207,14 @@ bool AdminProducts::DrawButtons(Button& sort, Button& search, Button& exit, int&
 			exit.DrawButton();
 			sort.DrawActiveBut(x, y, size_rows, size_cols);
 		}
-		if (y >= jump_size && y < jump_size*2 && x == size_cols * cols)
+		if (y >= jump_size && y < jump_size * 2 && x == size_cols * cols)
 		{
 			DrawData();
 			sort.DrawButton();
 			exit.DrawButton();
 			search.DrawActiveBut(x, y, size_rows, size_cols);
 		}
-		if (y >= jump_size*2 && y <= size_rows * rows && x == size_cols * cols)
+		if (y >= jump_size * 2 && y <= size_rows * rows && x == size_cols * cols)
 		{
 			DrawData();
 			sort.DrawButton();
@@ -228,8 +228,8 @@ bool AdminProducts::DrawButtons(Button& sort, Button& search, Button& exit, int&
 			Search("3");
 		if (key == 13 && y >= jump_size * 2 && y <= size_rows * rows && x == size_cols * cols)
 			return false;
-		if (key == 80||key=='s') y += jump_size;
-		if (key == 72||key=='w') y -= jump_size;
+		if (key == 80 || key == 's') y += jump_size;
+		if (key == 72 || key == 'w') y -= jump_size;
 		if (y >= size_rows * rows)y = 0;
 		if (y < 0)y = size_rows * (rows - 1);
 	}

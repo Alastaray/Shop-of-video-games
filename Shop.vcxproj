@@ -139,7 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Admin.cpp" />
+    <ClCompile Include="Administration.cpp" />
     <ClCompile Include="fun_console.cpp" />
     <ClCompile Include="Products and customers.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -147,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Admin.h" />
+    <ClInclude Include="Administration.h" />
     <ClInclude Include="fun_console.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="Management.h" />
