@@ -33,7 +33,6 @@ public:
 	void FileDelete();
 	type& operator[](int ind) { return list[ind]; }
 	void operator<<(const type& val) { list << val; }
-	
 protected:
 	List<type> list;
 	const char* filename;

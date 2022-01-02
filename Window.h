@@ -8,7 +8,7 @@
 using namespace std;
 
 bool CompareStr(const char* value, const char* source);
-void Move(char &key, int& x, int& y, int size_rows, int size_cols);
+void Move(char &key, int& x, int& y, int size_rows=0, int size_cols=0);
 
 
 enum position
@@ -94,7 +94,7 @@ public:
 		strcpy(name, _name);
 		
 	}
-	void DrawActiveBut(int& x, int& y, int size_rows, int size_cols);
+	void DrawActiveBut();
 	void DrawButton();
 
 
@@ -132,6 +132,7 @@ public:
 	double GetDouble(int len, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
 	int GetInt(int len, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
 	char* GetStr(int len, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
+	char* Get(int len, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
 private:
 	char* buff;
 };

@@ -19,9 +19,10 @@ void ManagProducts()
 	{
 		AdminProducts prod("products.txt");
 		prod.Read();
-		//prod.Add("dada", 4, 4, 4);
+		//prod.Add("Sacred", 4, 30.2, 34.5);
 		//prod.RemoveAt(0);
 		prod.Show();
+		//prod.DoSearching();
 
 	}
 	catch (const char*er)
@@ -32,12 +33,12 @@ void ManagProducts()
 	
 	
 }
-void ManagCustomers()
-{
-	AdminCustomers cust("customers.txt");
-	cust.Read();
-	cust.Show();
-}
+//void ManagCustomers()
+//{
+//	AdminCustomers cust("customers.txt");
+//	cust.Read();
+//	cust.Show();
+//}
 
 
 

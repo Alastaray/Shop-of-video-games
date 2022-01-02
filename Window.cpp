@@ -368,20 +368,43 @@ char* Input::GetStr(int len, int x, int y, int indent_letf, int indent_top)
 	ShowCaret(false);
 	return buff;
 }
-
-void Button::DrawActiveBut(int& x, int& y, int size_rows, int size_cols)
+char* Input::Get(int len, int x, int y, int indent_letf, int indent_top)
 {
-	char key;
+	ShowCaret(true);
+	if (buff)delete buff;
+	buff = new char[len + 1];
+	buff[0] = 0;
+	int key, i = 0;
+	bool is_dot = false;
+	if (!x)x = GetCurrentX() + indent_letf;
+	if (!y)y = GetCurrentY() + indent_top;
+	GotoXY(x, y);
+	while (i < len)
+	{
+		key = _getch();
+		if (key == 27) { buff[0] = 0; return buff; }
+		if (key == 13) { break; }
+		if ((key >= 'A' && key <= 'Z' && !i) || (key >= 'a' && key <= 'z')|| (key >= '0' && key <= '9') || (key == '.' && !is_dot))
+		{
+			if (key == '.')is_dot = true;
+			buff[i] = key;
+			i++;
+			buff[i] = 0;
+		}
+		GotoXY(x, y);
+		cout << buff;
+	}
+	ShowCaret(false);
+	return buff;
+}
+
+void Button::DrawActiveBut()
+{
 	DrawBox();
 	SetColor(activeTxcolor, activeBgcolor);
 	FillRow();
 	WriteLine(name);
 	SetColor(txcolor, bgcolor);
-	//key = _getch();
-	//Move(key, x, y, size_rows, size_cols);
-	//if (key == 13)return;
-	//if (key == 27)return;
-
 }
 void Button::DrawButton()
 {
