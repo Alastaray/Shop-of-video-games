@@ -1,6 +1,4 @@
 #pragma once
-#include <iostream>
-using namespace std;
 template <class type>
 class List
 {
@@ -23,6 +21,12 @@ public:
 		head = tail = 0;
 		count = current = 0;
 	}
+	List(const List<type>& l)
+	{
+		head = tail = 0;
+		count = current = 0;
+		*this = l;
+	}
 	~List() { RemoveAll(); }
 	void RemoveAll()
 	{
@@ -41,7 +45,7 @@ public:
 
 	}
 	void RemoveAt(int ind)
-	{		
+	{
 		Node* st = (*this).GetCertain(ind);
 		if (st)
 		{
@@ -55,9 +59,9 @@ public:
 	}
 	Node* GetHead() { return head; }
 	Node* GetTail() { return tail; }
-	Node* GetCertain(int ind)
+	Node* GetCertain(int ind)const
 	{
-		if (ind >= count||!head)throw "Index out of range";
+		if (ind >= count)throw ind;
 		Node* st = head;
 		int pos = 0;
 		while (st)
@@ -68,7 +72,7 @@ public:
 		}
 		return 0;
 	}
-	int GetCount() { return count; }
+	int GetCount()const { return count; }
 	List& AddTail(const type& val)
 	{
 		Node* st = new Node(val, tail, 0);
@@ -114,20 +118,6 @@ public:
 		AddTail(val);
 		return (*this);
 	}
-
-	type& operator[](int ind)
-	{
-		Node* st = (*this).GetCertain(ind);
-		return st->value;
-	}
-	
-	void operator=(List& l)
-	{
-		for (int i = 0; i < l.GetCount(); i++)
-		{
-			*this << l[i];
-		}
-	}
 	List& operator>>(type& val)
 	{
 		if (current >= count)current = 0;
@@ -135,7 +125,20 @@ public:
 		current++;
 		return (*this);
 	}
-	
+	type& operator[](int ind)const
+	{
+		Node* st = (*this).GetCertain(ind);
+		return st->value;
+	}
+
+	void operator=(const List& l)
+	{
+		for (int i = 0; i < l.GetCount(); i++)
+		{
+			*this << l[i];
+		}
+	}
+
 private:
 	int count, current;
 	Node* head, * tail;

@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-#include "Window.h"
 #include "List.h"
 #include "Products and customers.h"
 using namespace std;

@@ -142,7 +142,7 @@
     <ClCompile Include="Administration.cpp" />
     <ClCompile Include="fun_console.cpp" />
     <ClCompile Include="Products and customers.cpp" />
-    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>

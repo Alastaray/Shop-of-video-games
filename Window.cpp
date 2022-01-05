@@ -58,15 +58,16 @@ void Window::DrawBox()
 	cout << borders[BotRightAngle] << endl;
 
 }
-void Window::FillRow(int pos)
+void Window::FillRow(int _x, int _y)
 {
-	GotoXY(GetX(),GetY() + pos);
+	GotoXY(GetX()+_x,GetY() + _y);
 
 	for (int i = 0; i < GetWidth(); i++) {
-		std::cout << " ";
+		cout << " ";
 	}
 
 }
+
 void Window::SetWinParam(unsigned int _width, unsigned int _height, int position, int indent_letf, int indent_top)
 {
 	height = _height;
@@ -110,88 +111,89 @@ void Window::SetWinParam(unsigned int _width, unsigned int _height, int position
 
 }
 
-void Menu::DoMenu(const char** _menu_headlines, int _size, void (*func1) (), void (*func2) (), void (*func3) (), void (*func4) (), void (*func5) ())
-{
-	if (!_size)
-	{
-		_menu_headlines = menu_headlines;
-		_size = headlines_count;
-	}
-	char key;
-	int pos = 0,
-		pos_max = _size * 2;
-	while (true)
-	{
-		cls();
-		DrawMenu(_menu_headlines, _size);
-		SetColor(activeTxcolor, activeBgcolor);
-		FillRow(pos);
-		WriteLine(_menu_headlines[pos / 2], 0, pos, 4);
-		SetColor(txcolor, bgcolor);
-		key = _getch();
-		if (key == 27)break;
-		if (key == 13)
-		{
-			switch (pos / 2)
-			{
-			case 0:
-				if (*func1)func1();
-				break;
-			case 1:
-				if (*func2)func2();
-				break;
-			case 2:
-				if (*func3)func3();
-				break;
-			case 3:
-				if (*func4)func4();
-				break;
-			case 4:
-				if (*func5)func5();
-				return;
-				break;
-			}
-		}
-		if (key == 'w')pos -= 2;
-		if (key == 's')pos += 2;
-		if (key == -32) {
-			key = _getch();
-			//down
-			if (key == 80) pos += 2;
-			//up
-			if (key == 72) pos -= 2;
-		}
-		if (pos >= pos_max)pos = 0;
-		if (pos < 0)pos = pos_max - 2;
-	}
-}
-void Menu::DrawMenu(const char** _menu_headlines, int _size)
-{
-	DrawBox();
-	if (!_size)
-	{
-		_menu_headlines = menu_headlines;
-		_size = headlines_count;
-	}
-	for (int i = 0, j = 0; i < _size * 2; j++, i += 2)
-	{
-		WriteLine(_menu_headlines[j], 0, i, 4);
-	}
-}
+//void Menu::DoMenu(const char** _menu_headlines, int _size, void (*func1) (), void (*func2) (), void (*func3) (), void (*func4) (), void (*func5) ())
+//{
+//	if (!_size)
+//	{
+//		_menu_headlines = menu_headlines;
+//		_size = headlines_count;
+//	}
+//	char key;
+//	int pos = 0,
+//		pos_max = _size * 2;
+//	while (true)
+//	{
+//		cls();
+//		DrawMenu(_menu_headlines, _size);
+//		SetColor(activeTxcolor, activeBgcolor);
+//		FillRow(pos);
+//		WriteLine(_menu_headlines[pos / 2], 0, pos, 4);
+//		SetColor(txcolor, bgcolor);
+//		key = _getch();
+//		if (key == 27)break;
+//		if (key == 13)
+//		{
+//			switch (pos / 2)
+//			{
+//			case 0:
+//				if (*func1)func1();
+//				break;
+//			case 1:
+//				if (*func2)func2();
+//				break;
+//			case 2:
+//				if (*func3)func3();
+//				break;
+//			case 3:
+//				if (*func4)func4();
+//				break;
+//			case 4:
+//				if (*func5)func5();
+//				return;
+//				break;
+//			}
+//		}
+//		if (key == 'w')pos -= 2;
+//		if (key == 's')pos += 2;
+//		if (key == -32) {
+//			key = _getch();
+//			//down
+//			if (key == 80) pos += 2;
+//			//up
+//			if (key == 72) pos -= 2;
+//		}
+//		if (pos >= pos_max)pos = 0;
+//		if (pos < 0)pos = pos_max - 2;
+//	}
+//}
+//void Menu::DrawMenu(const char** _menu_headlines, int _size)
+//{
+//	DrawBox();
+//	if (!_size)
+//	{
+//		_menu_headlines = menu_headlines;
+//		_size = headlines_count;
+//	}
+//	for (int i = 0, j = 0; i < _size * 2; j++, i += 2)
+//	{
+//		WriteLine(_menu_headlines[j], 0, i, 4);
+//	}
+//}
 
 
 Table::Table(unsigned int _width, unsigned int _height, int position, int _cols, int _rows, int indent_letf, int indent_top) :Window(_width, _height, position, indent_letf, indent_top)
 {
+	key = 0;
 	cols = _cols;
 	rows = _rows;
 	size_cols = size_rows = 0;
 }
-void Table::FillRow(int pos_x, int pos_y)
+void Table::FillRow(int _x, int _y)
 {
 
 	for (int i = 0; i < size_rows - 1; i++)
 	{
-		GotoXY(GetX() + pos_x, GetY() + pos_y + i);
+		GotoXY(GetX() + _x, GetY() + _y + i);
 		for (int j = 0; j < size_cols - 1; j++)
 		{
 			cout << " ";
@@ -284,22 +286,21 @@ void Table::SetRows(int num_rows)
 
 
 
-int Input::GetInt(int len, int x, int y, int indent_letf, int indent_top)
+int Input::GetInt(int max_len, int min_len, int x, int y, int indent_letf, int indent_top)
 {
-	ShowCaret(true);
-	if (buff)delete buff;
-	buff = new char[len + 1];
-	buff[0] = 0;
+	DataPreparation(max_len, x, y, indent_letf, indent_top);
 	int key, i = 0;
-	if (!x)x = GetCurrentX() + indent_letf;
-	if (!y)y = GetCurrentY() + indent_top;
-	GotoXY(x, y);
-	while (i < len)
+	while (i < max_len)
 	{
-
 		key = _getch();
 		if (key == 27) { buff[0] = 0; return 0; }
-		if (key == 13) { break; }
+		if (key == 13) { if (i >= min_len)break; }
+		if (key == 8)
+		{
+			buff[--i] = 0;
+			GotoXY(GetCurrentX() - 1, GetCurrentY());
+			cout << " ";
+		}
 		if (key >= '0' && key <= '9') {
 			buff[i] = key;
 			i++;
@@ -311,23 +312,22 @@ int Input::GetInt(int len, int x, int y, int indent_letf, int indent_top)
 	ShowCaret(false);
 	return atoi(buff);
 }
-double Input::GetDouble(int len, int x, int y, int indent_letf, int indent_top)
+double Input::GetDouble(int max_len, int min_len, int x, int y, int indent_letf, int indent_top)
 {
-	ShowCaret(true);
-	if (buff)delete buff;
-	buff = new char[len + 1];
-	buff[0] = 0;
+	DataPreparation(max_len, x, y, indent_letf, indent_top);
 	int key, i = 0;
-	if (!x)x = GetCurrentX() + indent_letf;
-	if (!y)y = GetCurrentY() + indent_top;
 	bool is_dot = false;
-	GotoXY(x, y);
-	while (i < len)
+	while (i < max_len)
 	{
-
 		key = _getch();
 		if (key == 27) { buff[0] = 0; return 0; }
-		if (key == 13) { break; }
+		if (key == 13) { if (i >= min_len)break; }
+		if (key == 8)
+		{
+			buff[--i] = 0;
+			GotoXY(GetCurrentX() - 1, GetCurrentY());
+			cout << " ";
+		}
 		if ((key >= '0' && key <= '9') || (key == '.' && !is_dot))
 		{
 			if (key == '.')is_dot = true;
@@ -341,21 +341,21 @@ double Input::GetDouble(int len, int x, int y, int indent_letf, int indent_top)
 	ShowCaret(false);
 	return atof(buff);
 }
-char* Input::GetStr(int len, int x, int y, int indent_letf, int indent_top)
+char* Input::GetStr(int max_len, int min_len, int x, int y, int indent_letf, int indent_top)
 {
-	ShowCaret(true);
-	if (buff)delete buff;
-	buff = new char[len + 1];
-	buff[0] = 0;
+	DataPreparation(max_len, x, y, indent_letf, indent_top);
 	int key, i = 0;
-	if (!x)x = GetCurrentX() + indent_letf;
-	if (!y)y = GetCurrentY() + indent_top;
-	GotoXY(x, y);
-	while (i < len)
+	while (i < max_len)
 	{
 		key = _getch();
 		if (key == 27) { buff[0] = 0; return buff; }
-		if (key == 13) { break; }
+		if (key == 13) { if (i >= min_len)break; }
+		if (key == 8)
+		{
+			buff[--i] = 0;
+			GotoXY(GetCurrentX() - 1, GetCurrentY());
+			cout << " ";
+		}
 		if ((key >= 'A' && key <= 'Z' && !i) || (key >= 'a' && key <= 'z'))
 		{
 			buff[i] = key;
@@ -368,22 +368,22 @@ char* Input::GetStr(int len, int x, int y, int indent_letf, int indent_top)
 	ShowCaret(false);
 	return buff;
 }
-char* Input::Get(int len, int x, int y, int indent_letf, int indent_top)
+char* Input::Get(int max_len, int min_len, int x, int y, int indent_letf, int indent_top)
 {
-	ShowCaret(true);
-	if (buff)delete buff;
-	buff = new char[len + 1];
-	buff[0] = 0;
-	int key, i = 0;
+	DataPreparation(max_len, x, y, indent_letf, indent_top);
+	int key, i = 0;	
 	bool is_dot = false;
-	if (!x)x = GetCurrentX() + indent_letf;
-	if (!y)y = GetCurrentY() + indent_top;
-	GotoXY(x, y);
-	while (i < len)
+	while (i < max_len)
 	{
 		key = _getch();
 		if (key == 27) { buff[0] = 0; return buff; }
-		if (key == 13) { break; }
+		if (key == 13) { if(i>=min_len)break; }
+		if(key==8)
+		{			
+			buff[--i] = 0;
+			GotoXY(GetCurrentX() - 1, GetCurrentY());
+			cout << " ";
+		}
 		if ((key >= 'A' && key <= 'Z' && !i) || (key >= 'a' && key <= 'z')|| (key >= '0' && key <= '9') || (key == '.' && !is_dot))
 		{
 			if (key == '.')is_dot = true;
@@ -397,20 +397,18 @@ char* Input::Get(int len, int x, int y, int indent_letf, int indent_top)
 	ShowCaret(false);
 	return buff;
 }
+void Input::DataPreparation(int max_len, int& x, int& y, int indent_letf, int indent_top)
+{
+	ShowCaret(true);
+	if (buff)delete buff;
+	buff = new char[max_len + 1];
+	buff[0] = 0;
+	if (!x)x = GetCurrentX() + indent_letf;
+	if (!y)y = GetCurrentY() + indent_top;
+	GotoXY(x, y);
+}
 
-void Button::DrawActiveBut()
-{
-	DrawBox();
-	SetColor(activeTxcolor, activeBgcolor);
-	FillRow();
-	WriteLine(name);
-	SetColor(txcolor, bgcolor);
-}
-void Button::DrawButton()
-{
-	DrawBox();
-	WriteLine(name);
-}
+
 
 
 
@@ -443,23 +441,23 @@ bool CompareStr(const char* value, const char* source)
 	if (number_let == len_val)return true;
 	else return false;
 }
-void Move(char &key, int& x, int& y, int size_rows, int size_cols)
+void Move(char &key, int& x, int& y, int how_change_x, int how_change_y)
 {
 	key = _getch();
-	if (key == 'w')y -= size_rows;
-	if (key == 's')y += size_rows;
-	if (key == 'd')x += size_cols;
-	if (key == 'a')x -= size_cols;
+	if (key == 'w')y -= how_change_y;
+	if (key == 's')y += how_change_y;
+	if (key == 'd')x += how_change_x;
+	if (key == 'a')x -= how_change_x;
 	if (key == -32)
 	{
 		key = _getch();
 		//down
-		if (key == 80) y += size_rows;
+		if (key == 80) y += how_change_y;
 		//up
-		if (key == 72) y -= size_rows;
+		if (key == 72) y -= how_change_y;
 		//left
-		if (key == 75) x -= size_cols;
+		if (key == 75) x -= how_change_x;
 		//right
-		if (key == 77) x += size_cols;
+		if (key == 77) x += how_change_x;
 	}
 }

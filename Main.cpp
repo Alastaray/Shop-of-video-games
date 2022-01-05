@@ -12,9 +12,11 @@ using namespace std;
 #pragma warning(disable: 4996)
 
 
-void ManagProducts()
+
+
+
+void main()
 {
-	
 	try
 	{
 		AdminProducts prod("products.txt");
@@ -22,28 +24,13 @@ void ManagProducts()
 		//prod.Add("Sacred", 4, 30.2, 34.5);
 		//prod.RemoveAt(0);
 		prod.Show();
-		//prod.DoSearching();
-
+		prod.DoSorting();
+		getch();
 	}
-	catch (const char*er)
+	catch (const char* er)
 	{
 		cls();
 		cout << er;
 	}
-	
-	
-}
-//void ManagCustomers()
-//{
-//	AdminCustomers cust("customers.txt");
-//	cust.Read();
-//	cust.Show();
-//}
-
-
-
-void main()
-{
-	ManagProducts();
 
 };

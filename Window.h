@@ -8,7 +8,7 @@
 using namespace std;
 
 bool CompareStr(const char* value, const char* source);
-void Move(char &key, int& x, int& y, int size_rows=0, int size_cols=0);
+void Move(char &key, int& x, int& y, int how_change_x = 0, int how_change_y = 0);
 
 
 enum position
@@ -27,18 +27,20 @@ public:
 	
 	Window(unsigned int _width, unsigned int _height, int position, int indent_letf = 0, int indent_top = 0);
 	~Window();
-	template <class type>
-	void WriteLine(type val, int _x = 0, int _y = 0, int indent_x = 1, int indent_y = 1);
-	void SetWinParam(unsigned int _width, unsigned int _height, int position, int indent_letf=0, int indent_top=0);
+	void SetWinParam(unsigned int _width, unsigned int _height, int position, int indent_letf = 0, int indent_top = 0);
 	void DrawBox();
-	virtual void FillRow(int pos=0);
-	
+	virtual void FillRow(int _x = 0, int _y = 0);
 	int GetWidth() { return width - 2; }
 	int GetHeight() { return height - 2; }
-	int GetX() { return x+1; }
-	int GetY() { return y+1; }
-	
+	int GetX() { return x + 1; }
+	int GetY() { return y + 1; }
 
+	template <class type>
+	void WriteLine(type val, int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1);
+	template <class type>
+	void DrawBox(type val, int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1);
+	template <class type>
+	void FillRow(type val, int pos_x, int pos_y, int indent_x = 1, int indent_y = 1);
 protected:	
 	enum Borders_name
 	{
@@ -61,11 +63,26 @@ protected:
 		activeTxcolor, activeBgcolor;
 };
 template <class type>
-void Window::WriteLine(type val, int _x, int _y, int indent_letf, int indent_top)
+void Window::WriteLine(type val, int pos_x, int pos_y, int indent_letf, int indent_top)
 {
-	GotoXY(x + indent_letf + _x, y + indent_top + _y);
+	GotoXY(x + pos_x + indent_letf, y + pos_y + indent_top);
 	cout << val;
 }
+template <class type>
+void Window::DrawBox(type val, int pos_x, int pos_y, int indent_x, int indent_y)
+{
+	DrawBox();
+	WriteLine(val, pos_x, pos_y, indent_x, indent_y);
+}
+template <class type>
+void Window::FillRow(type val, int pos_x, int pos_y, int indent_x, int indent_y)
+{
+	SetColor(activeTxcolor, activeBgcolor);
+	FillRow(pos_x, pos_y);
+	WriteLine(val, pos_x, pos_y, indent_x, indent_y);
+	SetColor(txcolor, bgcolor);
+}
+
 
 class Table:public Window
 {
@@ -76,10 +93,11 @@ public:
 	void DrawRows();
 	void SetCols(int num_cols);
 	void SetRows(int num_cols);
-	void FillRow(int pos_x, int pos_y);
 	void DrawHeadlines(const char** headlines);
-
+	void FillRow(int _x = 0, int _y = 0);
 protected:
+	
+
 	int cols, rows,
 		size_cols, size_rows;
 	char key;
@@ -94,8 +112,8 @@ public:
 		strcpy(name, _name);
 		
 	}
-	void DrawActiveBut();
-	void DrawButton();
+	void DrawActiveBut(int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1){ FillRow(name, pos_x, pos_y, indent_x, indent_y); }
+	void DrawButton(int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1){ DrawBox(name, pos_x, pos_y, indent_x, indent_y); }
 
 
 private:
@@ -129,11 +147,12 @@ class Input
 public:
 	Input() { buff = 0; }
 	~Input() { delete buff; }
-	double GetDouble(int len, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
-	int GetInt(int len, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
-	char* GetStr(int len, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
-	char* Get(int len, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
+	double GetDouble(int max_len, int min_len = 0, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
+	int GetInt(int max_len, int min_len = 0, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
+	char* GetStr(int max_len, int min_len = 0, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
+	char* Get(int max_len, int min_len=0, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
 private:
+	void DataPreparation(int max_len, int &x, int &y, int indent_letf = 0, int indent_top = 0);
 	char* buff;
 };
 

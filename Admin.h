@@ -33,6 +33,7 @@ public:
 	
 protected:
 	const char* headlines[5];
+
 };
 
 
@@ -56,8 +57,8 @@ bool Admin<type>::DoTable()
 		search.DrawButton();
 		exit.DrawButton();
 		if (!size_cols || !size_rows)break;
-		DrawActiveCell(y / size_rows, x / size_cols, x, y);
-		Move(key, x, y, size_rows, size_cols);
+		DrawActiveCell( y / size_rows, x / size_cols, x, y);
+		Move(key, x, y, size_cols, size_rows);
 		if (key == 27)break;
 		if (key == 13)return false;
 		if (x >= size_cols * cols)
@@ -73,6 +74,7 @@ bool Admin<type>::DoTable()
 	return true;
 
 }
+
 template <class type>
 void Admin<type>::DrawData()
 {
@@ -144,7 +146,7 @@ bool Admin<type>::DrawButtons(Button& sort, Button& search, Button& exit)
 			exit.DrawActiveBut();
 			break;
 		}
-		Move(_key, x, y, 1);
+		Move(_key, x, y, 0,1);
 		if (_key == 13)
 		{
 			switch (y)
@@ -168,6 +170,7 @@ bool Admin<type>::DrawButtons(Button& sort, Button& search, Button& exit)
 }
 
 
+
 template <class type>
 bool Admin<type>::DoTable(List<type>& l)
 {
@@ -183,7 +186,7 @@ bool Admin<type>::DoTable(List<type>& l)
 		exit.DrawButton();
 		if (!size_cols || !size_rows)break;
 		DrawActiveCell(l, y / size_rows, x / size_cols, x, y);
-		Move(key, x, y, size_rows, size_cols);
+		Move(key, x, y, size_cols, size_rows);
 		if (key == 27)break;
 		if (key == 13)return false;
 		if (x >= size_cols * cols)
@@ -271,7 +274,7 @@ bool Admin<type>::DrawButtons(List<type>& l, Button& sort, Button& search, Butto
 			exit.DrawActiveBut();
 			break;
 		}
-		Move(_key, x, y, 1);
+		Move(_key, x, y, 0, 1);
 		if (_key == 13)
 		{
 			switch (y)

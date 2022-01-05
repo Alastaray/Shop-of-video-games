@@ -6,8 +6,7 @@
 #include "Products and customers.h"
 using namespace std;
 
-void ManagProducts();
-void ManagCustomers();
+
 
 class AdminProducts :public Admin<Product>
 {
@@ -23,13 +22,12 @@ public:
 	}
 	void Add(const char* name, int amount, double price, double puchase_price);
 	void Create();
-	bool Search(const char* val = 0, bool ascending = true);
-	bool Sort(const char* name = 0, int amount = 0, double price = 0, double purchase_price = 0, bool ascending = true);
+	bool Search(const char* val = 0);
+	bool Sort(const char* name = 0, int amount = 0, double price = 0, double purchase_price = 0, bool low_to_high = true);
 	virtual void DrawElement(List<Product>& l, int row, int col, int x, int y);
 	virtual void DrawElement(int row, int col, int x, int y);
 	virtual bool DoSearching();
 	virtual bool DoSorting();
-	friend void ManagProducts();
 
 };
 
@@ -54,6 +52,5 @@ public:
 //	virtual void DrawElement(int row, int col, int x, int y);
 //	virtual void DoSearching();
 //	virtual void DoSorting();
-//	friend void ManagCustomers();
 //
 //};

@@ -3,43 +3,41 @@
 
 void AdminProducts::Create()
 {
-	Window win(45, 5, CenterTop);
 	const char* phrases[5] = {
 		"Enter the name: ",
 		"Enter the amount: ",
 		"Enter the price: ",
 		"Enter the puchase_price: ",
-		"Price can't be less than puchase_price"
+		"Price can't be less than puchase price"
 	};
-	ShowCaret(true);
-	Input Cin;
 	char name[25];
 	int amount = 0;
 	double price = 0, puchase_price = 0;
+	Window win(45, 5, CenterTop);
+	Input Cin;
+	int x, y;
 	for (int i = 0; i < 4; i++)
 	{
-		win.DrawBox();
-		win.WriteLine(phrases[i], 0, 0, 2, 2);
-
+		win.DrawBox(phrases[i], 2, 2);
 		switch (i)
 		{
 		case 0:
-			strcpy(name, Cin.GetStr(25));
+			strcpy(name, Cin.GetStr(25, 3));
 			break;
 		case 1:
-			amount = Cin.GetInt(4);
+			amount = Cin.GetInt(4, 1);
 			break;
 		case 2:
-			price = Cin.GetDouble(8);
+			price = Cin.GetDouble(8, 1);
 			break;
 		case 3:
-			int x = GetCurrentX();
-			int y = GetCurrentY();
+			x = GetCurrentX();
+			y = GetCurrentY();
 			while (true)
 			{
-				puchase_price = Cin.GetDouble(8);
+				puchase_price = Cin.GetDouble(8, 1);
 				if (price > puchase_price)break;
-				win.WriteLine(phrases[4], 0, 0, 2, 3);
+				win.WriteLine(phrases[4],2, 3);
 				GotoXY(x, y);
 				cout << "        ";
 				GotoXY(x, y);
@@ -56,7 +54,7 @@ void AdminProducts::Add(const char* name, int amount, double price, double pucha
 	list << Product(id, name, amount, price, puchase_price);
 	id++;
 }
-bool AdminProducts::Sort(const char* name, int amount, double price, double purchase_price, bool ascending)
+bool AdminProducts::Sort(const char* name, int amount, double price, double purchase_price, bool low_to_high)
 {
 	List<Product> sort;
 	if (name || amount || price || purchase_price)
@@ -69,7 +67,7 @@ bool AdminProducts::Sort(const char* name, int amount, double price, double purc
 				(price && price == list[i].GetPrice()) &&
 				(purchase_price && purchase_price == list[i].GetPurchasePrice()))
 			{
-				if (ascending)sort << list[i];
+				if (low_to_high)sort << list[i];
 				else sort.AddHead(list[i]);
 			}
 			else if ((name && CompareStr(name, list[i].GetName())) &&
@@ -84,7 +82,7 @@ bool AdminProducts::Sort(const char* name, int amount, double price, double purc
 				(amount && amount == list[i].GetAmount()) &&
 				(purchase_price && purchase_price == list[i].GetPurchasePrice()))
 			{
-				if (ascending)sort << list[i];
+				if (low_to_high)sort << list[i];
 				else sort.AddHead(list[i]);
 			}
 			else if ((name && CompareStr(name, list[i].GetName())) &&
@@ -105,7 +103,7 @@ bool AdminProducts::Sort(const char* name, int amount, double price, double purc
 				(amount && amount == list[i].GetAmount()) &&
 				(purchase_price && purchase_price == list[i].GetPurchasePrice()))
 			{
-				if (ascending)sort << list[i];
+				if (low_to_high)sort << list[i];
 				else sort.AddHead(list[i]);
 			}
 			else if ((name && CompareStr(name, list[i].GetName())) ||
@@ -113,12 +111,12 @@ bool AdminProducts::Sort(const char* name, int amount, double price, double purc
 				(price && price == list[i].GetPrice()) ||
 				(purchase_price && purchase_price == list[i].GetPurchasePrice()))
 			{
-				if (ascending)sort << list[i];
+				if (low_to_high)sort << list[i];
 				else sort.AddHead(list[i]);
 			}
 		}
 	}
-	else if (!ascending)
+	else if (!low_to_high)
 	{
 		for (int i = 0; i < list.GetCount(); i++)
 			sort.AddHead(list[i]);
@@ -126,9 +124,9 @@ bool AdminProducts::Sort(const char* name, int amount, double price, double purc
 	if (sort.GetCount())return Show(sort);
 	else return Show();
 }
-bool AdminProducts::Search(const char* val, bool ascending)
+bool AdminProducts::Search(const char* val)
 {
-	List<Product> sort;
+	List<Product> search;
 	if (val)
 	{
 		for (int i = 0; i < list.GetCount(); i++)
@@ -137,19 +135,13 @@ bool AdminProducts::Search(const char* val, bool ascending)
 				atoi(val) == list[i].GetAmount() ||
 				atof(val) == list[i].GetPrice() ||
 				atof(val) == list[i].GetPurchasePrice())
-			{
-				if (ascending)sort << list[i];
-				else sort.AddHead(list[i]);
-			}
+				search << list[i];
+				
 		}
 
 	}
-	else if (!ascending)
-	{
-		for (int i = 0; i < list.GetCount(); i++)
-			sort.AddHead(list[i]);
-	}
-	return Show(sort);
+
+	return Show(search);
 
 }
 void AdminProducts::DrawElement(List<Product>& l, int row, int col, int x, int y)
@@ -196,12 +188,44 @@ void AdminProducts::DrawElement(int row, int col, int x, int y)
 }
 bool AdminProducts::DoSorting()
 {
-	cls();
-	Button sort("Sort", 10, 3, CenterTop,0,3);
-	Window win(45, 5, CenterTop);
-	sort.DrawButton();
-	win.DrawBox();
-	win.WriteLine("Enter", 0, 0, 2, 2);
+	int x=0, y=0;
+	Button sort("Sort", 6, 3, CenterBot, 12, -4);
+	Button enter_name("Enter the name: ", 35, 3, LeftTop, 10, 5);
+	Button enter_amount("Enter the amount: ", 35, 3, RightTop, -10, 5);
+	Button enter_price("Enter the price: ", 35, 3, RightBot, -10, 5);
+	Button enter_pur_price("Enter the puchase price: ", 35, 3, LeftBot, 10, 5);
+	while (true)
+	{
+		enter_name.DrawButton(2);
+		enter_amount.DrawButton(2);
+		enter_price.DrawButton(2);
+		enter_pur_price.DrawButton(2);
+		sort.DrawButton();
+		switch (y)
+		{
+		case 0:
+			enter_name.DrawActiveBut(2);
+			break;
+		case 1:
+			enter_amount.DrawActiveBut(2);
+			break;
+		case 2:
+			enter_price.DrawActiveBut(2);
+			break;
+		case 3:
+			enter_pur_price.DrawActiveBut(2);
+			break;
+		case 4:
+			sort.DrawActiveBut();
+			break;
+		}
+		Move(key, x, y, 0, 1);
+		if (y < 0)y = 4;
+		if (y > 4)y = 0;
+	}
+	
+	
+	//return Sort(name,amount,price,puchase_price,ascending);
 	return true;
 }
 bool AdminProducts::DoSearching()
@@ -211,7 +235,7 @@ bool AdminProducts::DoSearching()
 	Window win(47, 3, LeftTop,30,5);
 	Input Cin;
 	win.DrawBox();
-	win.WriteLine("Enter: ", 0, 0, 2);
+	win.WriteLine("Enter: ", 2);
 	strcpy(str, Cin.Get(37));
 	return Search(str);
 }
