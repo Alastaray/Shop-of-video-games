@@ -24,13 +24,12 @@ void main()
 		//prod.Add("Sacred", 4, 30.2, 34.5);
 		//prod.RemoveAt(0);
 		prod.Show();
-		prod.DoSorting();
-		getch();
+		//prod.DoSorting();
 	}
 	catch (const char* er)
 	{
 		cls();
 		cout << er;
 	}
-
+	
 };

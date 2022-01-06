@@ -16,6 +16,7 @@ public:
 
 	Admin(const char* _filename, unsigned int _width = 0, unsigned int _height = 0, int position = 0, int _cols = 0, int _rows = 0, int indent_letf = 0, int indent_top = 0) : Management<type>(_filename), Table(_width, _height, position, _cols, _rows, indent_letf, indent_top)
 	{}
+	void DrawHeadlines();
 	bool DoTable();
 	bool DoTable(List<type>& l);
 	void DrawData();
@@ -41,6 +42,16 @@ protected:
 
 
 
+
+template <class type>
+void Admin<type>::DrawHeadlines()
+{
+	if (headlines)
+	{
+		Table hl(75, 4, LeftTop, 5);
+		hl.DrawHeadlines(headlines);
+	}
+}
 
 
 template <class type>
@@ -78,6 +89,7 @@ bool Admin<type>::DoTable()
 template <class type>
 void Admin<type>::DrawData()
 {
+	DrawHeadlines();
 	DrawTable();
 	int pos_y = 0;
 	int pos_x = 0;
@@ -107,11 +119,6 @@ template <class type>
 bool Admin<type>::Show()
 {
 	cls();
-	if (headlines)
-	{
-		Table hl(75, 4, LeftTop, 5);
-		hl.DrawHeadlines(headlines);
-	}
 	SetWinParam(75, this->GetCount() * 2 + 1, LeftTop, 0, 2);
 	SetCols(5);
 	SetRows(this->GetCount());
@@ -123,6 +130,9 @@ bool Admin<type>::DrawButtons(Button& sort, Button& search, Button& exit)
 {
 	int x=0,y=0;
 	char _key;
+	sort.DrawButton();
+	search.DrawButton();
+	exit.DrawButton();
 	while (true)
 	{
 		switch (y)
@@ -152,7 +162,7 @@ bool Admin<type>::DrawButtons(Button& sort, Button& search, Button& exit)
 			switch (y)
 			{
 			case 0:
-				if(!DoSorting())return false;
+				if (!DoSorting())return false;
 				break;
 			case 1:
 				if (!DoSearching())return false;
@@ -206,6 +216,7 @@ bool Admin<type>::DoTable(List<type>& l)
 template <class type>
 void Admin<type>::DrawData(List<type>& l)
 {
+	DrawHeadlines();
 	DrawTable();
 	int pos_y = 0;
 	int pos_x = 0;

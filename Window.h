@@ -40,7 +40,7 @@ public:
 	template <class type>
 	void DrawBox(type val, int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1);
 	template <class type>
-	void FillRow(type val, int pos_x, int pos_y, int indent_x = 1, int indent_y = 1);
+	void FillRow(type val, int pos_x=0, int pos_y=0, int indent_x = 1, int indent_y = 1);
 protected:	
 	enum Borders_name
 	{
@@ -96,30 +96,11 @@ public:
 	void DrawHeadlines(const char** headlines);
 	void FillRow(int _x = 0, int _y = 0);
 protected:
-	
-
 	int cols, rows,
 		size_cols, size_rows;
 	char key;
 
 };
-
-class Button:public Window
-{
-public:
-	Button(const char*_name,unsigned int _width, unsigned int _height, int position, int indent_letf=0, int indent_top=0): Window(_width, _height, position, indent_letf, indent_top)
-	{
-		strcpy(name, _name);
-		
-	}
-	void DrawActiveBut(int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1){ FillRow(name, pos_x, pos_y, indent_x, indent_y); }
-	void DrawButton(int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1){ DrawBox(name, pos_x, pos_y, indent_x, indent_y); }
-
-
-private:
-	char name[25];
-};
-
 
 
 class Menu :public Window
@@ -134,11 +115,29 @@ public:
 	int GetHeadlinesCount() { return headlines_count; }
 	void DrawMenu(const char** _menu_headlines = 0, int _size = 0);
 	void DoMenu(const char** _menu_headlines = 0, int _size = 0, void (*func1) () = 0, void (*func2) () = 0, void (*func3) () = 0, void (*func4) () = 0, void (*func5) () = 0);
-
-	
 private:
 	const char** menu_headlines;
 	int headlines_count;
+};
+
+class Button :public Window
+{
+public:
+	Button(const char* _name, unsigned int _width, unsigned int _height, int position, int indent_letf = 0, int indent_top = 0) : Window(_width, _height, position, indent_letf, indent_top)
+	{
+		strcpy(name, _name);
+
+	}
+	void DrawActiveBut(int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1) 
+	{
+		DrawBox();
+		Window::FillRow(name, pos_x, pos_y, indent_x, indent_y); 
+	}
+	void DrawButton(int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1) { DrawBox(name, pos_x, pos_y, indent_x, indent_y); }
+	void DrawName(int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1) { WriteLine(name, pos_x, pos_y, indent_x, indent_y); }
+	void FillRow(int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1) { Window::FillRow(name, pos_x, pos_y, indent_x, indent_y); }
+private:
+	char name[25];
 };
 
 

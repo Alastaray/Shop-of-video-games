@@ -406,6 +406,9 @@ void Input::DataPreparation(int max_len, int& x, int& y, int indent_letf, int in
 	if (!x)x = GetCurrentX() + indent_letf;
 	if (!y)y = GetCurrentY() + indent_top;
 	GotoXY(x, y);
+	for (int i = 0; i < max_len; i++)
+		cout << " ";
+	GotoXY(x, y);
 }
 
 
@@ -414,9 +417,9 @@ void Input::DataPreparation(int max_len, int& x, int& y, int indent_letf, int in
 
 bool CompareStr(const char* value, const char* source)
 {
-	int len_val = strlen(value);
+	int len = strlen(value);
 	int number_let = 0;
-	switch (len_val)
+	switch (len)
 	{
 	case 1:
 		for (int i = 0; i < strlen(source); i++)
@@ -432,13 +435,13 @@ bool CompareStr(const char* value, const char* source)
 			if (value[0] == source[i] && value[1] == source[i + 1] && value[1] == source[i + 2]&& i + 2 < strlen(source))
 				return true;
 	default:
-		for (int i = 0; i < len_val; i++)
+		for (int i = 0; i < len; i++)
 			if (value[i] == source[i])
 				number_let++;
 		break;
 	}
 	
-	if (number_let == len_val)return true;
+	if (number_let == len)return true;
 	else return false;
 }
 void Move(char &key, int& x, int& y, int how_change_x, int how_change_y)
