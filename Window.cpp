@@ -356,6 +356,12 @@ char* Input::GetStr(int max_len, int min_len, int x, int y, int indent_letf, int
 			GotoXY(GetCurrentX() - 1, GetCurrentY());
 			cout << " ";
 		}
+		if (key == 32)
+		{
+			buff[i] = key;
+			i++;
+			buff[i] = 0;
+		}
 		if ((key >= 'A' && key <= 'Z' && !i) || (key >= 'a' && key <= 'z'))
 		{
 			buff[i] = key;
@@ -383,6 +389,12 @@ char* Input::Get(int max_len, int min_len, int x, int y, int indent_letf, int in
 			buff[--i] = 0;
 			GotoXY(GetCurrentX() - 1, GetCurrentY());
 			cout << " ";
+		}
+		if (key == 32)
+		{
+			buff[i] = key;
+			i++;
+			buff[i] = 0;
 		}
 		if ((key >= 'A' && key <= 'Z' && !i) || (key >= 'a' && key <= 'z')|| (key >= '0' && key <= '9') || (key == '.' && !is_dot))
 		{

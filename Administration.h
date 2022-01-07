@@ -28,6 +28,7 @@ public:
 	virtual void DrawElement(int row, int col, int x, int y);
 	virtual bool DoSearching();
 	virtual bool DoSorting();
+	virtual void Editing(int row, int col);
 
 };
 

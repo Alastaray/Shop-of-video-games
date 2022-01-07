@@ -31,7 +31,7 @@ public:
 	virtual void DrawElement(int row, int col, int x, int y) = 0;
 	virtual bool DoSearching() = 0;
 	virtual bool DoSorting() = 0;
-	
+	virtual void Editing(int row, int col) = 0;
 protected:
 	const char* headlines[5];
 
@@ -48,7 +48,7 @@ void Admin<type>::DrawHeadlines()
 {
 	if (headlines)
 	{
-		Table hl(75, 4, LeftTop, 5);
+		Table hl(85, 4, LeftTop, 5);
 		hl.DrawHeadlines(headlines);
 	}
 }
@@ -57,21 +57,29 @@ void Admin<type>::DrawHeadlines()
 template <class type>
 bool Admin<type>::DoTable()
 {
-	int x = 0, y = 0;
-	Button sort("Sorting", 10, 3, RightTop, 0, 2);
-	Button search("Search", 10, 3, RightTop, 0, 8);
-	Button exit("Exit", 10, 3, RightBot);
+	int x = 0, y = 0,
+		row, col;
+	Button sort("Sorting", 10, 3, RightTop, 8, 2);
+	Button search("Search", 10, 3, RightTop, 8, 8);
+	Button exit("Exit", 10, 3, RightBot,8);
 	while (true)
-	{
+	{		
 		DrawData();
 		sort.DrawButton();
 		search.DrawButton();
 		exit.DrawButton();
 		if (!size_cols || !size_rows)break;
-		DrawActiveCell( y / size_rows, x / size_cols, x, y);
+		row = y / size_rows;
+		col = x / size_cols;
+		/*for (int i = 0; i < cols; i++)
+		{
+			x = size_cols * i;
+			DrawActiveCell(y / size_rows, x / size_cols, x, y);		
+		}*/
+		DrawActiveCell(row, col, x, y);
 		Move(key, x, y, size_cols, size_rows);
 		if (key == 27)break;
-		if (key == 13)return false;
+		if (key == 13)Editing(row,col);
 		if (x >= size_cols * cols)
 		{
 			if (!DrawButtons(sort, search, exit))return false;
@@ -119,7 +127,7 @@ template <class type>
 bool Admin<type>::Show()
 {
 	cls();
-	SetWinParam(75, this->GetCount() * 2 + 1, LeftTop, 0, 2);
+	SetWinParam(85, this->GetCount() * 2 + 1, LeftTop, 0, 2);
 	SetCols(5);
 	SetRows(this->GetCount());
 	return DoTable();
@@ -185,9 +193,9 @@ template <class type>
 bool Admin<type>::DoTable(List<type>& l)
 {
 	int x = 0, y = 0;
-	Button sort("Sorting", 10, 3, RightTop, 0, 2);
-	Button search("Search", 10, 3, RightTop, 0, 8);
-	Button exit("Exit", 10, 3, RightBot);
+	Button sort("Sorting", 10, 3, RightTop, 8, 2);
+	Button search("Search", 10, 3, RightTop, 8, 8);
+	Button exit("Exit", 10, 3, RightBot, 8);
 	while (true)
 	{
 		DrawData(l);
@@ -251,7 +259,7 @@ bool Admin<type>::Show(List<type>& l)
 		Table hl(75, 4, LeftTop, 5);
 		hl.DrawHeadlines(headlines);
 	}
-	SetWinParam(75, l.GetCount() * 2 + 1, LeftTop, 0, 2);
+	SetWinParam(85, l.GetCount() * 2 + 1, LeftTop, 0, 2);
 	SetCols(5);
 	SetRows(l.GetCount());
 	return DoTable(l);

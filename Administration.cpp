@@ -10,10 +10,10 @@ void AdminProducts::Create()
 		"Enter the puchase_price: ",
 		"Price can't be less than puchase price"
 	};
-	char name[25];
+	char name[16];
 	int amount = 0;
 	double price = 0, puchase_price = 0;
-	Window win(45, 5, CenterTop);
+	Window win(35, 5, CenterTop);
 	Input Cin;
 	int x, y;
 	for (int i = 0; i < 4; i++)
@@ -22,7 +22,7 @@ void AdminProducts::Create()
 		switch (i)
 		{
 		case 0:
-			strcpy(name, Cin.GetStr(25, 3));
+			strcpy(name, Cin.GetStr(15, 3));
 			break;
 		case 1:
 			amount = Cin.GetInt(4, 1);
@@ -202,7 +202,7 @@ bool AdminProducts::DoSorting()
 {
 	cls();
 	int y=0;
-	char name[21];
+	char name[20];
 	int amount = 0;
 	double price = 0, puchase_price = 0;
 	bool low_to_high = true;
@@ -273,6 +273,27 @@ bool AdminProducts::DoSearching()
 	win.WriteLine("Enter: ", 2);
 	strcpy(str, Cin.Get(20));
 	return Search(str);
+}
+void AdminProducts::Editing(int row, int col)
+{
+	Input Cin;
+	switch (col)
+	{
+	case 0:
+		return;
+	case 1:
+		list[row].SetName(Cin.Get(15, 3, size_cols * col+1));
+		break;
+	case 2:
+		list[row].SetAmount(Cin.GetInt(5, 0, size_cols * col+1));
+		break;
+	case 3:
+		list[row].SetPrice(Cin.GetDouble(5, 0, size_cols * col+1));
+		break;
+	case 4:
+		list[row].SetPurchasePrice(Cin.GetDouble(5, 0, size_cols * col+1));
+		break;
+	}
 }
 
 

@@ -19,12 +19,13 @@ Product::Product(const Product& prod)
 }
 void Product::SetName(char* _name)
 {
-	strcpy(name, _name);
+	if(_name[0])
+		strcpy(name, _name);
 
 }
 void Product::SetAmount(int _amount)
 {
-	if (_amount >= 0)
+	if (_amount > 0)
 		amount = _amount;
 
 }
@@ -61,17 +62,18 @@ Customer::Customer(const Customer& cust)
 }
 void Customer::SetName(char* _name)
 {
-	strcpy(name, _name);
-
+	if (_name[0])
+		strcpy(name, _name);
 }
 void Customer::SetProdName(char* _prod_name)
 {
-	strcpy(prod_name, _prod_name);
+	if (_prod_name[0])
+		strcpy(prod_name, _prod_name);
 
 }
 void Customer::SetAmount(int _amount)
 {
-	if (_amount >= 0)
+	if (_amount > 0)
 		amount = _amount;
 
 }

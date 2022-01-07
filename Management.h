@@ -76,12 +76,10 @@ int Management<type>::Read()
 template <class type>
 void Management<type>::Write()
 {	
-	if (number_st == list.GetCount())return;
 	FileDelete();
 	fstream file;
 	type st;
 	file.open(filename, ios::out | ios::in | ios::binary | ios::app);
-	file.clear();
 	file.seekg(ios::beg);
 	for (int i = 0; i < list.GetCount(); i++)
 	{
