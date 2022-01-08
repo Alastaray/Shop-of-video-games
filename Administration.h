@@ -23,7 +23,7 @@ public:
 	void Add(const char* name, int amount, double price, double puchase_price);
 	void Create();
 	bool Search(const char* val = 0);
-	bool Sort(const char* name = 0, int amount = 0, double price = 0, double purchase_price = 0, bool low_to_high = true);
+	bool Sort(int amount = 0, double price = 0, double purchase_price = 0, bool low_to_high = true);
 	virtual void DrawElement(List<Product>& l, int row, int col, int x, int y);
 	virtual void DrawElement(int row, int col, int x, int y);
 	virtual bool DoSearching();
@@ -47,7 +47,7 @@ public:
 	void Add(const char* name, const char* prod_name, int amount, double price);
 	void Create();
 	bool Search(const char* val = 0);
-	bool Sort(const char* name = 0, const char* prod_name = 0, int amount = 0, double price = 0, bool low_to_high = true);
+	bool Sort(int amount = 0, double price = 0, bool low_to_high = true);
 	virtual void DrawElement(List<Customer>& l, int row, int col, int x, int y);
 	virtual void DrawElement(int row, int col, int x, int y);
 	virtual bool DoSearching();
