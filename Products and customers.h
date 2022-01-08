@@ -31,7 +31,7 @@ public:
 private:
 	
 	int id;
-	char name[50];
+	char name[15];
 	int amount;
 	double price;
 	double purchase_price;

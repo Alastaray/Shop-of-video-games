@@ -192,7 +192,8 @@ bool Admin<type>::DrawButtons(Button& sort, Button& search, Button& exit)
 template <class type>
 bool Admin<type>::DoTable(List<type>& l)
 {
-	int x = 0, y = 0;
+	int x = 0, y = 0,
+		row,col;
 	Button sort("Sorting", 10, 3, RightTop, 8, 2);
 	Button search("Search", 10, 3, RightTop, 8, 8);
 	Button exit("Exit", 10, 3, RightBot, 8);
@@ -203,10 +204,12 @@ bool Admin<type>::DoTable(List<type>& l)
 		search.DrawButton();
 		exit.DrawButton();
 		if (!size_cols || !size_rows)break;
-		DrawActiveCell(l, y / size_rows, x / size_cols, x, y);
+		row = y / size_rows;
+		col = x / size_cols;
+		DrawActiveCell(l,row, col, x, y);
 		Move(key, x, y, size_cols, size_rows);
 		if (key == 27)break;
-		if (key == 13)return false;
+		if (key == 13)Editing(row, col);
 		if (x >= size_cols * cols)
 		{
 			if (!DrawButtons(l, sort, search, exit))return false;
@@ -254,11 +257,6 @@ template <class type>
 bool Admin<type>::Show(List<type>& l)
 {
 	cls();
-	if (headlines)
-	{
-		Table hl(75, 4, LeftTop, 5);
-		hl.DrawHeadlines(headlines);
-	}
 	SetWinParam(85, l.GetCount() * 2 + 1, LeftTop, 0, 2);
 	SetCols(5);
 	SetRows(l.GetCount());

@@ -16,7 +16,7 @@ public:
 		type value;
 		Node* prev, * next;
 	};
-	List()
+	List(int arg = 0)
 	{
 		head = tail = 0;
 		count = current = 0;

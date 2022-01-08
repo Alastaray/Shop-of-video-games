@@ -19,12 +19,12 @@ void main()
 {
 	try
 	{
+		//AdminCustomers prod("customers.txt");
+		//prod.Read();
+		//prod.Show();
 		AdminProducts prod("products.txt");
 		prod.Read();
-		//prod.Add("Sacred", 4, 30.2, 34.5);
-		//prod.RemoveAt(0);
 		prod.Show();
-		//prod.DoSorting();
 	}
 	catch (const char* er)
 	{
