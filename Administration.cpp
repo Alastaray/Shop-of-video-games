@@ -1,5 +1,18 @@
 #include "Administration.h"
-
+void test()
+{
+	cls();
+	cout << "Dsada";
+	getch();
+	cls();
+}
+void test1()
+{
+	cls();
+	cout << "enenene";
+	getch();
+	cls();
+}
 
 void AdminProducts::Create()
 {
@@ -57,57 +70,136 @@ void AdminProducts::Add(const char* name, int amount, double price, double pucha
 bool AdminProducts::Sort(const char* name, int amount, double price, double purchase_price, bool low_to_high)
 {
 	List<Product> sort;
-	if ((name && name[0]) || amount || price || purchase_price)
+	if ((name && name[0]) && amount && price && purchase_price)
 	{
-
 		for (int i = 0; i < list.GetCount(); i++)
 		{
-			if ((name && (name[0] && CompareStr(name, list[i].GetName()))) &&
-				(amount && amount >= list[i].GetAmount()) &&
-				(price && price >= list[i].GetPrice()) &&
-				(purchase_price && purchase_price == list[i].GetPurchasePrice()))
+			if (CompareStr(name, list[i].GetName())&&
+				amount >= list[i].GetAmount() &&
+				price >= list[i].GetPrice() &&
+				purchase_price == list[i].GetPurchasePrice())
 			{
 				if (low_to_high)sort << list[i];
 				else sort.AddHead(list[i]);
 			}
-			else if ((name && (name[0] && CompareStr(name, list[i].GetName()))) &&
-				(amount && amount >= list[i].GetAmount()) &&
-				(price && price >= list[i].GetPrice())
-				||
-				(amount && amount >= list[i].GetAmount()) &&
-				(price && price >= list[i].GetPrice()) &&
-				(purchase_price && purchase_price >= list[i].GetPurchasePrice())
-				||
-				(name && (name[0] && CompareStr(name, list[i].GetName()))) &&
-				(amount && amount >= list[i].GetAmount()) &&
-				(purchase_price && purchase_price >= list[i].GetPurchasePrice()))
+		}
+	}
+	else if ((name && name[0]) && amount && price)
+	{
+		for (int i = 0; i < list.GetCount(); i++)
+		{
+			if (CompareStr(name, list[i].GetName()) &&
+				amount >= list[i].GetAmount() &&
+				price >= list[i].GetPrice())
 			{
 				if (low_to_high)sort << list[i];
 				else sort.AddHead(list[i]);
 			}
-			else if ((name && (name[0] && CompareStr(name, list[i].GetName()))) &&
-				(amount && amount >= list[i].GetAmount())
-				||
-				(name && (name[0] && CompareStr(name, list[i].GetName()))) &&
-				(price && price >= list[i].GetPrice())
-				||
-				(name && (name[0] && CompareStr(name, list[i].GetName()))) &&
-				(purchase_price && purchase_price >= list[i].GetPurchasePrice())
-				||
-				(price && price >= list[i].GetPrice()) &&
-				(purchase_price && purchase_price >= list[i].GetPurchasePrice())
-				||
-				(price && price >= list[i].GetPrice()) &&
-				(amount && amount >= list[i].GetAmount())
-				||
-				(amount && amount >= list[i].GetAmount()) &&
-				(purchase_price && purchase_price >= list[i].GetPurchasePrice()))
+		}
+	}
+	else if (purchase_price && amount && price)
+	{
+		for (int i = 0; i < list.GetCount(); i++)
+		{
+			if (amount >= list[i].GetAmount() &&
+				price >= list[i].GetPrice() &&
+				purchase_price && purchase_price >= list[i].GetPurchasePrice())
 			{
-				
 				if (low_to_high)sort << list[i];
 				else sort.AddHead(list[i]);
 			}
-			else if ((name && (name[0] && CompareStr(name, list[i].GetName()))) ||
+		}
+	}
+	else if ((name && name[0]) && amount && purchase_price)
+	{
+		for (int i = 0; i < list.GetCount(); i++)
+		{
+			if(CompareStr(name, list[i].GetName()) &&
+				amount >= list[i].GetAmount() &&
+				purchase_price >= list[i].GetPurchasePrice())
+			{
+				if (low_to_high)sort << list[i];
+				else sort.AddHead(list[i]);
+			}
+		}
+	}
+	else if ((name && name[0]) && amount)
+	{
+		for (int i = 0; i < list.GetCount(); i++)
+		{
+			if (CompareStr(name, list[i].GetName()) &&
+				amount && amount >= list[i].GetAmount())
+			{
+				if (low_to_high)sort << list[i];
+				else sort.AddHead(list[i]);
+			}
+		}
+	}
+	else if ((name && name[0]) && price)
+	{
+		for (int i = 0; i < list.GetCount(); i++)
+		{
+			if (CompareStr(name, list[i].GetName()) &&
+				price && price >= list[i].GetPrice())
+			{
+				if (low_to_high)sort << list[i];
+				else sort.AddHead(list[i]);
+			}
+		}
+	}
+	else if ((name && name[0]) && purchase_price)
+	{
+		for (int i = 0; i < list.GetCount(); i++)
+		{
+			if (CompareStr(name, list[i].GetName()) &&
+				purchase_price >= list[i].GetPurchasePrice())
+			{
+				if (low_to_high)sort << list[i];
+				else sort.AddHead(list[i]);
+			}
+		}
+	}
+	else if (price && purchase_price)
+	{
+		for (int i = 0; i < list.GetCount(); i++)
+		{
+			if (price >= list[i].GetPrice() &&
+				purchase_price >= list[i].GetPurchasePrice())
+			{
+				if (low_to_high)sort << list[i];
+				else sort.AddHead(list[i]);
+			}
+		}
+	}
+	else if (amount && price)
+	{
+		for (int i = 0; i < list.GetCount(); i++)
+		{
+			if (price && price >= list[i].GetPrice() &&
+				amount && amount >= list[i].GetAmount())
+			{
+				if (low_to_high)sort << list[i];
+				else sort.AddHead(list[i]);
+			}
+		}
+	}	
+	else if (amount && purchase_price)
+	{
+		for (int i = 0; i < list.GetCount(); i++)
+		{
+			if (amount >= list[i].GetAmount() &&
+				purchase_price >= list[i].GetPurchasePrice())
+			{
+				if (low_to_high)sort << list[i];
+				else sort.AddHead(list[i]);
+			}
+		}	
+	}
+	else if ((name && name[0]) || amount || price || purchase_price)
+	{
+		for (int i = 0; i < list.GetCount(); i++)
+		{
+			if ((name && (name[0] && CompareStr(name, list[i].GetName()))) ||
 				(amount && amount >= list[i].GetAmount()) ||
 				(price && price >= list[i].GetPrice()) ||
 				(purchase_price && purchase_price >= list[i].GetPurchasePrice()))
@@ -117,7 +209,7 @@ bool AdminProducts::Sort(const char* name, int amount, double price, double purc
 			}
 		}
 	}
-	if (!low_to_high &&!sort.GetCount())
+	else if (!low_to_high && !sort.GetCount())
 	{
 		for (int i = 0; i < list.GetCount(); i++)
 			sort.AddHead(list[i]);
@@ -126,7 +218,12 @@ bool AdminProducts::Sort(const char* name, int amount, double price, double purc
 	else
 	{
 		cls();
-		Button error("Page not found!", 17, 3, CenterTop,0,10);
+		cout << amount<<price;
+		getch();
+		cls();
+		///
+		cls();
+		Button error("Page not found!", 17, 3, CenterTop, 0, 10);
 		error.DrawName();
 		_getch();
 		cls();

@@ -63,8 +63,8 @@ public:
 private:
 
 	int id;
-	char name[50];
-	char prod_name[50];
+	char name[15];
+	char prod_name[15];
 	int amount;
 	double price;
 };

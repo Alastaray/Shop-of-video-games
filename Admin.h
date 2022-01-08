@@ -59,7 +59,7 @@ bool Admin<type>::DoTable()
 {
 	int x = 0, y = 0,
 		row, col;
-	Button sort("Sorting", 10, 3, RightTop, 8, 2);
+	Button sort("Sort", 10, 3, RightTop, 8, 2);
 	Button search("Search", 10, 3, RightTop, 8, 8);
 	Button exit("Exit", 10, 3, RightBot,8);
 	while (true)
@@ -194,7 +194,7 @@ bool Admin<type>::DoTable(List<type>& l)
 {
 	int x = 0, y = 0,
 		row,col;
-	Button sort("Sorting", 10, 3, RightTop, 8, 2);
+	Button sort("Sort", 10, 3, RightTop, 8, 2);
 	Button search("Search", 10, 3, RightTop, 8, 8);
 	Button exit("Exit", 10, 3, RightBot, 8);
 	while (true)

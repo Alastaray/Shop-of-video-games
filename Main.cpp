@@ -19,12 +19,13 @@ void main()
 {
 	try
 	{
-		//AdminCustomers prod("customers.txt");
-		//prod.Read();
-		//prod.Show();
+		/*AdminCustomers prod("customers.txt");
+		prod.Read();
+		prod.Show();*/
 		AdminProducts prod("products.txt");
 		prod.Read();
-		prod.Show();
+		//prod.Show();
+		prod.Sort(0, 4, 31);
 	}
 	catch (const char* er)
 	{
