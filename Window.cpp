@@ -58,7 +58,7 @@ void Window::DrawBox()
 	cout << borders[BotRightAngle] << endl;
 
 }
-void Window::FillRow(int _x, int _y)
+void Window::FillLine(int _x, int _y)
 {
 	GotoXY(GetX()+_x,GetY() + _y);
 
@@ -181,14 +181,13 @@ void Window::SetWinParam(unsigned int _width, unsigned int _height, int position
 //}
 
 
-Table::Table(unsigned int _width, unsigned int _height, int position, int _cols, int _rows, int indent_letf, int indent_top) :Window(_width, _height, position, indent_letf, indent_top)
+Table::Table(unsigned int _width, unsigned int _height, unsigned int position, unsigned int _cols, unsigned int _rows, int indent_letf, int indent_top) :Window(_width, _height, position, indent_letf, indent_top)
 {
 	key = 0;
-	cols = _cols;
-	rows = _rows;
-	size_cols = size_rows = 0;
+	SetCols(_cols);
+	SetRows(_rows);
 }
-void Table::FillRow(int _x, int _y)
+void Table::FillLine(int _x, int _y)
 {
 
 	for (int i = 0; i < size_rows - 1; i++)
@@ -203,7 +202,6 @@ void Table::FillRow(int _x, int _y)
 void Table::DrawCols()
 {
 	while (width < cols * 2)cols--;
-	size_cols = width / cols;
 	for (int i = 0; i < height; i++)
 	{
 		GotoXY(GetX(), y + i);
@@ -235,7 +233,7 @@ void Table::DrawCols()
 void Table::DrawRows()
 {
 	while (height < rows * 2)rows--;
-	size_rows = height / rows;
+	
 	int row_size = 0;
 	for (int i = 0; i < rows - 1; i++)
 	{
@@ -273,15 +271,24 @@ void Table::DrawHeadlines(const char** headlines)
 	}
 
 };
-void Table::SetCols(int num_cols)
+void Table::SetCols(unsigned int num_cols)
 {
-	if (num_cols < 0)throw "Number of cols can't be the negative!";
-	cols = num_cols;
+	if (num_cols > 0)
+	{
+		cols = num_cols;
+		size_cols = width / cols;
+	}
+	else cols = size_cols = num_cols;
 }
-void Table::SetRows(int num_rows)
+void Table::SetRows(unsigned int num_rows)
 {
-	if (num_rows < 0)throw "Number of cols can't be the negative!";
-	rows = num_rows;
+	if (num_rows > 0)
+	{
+		rows = num_rows;
+		size_rows = height / rows;
+	}
+	else rows = size_rows = num_rows;
+	
 }
 
 
@@ -475,4 +482,12 @@ void Move(char &key, int& x, int& y, int how_change_x, int how_change_y)
 		//right
 		if (key == 77) x += how_change_x;
 	}
+}
+void DrawMessage(const char* message, unsigned int width, unsigned int height, int position, int indent_letf, int indent_top)
+{
+	cls();
+	Message msg(message, width, height, position, indent_letf, indent_top);
+	msg.Draw();
+	_getch();
+	cls();
 }

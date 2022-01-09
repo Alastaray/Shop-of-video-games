@@ -1,19 +1,5 @@
 #include "Administration.h"
-template <class type>
-void test(type a)
-{
-	cls();
-	cout << a;
-	getch();
-	cls();
-}
-void test1()
-{
-	cls();
-	cout << "enenene";
-	getch();
-	cls();
-}
+
 
 void AdminProducts::Create()
 {
@@ -27,16 +13,16 @@ void AdminProducts::Create()
 	char name[16];
 	int amount = 0;
 	double price = 0, puchase_price = 0;
-	Window win(35, 5, CenterTop);
+	Window win(35, 5, CenterTop,0,7);
 	Input Cin;
 	int x, y;
 	for (int i = 0; i < 4; i++)
 	{
-		win.DrawBox(phrases[i], 2, 2);
+		win.DrawBox(phrases[i], 0, 0, 2, 2);
 		switch (i)
 		{
 		case 0:
-			strcpy(name, Cin.GetStr(15, 3));
+			strcpy(name, Cin.Get(15, 3));
 			break;
 		case 1:
 			amount = Cin.GetInt(4, 1);
@@ -51,7 +37,7 @@ void AdminProducts::Create()
 			{
 				puchase_price = Cin.GetDouble(8, 1);
 				if (price > puchase_price)break;
-				win.WriteLine(phrases[4],2, 3);
+				win.WriteLine(phrases[4], 0, 0, 2, 3);
 				GotoXY(x, y);
 				cout << "        ";
 				GotoXY(x, y);
@@ -60,7 +46,7 @@ void AdminProducts::Create()
 		}
 	}
 	Add(name, amount, price, puchase_price);
-
+	DrawMessage("Product was added!");
 }
 void AdminProducts::Add(const char* name, int amount, double price, double puchase_price)
 {
@@ -144,11 +130,7 @@ bool AdminProducts::Sort(int amount, double price, double purchase_price, bool l
 	if (sorting.GetCount())return Show(sorting);
 	else
 	{
-		cls();
-		Button error("Page not found!", 17, 3, CenterTop, 0, 10);
-		error.DrawName();
-		_getch();
-		cls();
+		DrawMessage("Page not found!");
 		return true;
 	}
 }
@@ -169,11 +151,7 @@ bool AdminProducts::Search(const char* val)
 	if (searching.GetCount())return Show(searching);
 	else
 	{
-		cls();
-		Button error("Page not found!", 17, 3, CenterTop, 0, 10);
-		error.DrawName();
-		_getch();
-		cls();
+		DrawMessage("Page not found!");
 		return true;
 	}
 }
@@ -228,44 +206,44 @@ bool AdminProducts::DoSorting()
 	double price = 0, puchase_price = 0;
 	bool low_to_high = true;
 	Input Cin;
-	Button enter_amount("Enter the amount:", 18, 3, CenterTop, 0, 4);
-	Button enter_price("Enter the price:", 17, 3, CenterTop, 0, 6);
-	Button enter_pur_price("Enter the puchase price:", 25, 3, CenterTop, 0, 8);
-	Button High_to_low("High-to-low", 13, 3, CenterTop, 3, 11);
-	Button Low_to_high("Low-to-high", 13, 3, CenterTop, 3, 14);
-	Button sort("Sort", 6, 3, CenterTop, 6, 17);
+	Message enter_amount("Enter the amount:", 18, 3, CenterTop, 0, 4);
+	Message enter_price("Enter the price:", 17, 3, CenterTop, 0, 6);
+	Message enter_pur_price("Enter the puchase price:", 25, 3, CenterTop, 0, 8);
+	Message High_to_low("High-to-low", 13, 3, CenterTop, 3, 11);
+	Message Low_to_high("Low-to-high", 13, 3, CenterTop, 3, 14);
+	Message sort("Sort", 6, 3, CenterTop, 6, 17);
 	while (true)
 	{		
-		enter_amount.DrawName();
-		enter_price.DrawName();
-		enter_pur_price.DrawName();
-		sort.DrawButton();
-		High_to_low.DrawButton();
-		Low_to_high.DrawButton();
+		enter_amount.Draw();
+		enter_price.Draw();
+		enter_pur_price.Draw();
+		sort.DrawBox();
+		High_to_low.DrawBox();
+		Low_to_high.DrawBox();
 		switch (y)
 		{
 		case 0:
-			enter_amount.FillRow();
+			enter_amount.FillLine();
 			if (key == 13)amount = Cin.GetInt(5,0,0,0,1);
 			break;
 		case 1:
-			enter_price.FillRow();
+			enter_price.FillLine();
 			if (key == 13)price = Cin.GetDouble(5, 0, 0, 0, 1);
 			break;
 		case 2:
-			enter_pur_price.FillRow();
+			enter_pur_price.FillLine();
 			if (key == 13)puchase_price = Cin.GetDouble(5, 0, 0, 0, 1);
 			break;
 		case 3:
-			High_to_low.DrawActiveBut();
+			High_to_low.DrawActiveMsg();
 			if (key == 13)low_to_high = false;
 			break;
 		case 4:			
-			Low_to_high.DrawActiveBut();
+			Low_to_high.DrawActiveMsg();
 			if (key == 13)low_to_high = true;
 			break;
 		case 5:
-			sort.DrawActiveBut();
+			sort.DrawActiveMsg();
 			if (key == 13)return Sort(amount, price, puchase_price, low_to_high);
 			break;	
 		}
@@ -314,11 +292,77 @@ void AdminProducts::Editing(int row, int col)
 
 
 
-//void AdminCustomers::Create()
-//{
-//	AdminProducts prod;
-//	prod.Read();
-//}
+
+void AdminCustomers::Create()
+{
+	cls();
+	int index,
+		amount;
+	char name[16];
+	Window win(35, 5, CenterTop, 0, 7);
+	Input Cin;
+	win.DrawBox("Enter the name: ", 0, 0, 2, 2);
+	strcpy(name, Cin.GetStr(15, 3));
+
+	AdminProducts product("products.txt");
+	product.Read();
+	this->SetWinParam(85, product.GetCount() * 2 + 1, LeftTop, 0, 2);
+	this->SetCols(5);
+	this->SetRows(product.GetCount());
+	product.SetWinParam(85, product.GetCount() * 2 + 1, LeftTop, 0, 2);
+	product.SetCols(5);
+	product.SetRows(product.GetCount());
+	if ((index = ShowProducts(product))==-1)return;
+	cls();
+	win.DrawBox("Enter the amount: ", 0, 0, 2, 2);
+	amount = Cin.GetInt(5);
+	if (amount >= product[index].GetAmount())
+	{
+		Add(name, product[index].GetName(), product[index].GetAmount(), product[index].GetPrice());
+		product.RemoveAt(index);
+	}
+	else
+	{
+		product[index].ChangeAmount(-amount);
+		Add(name, product[index].GetName(), amount, product[index].GetPrice());
+	}
+	
+	DrawMessage("Product was bought!");
+}
+int AdminCustomers::ShowProducts(AdminProducts& product)
+{
+	int x = 0, y = 0,
+		row, col;
+	Message back("Back", 10, 3, RightTop, 8, 2);
+	while (true)
+	{
+		product.DrawData();
+		back.DrawBox();
+		if (!size_cols || !size_rows)break;
+		row = y / size_rows;
+		col = x / size_cols;
+		for (int i = 0; i < cols; i++)
+		{
+			x = size_cols * i;
+			product.DrawActiveCell(y / size_rows, x / size_cols, x, y);
+		}
+		Move(key, x, y, size_cols, size_rows);
+		if (key == 27)return -1;
+		if (key == 13)return row;
+		if (x >= size_cols * cols)
+		{
+			product.DrawData();
+			back.DrawActiveMsg();
+			Move(key, x, y, size_cols, size_rows);
+			if (key == 13)return -1;
+			if (key == 72 || key == 'w' || key == 'W')
+				y += size_rows;
+			if (key == 80 || key == 's' || key == 'S')
+				y -= size_rows;
+		}
+		CheckXY(x, y);
+	}
+}
 void AdminCustomers::Add(const char* name, const char* prod_name, int amount, double price)
 {
 	static int id = number_st;
@@ -364,11 +408,7 @@ bool AdminCustomers::Sort(int amount, double price, bool low_to_high)
 	if (sorting.GetCount())return Show(sorting);
 	else
 	{
-		cls();
-		Button error("Page not found!", 17, 3, CenterTop, 0, 10);
-		error.DrawName();
-		_getch();
-		cls();
+		DrawMessage("Page not found!");
 		return true;
 	}
 }
@@ -389,11 +429,7 @@ bool AdminCustomers::Search(const char* val)
 	if (searching.GetCount())return Show(searching);
 	else
 	{
-		cls();
-		Button error("Page not found!", 17, 3, CenterTop, 0, 10);
-		error.DrawName();
-		_getch();
-		cls();
+		DrawMessage("Page not found!");
 		return true;
 	}
 }
@@ -406,39 +442,39 @@ bool AdminCustomers::DoSorting()
 	double price = 0;
 	bool low_to_high = true;
 	Input Cin;
-	Button enter_amount("Enter the amount:", 18, 3, CenterTop, 0, 6);
-	Button enter_price("Enter the price:", 17, 3, CenterTop, 0, 8);
-	Button High_to_low("High-to-low", 13, 3, CenterTop, 3, 11);
-	Button Low_to_high("Low-to-high", 13, 3, CenterTop, 3, 14);
-	Button sort("Sort", 6, 3, CenterTop, 6, 17);
+	Message enter_amount("Enter the amount:", 18, 3, CenterTop, 0, 6);
+	Message enter_price("Enter the price:", 17, 3, CenterTop, 0, 8);
+	Message High_to_low("High-to-low", 13, 3, CenterTop, 3, 11);
+	Message Low_to_high("Low-to-high", 13, 3, CenterTop, 3, 14);
+	Message sort("Sort", 6, 3, CenterTop, 6, 17);
 	while (true)
 	{
-		enter_amount.DrawName();
-		enter_price.DrawName();
-		sort.DrawButton();
-		High_to_low.DrawButton();
-		Low_to_high.DrawButton();
+		enter_amount.Draw();
+		enter_price.Draw();
+		sort.DrawBox();
+		High_to_low.DrawBox();
+		Low_to_high.DrawBox();
 		switch (y)
 		{
 		case 0:
-			enter_amount.FillRow();
+			enter_amount.FillLine();
 			if (key == 13)amount = Cin.GetInt(5, 0, 0, 0, 1);
 			break;
 		case 1:
-			enter_price.FillRow();
+			enter_price.FillLine();
 			if (key == 13)price = Cin.GetDouble(5, 0, 0, 0, 1);
 			break;
 		
 		case 2:
-			High_to_low.DrawActiveBut();
+			High_to_low.DrawActiveMsg();
 			if (key == 13)low_to_high = false;
 			break;
 		case 3:
-			Low_to_high.DrawActiveBut();
+			Low_to_high.DrawActiveMsg();
 			if (key == 13)low_to_high = true;
 			break;
 		case 4:
-			sort.DrawActiveBut();
+			sort.DrawActiveMsg();
 			if (key == 13)return Sort(amount, price, low_to_high);
 			break;
 		}

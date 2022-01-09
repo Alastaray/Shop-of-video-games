@@ -16,26 +16,27 @@ public:
 
 	Admin(const char* _filename, unsigned int _width = 0, unsigned int _height = 0, int position = 0, int _cols = 0, int _rows = 0, int indent_letf = 0, int indent_top = 0) : Management<type>(_filename), Table(_width, _height, position, _cols, _rows, indent_letf, indent_top)
 	{}
-	void DrawHeadlines();
-	void CheckXY(int &x, int &y);
-	void DoDeleting();
-	bool Delete();
+	void DoDeleting();	
 	bool DoTable();
 	bool DoTable(List<type>& l);
-	void DrawData();
-	void DrawData(List<type>& l);
 	bool Show();
 	bool Show(List<type>& l);
-	void DrawActiveCell(int row, int col, int x, int y);
-	void DrawActiveCell(List<type>& l, int row, int col, int x, int y);
-	bool DrawButtons(Button& sort, Button& search, Button& back);
-	bool DrawButtons(List<type>& l, Button& sort, Button& search, Button& back);
 	virtual void DrawElement(List<type>& l, int row, int col, int x, int y) = 0;
 	virtual void DrawElement(int row, int col, int x, int y) = 0;
 	virtual bool DoSearching() = 0;
 	virtual bool DoSorting() = 0;
 	virtual void Editing(int row, int col) = 0;
 protected:
+	void DrawHeadlines();
+	void DrawData();
+	void DrawData(List<type>& l);
+	void DrawActiveCell(int row, int col, int x, int y);
+	void DrawActiveCell(List<type>& l, int row, int col, int x, int y);
+	bool DrawButtons(Message& sort, Message& search, Message& back);
+	bool DrawButtons(List<type>& l, Message& sort, Message& search, Message& back);
+	bool Delete();
+	void CheckXY(int& x, int& y);
+
 	const char* headlines[5];
 
 };
@@ -83,11 +84,11 @@ bool Admin<type>::Delete()
 {
 	int x = 0, y = 0,
 		row, col;
-	Button back("Back", 10, 3, RightTop, 8,2);
+	Message back("Back", 10, 3, RightTop, 8,2);
 	while (true)
 	{
 		DrawData();
-		back.DrawButton();
+		back.DrawBox();
 		if (!size_cols || !size_rows)break;
 		row = y / size_rows;
 		col = x / size_cols;
@@ -106,7 +107,7 @@ bool Admin<type>::Delete()
 		if (x >= size_cols * cols)
 		{
 			DrawData();
-			back.DrawActiveBut();
+			back.DrawActiveMsg();
 			Move(key, x, y, size_cols, size_rows);
 			if (key == 13)return false;
 			if (key == 72 || key == 'w' || key == 'W')
@@ -118,20 +119,21 @@ bool Admin<type>::Delete()
 	}
 }
 
+
 template <class type>
 bool Admin<type>::DoTable()
 {
 	int x = 0, y = 0,
 		row, col;
-	Button sort("Sort", 10, 3, RightTop, 8, 2);
-	Button search("Search", 10, 3, RightTop, 8, 8);
-	Button back("Back", 10, 3, RightBot,8);
+	Message sort("Sort", 10, 3, RightTop, 8, 2);
+	Message search("Search", 10, 3, RightTop, 8, 8);
+	Message back("Back", 10, 3, RightBot,8);
 	while (true)
 	{		
 		DrawData();
-		sort.DrawButton();
-		search.DrawButton();
-		back.DrawButton();
+		sort.DrawBox();
+		search.DrawBox();
+		back.DrawBox();
 		if (!size_cols || !size_rows)break;
 		row = y / size_rows;
 		col = x / size_cols;
@@ -179,7 +181,7 @@ template <class type>
 void Admin<type>::DrawActiveCell(int row, int col, int x, int y)
 {
 	SetColor(activeTxcolor, activeBgcolor);
-	FillRow(x, y);
+	FillLine(x, y);
 	DrawElement(row, col, x, y);
 	SetColor(txcolor, bgcolor);
 }
@@ -195,34 +197,34 @@ bool Admin<type>::Show()
 }
 
 template <class type>
-bool Admin<type>::DrawButtons(Button& sort, Button& search, Button& back)
+bool Admin<type>::DrawButtons(Message& sort, Message& search, Message& back)
 {
 	int x=0,y=0;
 	char _key;
-	sort.DrawButton();
-	search.DrawButton();
-	back.DrawButton();
+	sort.DrawBox();
+	search.DrawBox();
+	back.DrawBox();
 	while (true)
 	{
 		switch (y)
 		{
 		case 0:
 			DrawData();
-			search.DrawButton();
-			back.DrawButton();
-			sort.DrawActiveBut();
+			search.DrawBox();
+			back.DrawBox();
+			sort.DrawActiveMsg();
 			break;
 		case 1:
 			DrawData();
-			sort.DrawButton();
-			back.DrawButton();
-			search.DrawActiveBut();
+			sort.DrawBox();
+			back.DrawBox();
+			search.DrawActiveMsg();
 			break;
 		case 2:
 			DrawData();
-			sort.DrawButton();
-			search.DrawButton();
-			back.DrawActiveBut();
+			sort.DrawBox();
+			search.DrawBox();
+			back.DrawActiveMsg();
 			break;
 		}
 		Move(_key, x, y, 0,1);
@@ -255,15 +257,15 @@ bool Admin<type>::DoTable(List<type>& l)
 {
 	int x = 0, y = 0,
 		row,col;
-	Button sort("Sort", 10, 3, RightTop, 8, 2);
-	Button search("Search", 10, 3, RightTop, 8, 8);
-	Button back("Back", 10, 3, RightBot, 8);
+	Message sort("Sort", 10, 3, RightTop, 8, 2);
+	Message search("Search", 10, 3, RightTop, 8, 8);
+	Message back("Back", 10, 3, RightBot, 8);
 	while (true)
 	{
 		DrawData(l);
-		sort.DrawButton();
-		search.DrawButton();
-		back.DrawButton();
+		sort.DrawBox();
+		search.DrawBox();
+		back.DrawBox();
 		if (!size_cols || !size_rows)break;
 		row = y / size_rows;
 		col = x / size_cols;
@@ -305,7 +307,7 @@ template <class type>
 void Admin<type>::DrawActiveCell(List<type>& l, int row, int col, int x, int y)
 {
 	SetColor(activeTxcolor, activeBgcolor);
-	FillRow(x, y);
+	FillLine(x, y);
 	DrawElement(l, row, col, x, y);
 	SetColor(txcolor, bgcolor);
 }
@@ -321,7 +323,7 @@ bool Admin<type>::Show(List<type>& l)
 }
 
 template <class type>
-bool Admin<type>::DrawButtons(List<type>& l, Button& sort, Button& search, Button& back)
+bool Admin<type>::DrawButtons(List<type>& l, Message& sort, Message& search, Message& back)
 {
 	int x = 0, y = 0;
 	char _key;
@@ -331,21 +333,21 @@ bool Admin<type>::DrawButtons(List<type>& l, Button& sort, Button& search, Butto
 		{
 		case 0:
 			DrawData(l);
-			search.DrawButton();
-			back.DrawButton();
-			sort.DrawActiveBut();
+			search.DrawBox();
+			back.DrawBox();
+			sort.DrawActiveMsg();
 			break;
 		case 1:
 			DrawData(l);
-			sort.DrawButton();
-			back.DrawButton();
-			search.DrawActiveBut();
+			sort.DrawBox();
+			back.DrawBox();
+			search.DrawActiveMsg();
 			break;
 		case 2:
 			DrawData(l);
-			sort.DrawButton();
-			search.DrawButton();
-			back.DrawActiveBut();
+			sort.DrawBox();
+			search.DrawBox();
+			back.DrawActiveMsg();
 			break;
 		}
 		Move(_key, x, y, 0, 1);

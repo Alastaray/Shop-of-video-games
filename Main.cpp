@@ -14,18 +14,17 @@ using namespace std;
 
 
 
-
 void main()
 {
 	try
 	{
-		AdminProducts prod("products.txt");
-		prod.Read();
-		//prod.Show();
-		prod.DoDeleting();
-		/*AdminCustomers prod("customers.txt");
-		prod.Read();
-		prod.Show();*/
+		//AdminProducts product("products.txt");
+		//product.Read();
+		//product.Show();
+		AdminCustomers product("customers.txt");
+		product.Read();
+		//product.Create();
+		product.Show();
 	}
 	catch (ListException& error)
 	{

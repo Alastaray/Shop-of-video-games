@@ -19,16 +19,18 @@ public:
 		headlines[3] = "Price";
 		headlines[4] = "Purchase Price";
 		filename = _filename;
-	}
-	void Add(const char* name, int amount, double price, double puchase_price);
-	void Create();
-	bool Search(const char* val = 0);
-	bool Sort(int amount = 0, double price = 0, double purchase_price = 0, bool low_to_high = true);
+	}	
+	void Create();	
 	virtual void DrawElement(List<Product>& l, int row, int col, int x, int y);
 	virtual void DrawElement(int row, int col, int x, int y);
 	virtual bool DoSearching();
 	virtual bool DoSorting();
 	virtual void Editing(int row, int col);
+protected:
+	bool Search(const char* val = 0);
+	bool Sort(int amount = 0, double price = 0, double purchase_price = 0, bool low_to_high = true);
+	void Add(const char* name, int amount, double price, double puchase_price);
+	friend class AdminCustomers;
 };
 
 
@@ -43,14 +45,16 @@ public:
 		headlines[3] = "Amount";
 		headlines[4] = "Price";
 		filename = _filename;
-	}
-	void Add(const char* name, const char* prod_name, int amount, double price);
+	}	
 	void Create();
-	bool Search(const char* val = 0);
-	bool Sort(int amount = 0, double price = 0, bool low_to_high = true);
 	virtual void DrawElement(List<Customer>& l, int row, int col, int x, int y);
 	virtual void DrawElement(int row, int col, int x, int y);
 	virtual bool DoSearching();
 	virtual bool DoSorting();
 	virtual void Editing(int row, int col);
+protected:
+	void Add(const char* name, const char* prod_name, int amount, double price);
+	int ShowProducts(AdminProducts& product);
+	bool Search(const char* val = 0);
+	bool Sort(int amount = 0, double price = 0, bool low_to_high = true);
 };

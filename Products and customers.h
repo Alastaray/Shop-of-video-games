@@ -11,7 +11,7 @@ class Product
 public:
 	Product() {}
 	Product(int _id, const char* _name, int _amount, double _price, double _puchase_price);
-	Product(const Product& prod);
+	Product(const Product& product);
 
 	int GetId() { return id; }
 
@@ -24,6 +24,7 @@ public:
 	void SetPrice(double _price);
 	double GetPrice() { return price; }
 
+	void ChangeAmount(int _amount);
 	void SetAmount(int _amount);
 	int GetAmount() { return amount; }
 
