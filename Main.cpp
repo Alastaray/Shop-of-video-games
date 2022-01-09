@@ -19,17 +19,20 @@ void main()
 {
 	try
 	{
-		//AdminProducts prod("products.txt");
-		//prod.Read();
-		//prod.Show();
-		AdminCustomers prod("customers.txt");
+		AdminProducts prod("products.txt");
 		prod.Read();
-		prod.Show();
+		//prod.Show();
+		prod.DoDeleting();
+		/*AdminCustomers prod("customers.txt");
+		prod.Read();
+		prod.Show();*/
 	}
-	catch (const char* er)
+	catch (ListException& error)
 	{
 		cls();
-		cout << er;
+		cout << error.what()<<endl
+			<<"index = "<<error.GetValue() << endl
+			<< "count = " << error.GetCount() << endl;
 	}
-	
+
 };

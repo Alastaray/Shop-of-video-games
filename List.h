@@ -1,4 +1,23 @@
 #pragma once
+#include <iostream>
+using namespace std;
+
+
+class ListException : public exception
+{
+public:
+	ListException(const char* msg, int _value, int _count) :exception(msg)
+	{
+		value = _value;
+		count = _count;
+	}
+	int GetValue() { return value; }
+	int GetCount() { return count; }
+private:
+	int value, count;
+};
+
+
 template <class type>
 class List
 {
@@ -61,7 +80,7 @@ public:
 	Node* GetTail() { return tail; }
 	Node* GetCertain(int ind)const
 	{
-		if (ind >= count)throw ind;
+		if (ind >= count)throw ListException("Index can't be bigger then the count", ind, count);
 		Node* st = head;
 		int pos = 0;
 		while (st)
