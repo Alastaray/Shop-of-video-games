@@ -1,8 +1,8 @@
 #include <windows.h>
 #include "fun_console.h"
 
-void GotoXY(short x, short y) {
-	COORD coord = { x,  y };
+void GotoXY(short px, short py) {
+	COORD coord = { px,  py };
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 

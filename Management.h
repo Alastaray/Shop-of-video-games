@@ -15,31 +15,40 @@ public:
 	Management(const char* _filename)
 	{
 		filename = _filename;
-		number_st = 0;
+		sizeof_st = sizeof(type);
+		QuiryNumberSt();
 	}
 	~Management()
 	{
 		if (filename)Write();
 		else cls();
 	}
-	List<type>& GetList() { return list; }
+	int Read(int amount = 0, int offset = 0);
+	void FileDelete();
 	void Write();
-	int Read();
+	void QuiryNumberSt();
+	List<type>& GetList() { return list; }
 	void RemoveAt(int ind) { list.RemoveAt(ind); }
 	void RemoveAll() { list.RemoveAll(); }
 	int GetCount() { return list.GetCount(); }
 	int GetNumberSt() { return number_st; }
-	void FileDelete();
 	type& operator[](int ind) { return list[ind]; }
 	void operator<<(const type& val) { list << val; }
 protected:
 	List<type> list;
 	const char* filename;
-	int number_st;
+	long number_st, sizeof_st;
 };
 
-
-
+template <class type>
+void Management<type>::QuiryNumberSt()
+{
+	fstream file;
+	file.open(filename, ios::out | ios::in | ios::binary | ios::app);
+	file.seekg(0, ios::end);
+	number_st = file.tellg() / sizeof_st;
+	file.close();
+}
 template <class type>
 void Management<type>::FileDelete()
 {
@@ -49,28 +58,32 @@ void Management<type>::FileDelete()
 }
 
 template <class type>
-int Management<type>::Read()
+int Management<type>::Read(int amount, int offset)
 {
-	type st;
-	fstream file;
-	file.open(filename, ios::out | ios::in | ios::binary | ios::app);
-	file.seekg(0, ios::end);
-	number_st = file.tellg() / sizeof(st);
-	if (number_st)
-	{
-		file.seekg(0, ios::beg);
-		for (int i = 0; i < number_st; i++)
+	if (number_st && offset < number_st)
+	{	
+		type st;
+		fstream file;
+		file.open(filename, ios::out | ios::in | ios::binary | ios::app);
+		if (!amount || amount > number_st)amount = number_st;
+		if (offset + amount >= number_st)
 		{
-			file.read((char*)&st, sizeof(st));
+			amount = number_st - offset;
+		}
+		file.seekg(offset * sizeof_st, ios::beg);
+		for (int i = 0; i < amount; i++)
+		{
+			file.read((char*)&st, sizeof_st);
 			list << st;
 		}
+		file.close();
 		return 1;
 	}
 	else
 	{
 		return 0;
 	}
-	file.close();
+
 }
 
 template <class type>
@@ -83,7 +96,7 @@ void Management<type>::Write()
 	file.seekg(ios::beg);
 	for (int i = 0; i < list.GetCount(); i++)
 	{
-		file.write((char*)&list[i], sizeof(list[i]));
+		file.write((char*)&list[i], sizeof_st);
 	}
 	file.close();
 }

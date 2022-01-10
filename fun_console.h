@@ -19,7 +19,7 @@ enum ConsoleColor
 	White = 15
 };
 
-void GotoXY(short x, short y);
+void GotoXY(short px, short py);
 void cls();
 void SetColor(short textcolor, short bkcolor);
 void SetSize(int X, int Y);

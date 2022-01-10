@@ -19,7 +19,7 @@ enum position
 
 bool CompareStr(const char* value, const char* source);
 void Move(char &key, int& x, int& y, int how_change_x = 0, int how_change_y = 0);
-void DrawMessage(const char* message, unsigned int _width = 17, unsigned int _height = 3, int position = CenterTop, int indent_letf = 0, int indent_top = 10);
+void DrawMessage(const char* message, unsigned int _width = 17, unsigned int _height = 3, unsigned int position = CenterTop, int indent_letf = 0, int indent_top = 10);
 
 
 class Window
@@ -33,8 +33,8 @@ public:
 	virtual void FillLine(int _x = 0, int _y = 0);
 	int GetWidth() { return width - 2; }
 	int GetHeight() { return height - 2; }
-	int GetX() { return x + 1; }
-	int GetY() { return y + 1; }
+	int GetX() { return px + 1; }
+	int GetY() { return py + 1; }
 
 	template <class type>
 	void WriteLine(type val, int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1);
@@ -59,14 +59,14 @@ protected:
 	};
 	char borders[11];
 	unsigned int height, width,
-		x, y;
+		px, py;
 	unsigned txcolor, bgcolor,
 		activeTxcolor, activeBgcolor;
 };
 template <class type>
 void Window::WriteLine(type val, int pos_x, int pos_y, int indent_letf, int indent_top)
 {
-	GotoXY(x + pos_x + indent_letf, y + pos_y + indent_top);
+	GotoXY(px + pos_x + indent_letf, py + pos_y + indent_top);
 	cout << val;
 }
 template <class type>
@@ -88,7 +88,7 @@ void Window::FillLine(type val, int pos_x, int pos_y, int indent_x, int indent_y
 class Table:public Window
 {
 public:
-	Table(unsigned int _width, unsigned int _height, unsigned int position, unsigned int _cols = 0, unsigned int _rows = 0, int indent_letf = 0, int indent_top = 0);
+	Table(unsigned int _width=0, unsigned int _height=0, unsigned int position=0, unsigned int _cols = 0, unsigned int _rows = 0, int indent_letf = 0, int indent_top = 0);
 	void DrawTable();
 	void SetCols(unsigned int num_cols);
 	void SetRows(unsigned int num_cols);
@@ -97,10 +97,8 @@ public:
 protected:
 	void DrawCols();
 	void DrawRows();
-	unsigned int cols, rows,
+	int cols, rows,
 		size_cols, size_rows;
-	char key;
-
 };
 
 
@@ -134,7 +132,7 @@ public:
 		Window::FillLine(name, pos_x, pos_y, indent_x, indent_y); 
 	}
 	void DrawBox(int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1) { Window::DrawBox(name, pos_x, pos_y, indent_x, indent_y); }
-	void Draw(int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1) { Window::WriteLine(name, pos_x, pos_y, indent_x, indent_y); }
+	void DoTable(int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1) { Window::WriteLine(name, pos_x, pos_y, indent_x, indent_y); }
 	void FillLine(int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1) { Window::FillLine(name, pos_x, pos_y, indent_x, indent_y); }
 private:
 	char name[25];
@@ -146,12 +144,12 @@ class Input
 public:
 	Input() { buff = 0; }
 	~Input() { delete buff; }
-	double GetDouble(int max_len, int min_len = 0, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
-	int GetInt(int max_len, int min_len = 0, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
-	char* GetStr(int max_len, int min_len = 0, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
-	char* Get(int max_len, int min_len=0, int x = 0, int y = 0, int indent_letf = 0, int indent_top = 0);
+	double GetDouble(int max_len, int min_len = 0, int px = 0, int py = 0, int indent_letf = 0, int indent_top = 0);
+	int GetInt(int max_len, int min_len = 0, int px = 0, int py = 0, int indent_letf = 0, int indent_top = 0);
+	char* GetStr(int max_len, int min_len = 0, int px = 0, int py = 0, int indent_letf = 0, int indent_top = 0);
+	char* Get(int max_len, int min_len=0, int px = 0, int py = 0, int indent_letf = 0, int indent_top = 0);
 private:
-	void DataPreparation(int max_len, int &x, int &y, int indent_letf = 0, int indent_top = 0);
+	void DataPreparation(int max_len, int &px, int &py, int indent_letf = 0, int indent_top = 0);
 	char* buff;
 };
 

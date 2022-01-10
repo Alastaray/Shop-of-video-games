@@ -31,14 +31,14 @@ Window::~Window()
 }
 void Window::DrawBox()
 {
-	GotoXY(x, y);
+	GotoXY(px, py);
 	cout << borders[TopLeftAngle];
 	for (int i = 0; i < GetWidth(); i++)
 	{
 		cout << borders[HorizontalLine];
 	}
 	cout << borders[TopRightAngle];
-	GotoXY(x, y + 1);
+	GotoXY(px, py + 1);
 
 	for (int i = 0; i < GetHeight(); i++)
 	{
@@ -48,7 +48,7 @@ void Window::DrawBox()
 			cout << " ";
 		}
 		cout << borders[VerticalLine];
-		GotoXY(x, y + 2 + i);
+		GotoXY(px, py + 2 + i);
 	}
 	cout << borders[BotLeftAngle];
 	for (int i = 0; i < GetWidth(); i++)
@@ -75,33 +75,33 @@ void Window::SetWinParam(unsigned int _width, unsigned int _height, int position
 	switch (position)
 	{
 	case LeftTop:
-		x = 0 + indent_letf;
-		y = 0 + indent_top;
+		px = 0 + indent_letf;
+		py = 0 + indent_top;
 		if (width >= 120)width = 120;
 		break;
 	case LeftBot:
-		x = 0 + indent_letf;
-		y = 15 + indent_top;
+		px = 0 + indent_letf;
+		py = 15 + indent_top;
 		if (width >= 120)width = 120;
 		break;
 	case CenterTop:
-		x = 40 + indent_letf;
-		y = 0 + indent_top;
+		px = 40 + indent_letf;
+		py = 0 + indent_top;
 		if (width >= 80)width = 80;
 		break;
 	case CenterBot:
-		x = 40 + indent_letf;
-		y = 15 + indent_top;
+		px = 40 + indent_letf;
+		py = 15 + indent_top;
 		if (width >= 80)width = 80;
 		break;
 	case RightTop:
-		x = 80 + indent_letf;
-		y = 0 + indent_top;
+		px = 80 + indent_letf;
+		py = 0 + indent_top;
 		if (width >= 40)width = 40;
 		break;
 	case RightBot:
-		x = 80 + indent_letf;
-		y = 15 + indent_top;
+		px = 80 + indent_letf;
+		py = 15 + indent_top;
 		if (width >= 40)width = 40;
 		break;
 	default:
@@ -183,7 +183,6 @@ void Window::SetWinParam(unsigned int _width, unsigned int _height, int position
 
 Table::Table(unsigned int _width, unsigned int _height, unsigned int position, unsigned int _cols, unsigned int _rows, int indent_letf, int indent_top) :Window(_width, _height, position, indent_letf, indent_top)
 {
-	key = 0;
 	SetCols(_cols);
 	SetRows(_rows);
 }
@@ -204,7 +203,7 @@ void Table::DrawCols()
 	while (width < cols * 2)cols--;
 	for (int i = 0; i < height; i++)
 	{
-		GotoXY(GetX(), y + i);
+		GotoXY(GetX(), py + i);
 
 		for (int j = 1; j <= GetWidth(); j++)
 		{
@@ -239,7 +238,7 @@ void Table::DrawRows()
 	{
 		row_size += height / rows;
 		if (row_size >= height - 1)break;
-		GotoXY(x, y + row_size);
+		GotoXY(px, py + row_size);
 		for (int j = 0; j < width; j++)
 		{
 			if (j == 0)
@@ -293,9 +292,9 @@ void Table::SetRows(unsigned int num_rows)
 
 
 
-int Input::GetInt(int max_len, int min_len, int x, int y, int indent_letf, int indent_top)
+int Input::GetInt(int max_len, int min_len, int px, int py, int indent_letf, int indent_top)
 {
-	DataPreparation(max_len, x, y, indent_letf, indent_top);
+	DataPreparation(max_len, px, py, indent_letf, indent_top);
 	int key, i = 0;
 	while (i < max_len)
 	{
@@ -313,15 +312,15 @@ int Input::GetInt(int max_len, int min_len, int x, int y, int indent_letf, int i
 			i++;
 			buff[i] = 0;
 		}
-		GotoXY(x, y);
+		GotoXY(px, py);
 		cout << buff;
 	}
 	ShowCaret(false);
 	return atoi(buff);
 }
-double Input::GetDouble(int max_len, int min_len, int x, int y, int indent_letf, int indent_top)
+double Input::GetDouble(int max_len, int min_len, int px, int py, int indent_letf, int indent_top)
 {
-	DataPreparation(max_len, x, y, indent_letf, indent_top);
+	DataPreparation(max_len, px, py, indent_letf, indent_top);
 	int key, i = 0;
 	bool is_dot = false;
 	while (i < max_len)
@@ -342,15 +341,15 @@ double Input::GetDouble(int max_len, int min_len, int x, int y, int indent_letf,
 			i++;
 			buff[i] = 0;
 		}
-		GotoXY(x, y);
+		GotoXY(px, py);
 		cout << buff;
 	}
 	ShowCaret(false);
 	return atof(buff);
 }
-char* Input::GetStr(int max_len, int min_len, int x, int y, int indent_letf, int indent_top)
+char* Input::GetStr(int max_len, int min_len, int px, int py, int indent_letf, int indent_top)
 {
-	DataPreparation(max_len, x, y, indent_letf, indent_top);
+	DataPreparation(max_len, px, py, indent_letf, indent_top);
 	int key, i = 0;
 	while (i < max_len)
 	{
@@ -375,15 +374,15 @@ char* Input::GetStr(int max_len, int min_len, int x, int y, int indent_letf, int
 			i++;
 			buff[i] = 0;
 		}
-		GotoXY(x, y);
+		GotoXY(px, py);
 		cout << buff;
 	}
 	ShowCaret(false);
 	return buff;
 }
-char* Input::Get(int max_len, int min_len, int x, int y, int indent_letf, int indent_top)
+char* Input::Get(int max_len, int min_len, int px, int py, int indent_letf, int indent_top)
 {
-	DataPreparation(max_len, x, y, indent_letf, indent_top);
+	DataPreparation(max_len, px, py, indent_letf, indent_top);
 	int key, i = 0;	
 	bool is_dot = false;
 	while (i < max_len)
@@ -410,24 +409,24 @@ char* Input::Get(int max_len, int min_len, int x, int y, int indent_letf, int in
 			i++;
 			buff[i] = 0;
 		}
-		GotoXY(x, y);
+		GotoXY(px, py);
 		cout << buff;
 	}
 	ShowCaret(false);
 	return buff;
 }
-void Input::DataPreparation(int max_len, int& x, int& y, int indent_letf, int indent_top)
+void Input::DataPreparation(int max_len, int& px, int& py, int indent_letf, int indent_top)
 {
 	ShowCaret(true);
 	if (buff)delete buff;
 	buff = new char[max_len + 1];
 	buff[0] = 0;
-	if (!x)x = GetCurrentX() + indent_letf;
-	if (!y)y = GetCurrentY() + indent_top;
-	GotoXY(x, y);
+	if (!px)px = GetCurrentX() + indent_letf;
+	if (!py)py = GetCurrentY() + indent_top;
+	GotoXY(px, py);
 	for (int i = 0; i < max_len; i++)
 		cout << " ";
-	GotoXY(x, y);
+	GotoXY(px, py);
 }
 
 
@@ -483,11 +482,11 @@ void Move(char &key, int& x, int& y, int how_change_x, int how_change_y)
 		if (key == 77) x += how_change_x;
 	}
 }
-void DrawMessage(const char* message, unsigned int width, unsigned int height, int position, int indent_letf, int indent_top)
+void DrawMessage(const char* message, unsigned int width, unsigned int height, unsigned int position, int indent_letf, int indent_top)
 {
 	cls();
 	Message msg(message, width, height, position, indent_letf, indent_top);
-	msg.Draw();
+	msg.DoTable();
 	_getch();
 	cls();
 }

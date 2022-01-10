@@ -40,11 +40,11 @@ public:
 		head = tail = 0;
 		count = current = 0;
 	}
-	List(const List<type>& l)
+	List(const List<type>& _list)
 	{
 		head = tail = 0;
 		count = current = 0;
-		*this = l;
+		*this = _list;
 	}
 	~List() { RemoveAll(); }
 	void RemoveAll()
@@ -59,6 +59,7 @@ public:
 				delete st;
 				st = buff;
 			}
+			head = tail = 0;
 			count = 0;
 		}
 
@@ -150,11 +151,11 @@ public:
 		return st->value;
 	}
 
-	void operator=(const List& l)
+	void operator=(const List& _list)
 	{
-		for (int i = 0; i < l.GetCount(); i++)
+		for (int i = 0; i < _list.GetCount(); i++)
 		{
-			*this << l[i];
+			*this << _list[i];
 		}
 	}
 

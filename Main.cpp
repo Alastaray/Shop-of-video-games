@@ -18,13 +18,12 @@ void main()
 {
 	try
 	{
-		//AdminProducts product("products.txt");
-		//product.Read();
-		//product.Show();
-		AdminCustomers product("customers.txt");
-		product.Read();
-		//product.Create();
+		AdminProducts product("products.txt");
 		product.Show();
+		/*AdminCustomers product("customers.txt");
+		product.Read();
+		product.Show();*/
+
 	}
 	catch (ListException& error)
 	{
@@ -33,5 +32,8 @@ void main()
 			<<"index = "<<error.GetValue() << endl
 			<< "count = " << error.GetCount() << endl;
 	}
-
+	catch (exception& error)
+	{
+		cout << error.what() << endl;
+	}
 };

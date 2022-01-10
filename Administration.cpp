@@ -1,7 +1,7 @@
 #include "Administration.h"
 
 
-void AdminProducts::Create()
+void AdminProducts::DrawAdding()
 {
 	const char* phrases[5] = {
 		"Enter the name: ",
@@ -155,52 +155,31 @@ bool AdminProducts::Search(const char* val)
 		return true;
 	}
 }
-void AdminProducts::DrawElement(List<Product>& l, int row, int col, int x, int y)
+void AdminProducts::DrawElement(List<Product>& _list, int row, int col, int x, int y)
 {
 	switch (col)
 	{
 	case 0:
-		WriteLine(l[row].GetId(), x, y);
+		WriteLine(_list[row].GetId(), x, y);
 		break;
 	case 1:
-		WriteLine(l[row].GetName(), x, y);
+		WriteLine(_list[row].GetName(), x, y);
 		break;
 	case 2:
-		WriteLine(l[row].GetAmount(), x, y);
+		WriteLine(_list[row].GetAmount(), x, y);
 		break;
 	case 3:
-		WriteLine(l[row].GetPrice(), x, y);
+		WriteLine(_list[row].GetPrice(), x, y);
 		break;
 	case 4:
-		WriteLine(l[row].GetPurchasePrice(), x, y);
+		WriteLine(_list[row].GetPurchasePrice(), x, y);
 		break;
 	}
 }
-void AdminProducts::DrawElement(int row, int col, int x, int y)
-{
-	switch (col)
-	{
-	case 0:
-		WriteLine(list[row].GetId(), x, y);
-		break;
-	case 1:
-		WriteLine(list[row].GetName(), x, y);
-		break;
-	case 2:
-		WriteLine(list[row].GetAmount(), x, y);
-		break;
-	case 3:
-		WriteLine(list[row].GetPrice(), x, y);
-		break;
-	case 4:
-		WriteLine(list[row].GetPurchasePrice(), x, y);
-		break;
-	}
-}
-bool AdminProducts::DoSorting()
+bool AdminProducts::DrawSorting()
 {
 	cls();
-	key = 0;
+	char key = 0;
 	int y=0;
 	int amount = 0;
 	double price = 0, puchase_price = 0;
@@ -214,9 +193,9 @@ bool AdminProducts::DoSorting()
 	Message sort("Sort", 6, 3, CenterTop, 6, 17);
 	while (true)
 	{		
-		enter_amount.Draw();
-		enter_price.Draw();
-		enter_pur_price.Draw();
+		enter_amount.DoTable();
+		enter_price.DoTable();
+		enter_pur_price.DoTable();
 		sort.DrawBox();
 		High_to_low.DrawBox();
 		Low_to_high.DrawBox();
@@ -256,7 +235,7 @@ bool AdminProducts::DoSorting()
 	
 	return Sort(amount,price,puchase_price,low_to_high);
 }
-bool AdminProducts::DoSearching()
+bool AdminProducts::DrawSearching()
 {
 	cls();
 	char str[20];	
@@ -267,25 +246,30 @@ bool AdminProducts::DoSearching()
 	strcpy(str, Cin.Get(20));
 	return Search(str);
 }
-void AdminProducts::Editing(int row, int col)
+void AdminProducts::Edit(int id, int col)
 {
+	if (!col)return;
 	Input Cin;
-	switch (col)
+	for (int i = 0; i < list.GetCount(); i++)
 	{
-	case 0:
-		return;
-	case 1:
-		list[row].SetName(Cin.Get(15, 3, size_cols * col+1));
-		break;
-	case 2:
-		list[row].SetAmount(Cin.GetInt(5, 0, size_cols * col+1));
-		break;
-	case 3:
-		list[row].SetPrice(Cin.GetDouble(5, 0, size_cols * col+1));
-		break;
-	case 4:
-		list[row].SetPurchasePrice(Cin.GetDouble(5, 0, size_cols * col+1));
-		break;
+		if (id == list[i].GetId())
+		{
+			switch (col)
+			{
+			case 1:
+				list[i].SetName(Cin.Get(15, 3, size_cols * col + 1));
+				break;
+			case 2:
+				list[i].SetAmount(Cin.GetInt(5, 0, size_cols * col + 1));
+				break;
+			case 3:
+				list[i].SetPrice(Cin.GetDouble(5, 0, size_cols * col + 1));
+				break;
+			case 4:
+				list[i].SetPurchasePrice(Cin.GetDouble(5, 0, size_cols * col + 1));
+				break;
+			}
+		}
 	}
 }
 
@@ -293,7 +277,7 @@ void AdminProducts::Editing(int row, int col)
 
 
 
-void AdminCustomers::Create()
+void AdminCustomers::DrawAdding()
 {
 	cls();
 	int index,
@@ -331,12 +315,13 @@ void AdminCustomers::Create()
 }
 int AdminCustomers::ShowProducts(AdminProducts& product)
 {
+	char key;
 	int x = 0, y = 0,
 		row, col;
 	Message back("Back", 10, 3, RightTop, 8, 2);
 	while (true)
 	{
-		product.DrawData();
+		product.DrawData(product.GetList());
 		back.DrawBox();
 		if (!size_cols || !size_rows)break;
 		row = y / size_rows;
@@ -344,14 +329,14 @@ int AdminCustomers::ShowProducts(AdminProducts& product)
 		for (int i = 0; i < cols; i++)
 		{
 			x = size_cols * i;
-			product.DrawActiveCell(y / size_rows, x / size_cols, x, y);
+			product.DrawActiveCell(product.GetList(), y / size_rows, x / size_cols, x, y);
 		}
 		Move(key, x, y, size_cols, size_rows);
 		if (key == 27)return -1;
 		if (key == 13)return row;
 		if (x >= size_cols * cols)
 		{
-			product.DrawData();
+			product.DrawData(product.GetList());
 			back.DrawActiveMsg();
 			Move(key, x, y, size_cols, size_rows);
 			if (key == 13)return -1;
@@ -398,7 +383,6 @@ bool AdminCustomers::Sort(int amount, double price, bool low_to_high)
 	}
 	else if (!amount && !price)
 	{
-		//test(low_to_high);
 		for (int i = 0; i < list.GetCount(); i++)
 		{
 			if (low_to_high)sorting.AddTail(list[i]);
@@ -433,10 +417,10 @@ bool AdminCustomers::Search(const char* val)
 		return true;
 	}
 }
-bool AdminCustomers::DoSorting()
+bool AdminCustomers::DrawSorting()
 {
 	cls();
-	key = 0;
+	char key = 0;
 	int y = 0;
 	int amount = 0;
 	double price = 0;
@@ -449,8 +433,8 @@ bool AdminCustomers::DoSorting()
 	Message sort("Sort", 6, 3, CenterTop, 6, 17);
 	while (true)
 	{
-		enter_amount.Draw();
-		enter_price.Draw();
+		enter_amount.DoTable();
+		enter_price.DoTable();
 		sort.DrawBox();
 		High_to_low.DrawBox();
 		Low_to_high.DrawBox();
@@ -485,7 +469,7 @@ bool AdminCustomers::DoSorting()
 	}
 	return Sort(amount, price, low_to_high);
 }
-bool AdminCustomers::DoSearching()
+bool AdminCustomers::DrawSearching()
 {
 	cls();
 	char str[20];
@@ -496,68 +480,53 @@ bool AdminCustomers::DoSearching()
 	strcpy(str, Cin.Get(20));
 	return Search(str);
 }
-void AdminCustomers::Editing(int row, int col)
-{
-	Input Cin;
-	switch (col)
-	{
-	case 0:
-		return;
-	case 1:
-		list[row].SetName(Cin.Get(15, 3, size_cols * col + 1));
-		break;
-	case 2:
-		list[row].SetProdName(Cin.Get(15, 3, size_cols * col + 1));
-		break;
-	case 3:
-		list[row].SetAmount(Cin.GetInt(5, 0, size_cols * col + 1));
-		break;
-	case 4:
-		list[row].SetPrice(Cin.GetDouble(5, 0, size_cols * col + 1));
-		break;
-	
-	}
-}
-void AdminCustomers::DrawElement(List<Customer>& l, int row, int col, int x, int y)
+void AdminCustomers::DrawElement(List<Customer>& _list, int row, int col, int x, int y)
 {
 
 	switch (col)
 	{
 	case 0:
-		WriteLine(l[row].GetId(), x, y);
+		WriteLine(_list[row].GetId(), x, y);
 		break;
 	case 1:
-		WriteLine(l[row].GetName(), x, y);
+		WriteLine(_list[row].GetName(), x, y);
 		break;
 	case 2:
-		WriteLine(l[row].GetProdName(), x, y);
+		WriteLine(_list[row].GetProdName(), x, y);
 		break;
 	case 3:
-		WriteLine(l[row].GetAmount(), x, y);
+		WriteLine(_list[row].GetAmount(), x, y);
 		break;
 	case 4:
-		WriteLine(l[row].GetPrice(), x, y);
+		WriteLine(_list[row].GetPrice(), x, y);
 		break;
 	}
 }
-void AdminCustomers::DrawElement(int row, int col, int x, int y)
+void AdminCustomers::Edit(int id, int col)
 {
-	switch (col)
+	if (!col)return;
+	Input Cin;
+	for (int i = 0; i < list.GetCount(); i++)
 	{
-	case 0:
-		WriteLine(list[row].GetId(), x, y);
-		break;
-	case 1:
-		WriteLine(list[row].GetName(), x, y);
-		break;
-	case 2:
-		WriteLine(list[row].GetProdName(), x, y);
-		break;
-	case 3:
-		WriteLine(list[row].GetAmount(), x, y);
-		break;
-	case 4:
-		WriteLine(list[row].GetPrice(), x, y);
-		break;
+		if (id == list[i].GetId())
+		{
+			switch (col)
+			{
+			case 1:
+				list[i].SetName(Cin.Get(15, 3, size_cols * col + 1));
+				break;
+			case 2:
+				list[i].SetProdName(Cin.Get(15, 3, size_cols * col + 1));
+				break;
+			case 3:
+				list[i].SetAmount(Cin.GetInt(5, 0, size_cols * col + 1));
+				break;
+			case 4:
+				list[i].SetPrice(Cin.GetDouble(5, 0, size_cols * col + 1));
+				break;
+			}
+		}
+		
 	}
+	
 }
