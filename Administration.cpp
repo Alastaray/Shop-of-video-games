@@ -195,24 +195,24 @@ int AdminProducts::DrawSorting()
 	Message sort("Sort", 6, 3, CenterTop, 6, 17);
 	while (true)
 	{		
-		enter_amount.DoTable();
-		enter_price.DoTable();
-		enter_pur_price.DoTable();
-		sort.DrawBox();
-		High_to_low.DrawBox();
-		Low_to_high.DrawBox();
+		enter_amount.WriteMessage();
+		enter_price.WriteMessage();
+		enter_pur_price.WriteMessage();
+		sort.DrawMessage();
+		High_to_low.DrawMessage();
+		Low_to_high.DrawMessage();
 		switch (y)
 		{
 		case 0:
-			enter_amount.FillLine();
+			enter_amount.FillMessage();
 			if (key == 13)amount = Cin.GetInt(5,0,0,0,1);
 			break;
 		case 1:
-			enter_price.FillLine();
+			enter_price.FillMessage();
 			if (key == 13)price = Cin.GetDouble(5, 0, 0, 0, 1);
 			break;
 		case 2:
-			enter_pur_price.FillLine();
+			enter_pur_price.FillMessage();
 			if (key == 13)puchase_price = Cin.GetDouble(5, 0, 0, 0, 1);
 			break;
 		case 3:
@@ -250,7 +250,7 @@ int AdminProducts::DrawSearching()
 }
 void AdminProducts::ChangeData(int id, int whom)
 {
-	if (id < 0)throw "Id can't be the negative!";
+	if (id < 0)throw exception("Id can't be the negative!");
 	Input Cin;
 	switch (whom)
 	{
@@ -318,7 +318,7 @@ int AdminCustomers::ShowProducts(AdminProducts& product)
 	while (true)
 	{
 		product.DrawData(product.GetList());
-		back.DrawBox();
+		back.DrawMessage();
 		if (!size_cols || !size_rows)break;
 		row = y / size_rows;
 		col = x / size_cols;
@@ -431,19 +431,19 @@ int AdminCustomers::DrawSorting()
 	Message sort("Sort", 6, 3, CenterTop, 6, 17);
 	while (true)
 	{
-		enter_amount.DoTable();
-		enter_price.DoTable();
-		sort.DrawBox();
-		High_to_low.DrawBox();
-		Low_to_high.DrawBox();
+		enter_amount.WriteMessage();
+		enter_price.WriteMessage();
+		sort.DrawMessage();
+		High_to_low.DrawMessage();
+		Low_to_high.DrawMessage();
 		switch (y)
 		{
 		case 0:
-			enter_amount.FillLine();
+			enter_amount.FillMessage();
 			if (key == 13)amount = Cin.GetInt(5, 0, 0, 0, 1);
 			break;
 		case 1:
-			enter_price.FillLine();
+			enter_price.FillMessage();
 			if (key == 13)price = Cin.GetDouble(5, 0, 0, 0, 1);
 			break;
 		
@@ -502,7 +502,7 @@ void AdminCustomers::DrawElement(List<Customer>& _list, int row, int col, int x,
 }
 void AdminCustomers::ChangeData(int id, int whom)
 {
-	if (id < 0)throw "Id can't be the negative!";
+	if (id < 0)throw exception("Id can't be the negative!");
 	Input Cin;
 	switch (whom)
 	{

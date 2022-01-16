@@ -18,11 +18,10 @@ void main()
 {
 	try
 	{
-		AdminProducts product("products.txt");
-		product.Show();
-		/*AdminCustomers product("customers.txt");
-		product.Read();
-		product.Show();*/
+		//AdminProducts product("products.txt");
+		//product.Show();
+		AdminCustomers product("customers.txt");
+		product.DrawAdding();
 
 	}
 	catch (ListException& error)
@@ -34,7 +33,6 @@ void main()
 	}
 	catch (exception& error)
 	{
-		cls();
 		cout << error.what() << endl;
 	}
 };
