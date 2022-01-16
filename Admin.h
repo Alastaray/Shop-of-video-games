@@ -18,14 +18,13 @@ public:
 	{
 	}
 	void Show();
-
+	bool DoPages(List<type>& _list);
 	void DoDeleting();	
 	virtual void DrawAdding() = 0;
 protected:
-	bool Show(List<type>& _list);
-	bool SetTableParam(List<type>& _list, int &page);
+	int SetTableParam(List<type>& _list, int &page);
 	void DrawHeadlines();
-	bool DoTable(List<type>& _list, int& page);
+	int DoTable(List<type>& _list, int& page);
 	void DrawData(List<type>& _list);
 	void DrawActiveCell(List<type>& _list, int row, int col, int x, int y);
 	int DrawPagination(Message& pag_left, Message& pag_right, int& page);
@@ -33,10 +32,12 @@ protected:
 	bool DrawDeleting();
 	void CheckXY(int& x, int& y);
 	virtual void DrawElement(List<type>& _list, int row, int col, int x, int y) = 0;
-	virtual bool DrawSearching() = 0;
-	virtual bool DrawSorting() = 0;
+	virtual int DrawSearching() = 0;
+	virtual int DrawSorting() = 0;
 	virtual void Edit(int id, int col) = 0;
+
 	const char* headlines[5];
+	List <type> sorted;
 };
 
 
@@ -44,34 +45,44 @@ template <class type>
 void Admin<type>::Show()
 {
 	this->Read();
-	Show(this->list);
+	DoPages(this->list);
 }
 
 template <class type>
-bool Admin<type>::Show(List<type>& _list)
+bool Admin<type>::DoPages(List<type>& _list)
 {
+	sorted = _list;
+	int a = 0;
 	int page = 0,
-		limit = 2;
-	int number_pages = ceil(_list.GetCount() / (limit*1.0));
+		limit = 2,
+		result = 1,
+	number_pages = ceil(sorted.GetCount() / (limit*1.0));
 	while (true)
 	{
 		List <type> l;	
-		for (int i = page * limit, j = 0; i < _list.GetCount(); i++, j++)
+		for (int i = page * limit, j = 0; i < sorted.GetCount(); i++, j++)
 		{
 			if (j >= limit)break;
-			l << _list[i];			
+			l << sorted[i];
 		}	
-
-		if (!SetTableParam(l, page))return false;
+		result = SetTableParam(l, page);
+		if (!result)return false;
+		if (result == 2)
+		{
+			page = 0;
+			number_pages = ceil(sorted.GetCount() / (limit * 1.0));
+		}
 		if (number_pages <= page)page = 0;
 		if (0 > page)page = number_pages - 1;
 	}
+	return true;
 }
 
 
 template <class type>
-bool Admin<type>::SetTableParam(List<type>& _list, int& page)
+int Admin<type>::SetTableParam(List<type>& _list, int& page)
 {
+	if (!_list.GetCount())throw "List is empty!";
 	cls();
 	SetWinParam(85, _list.GetCount() * 2 + 1, LeftTop, 0, 2);
 	SetCols(5);
@@ -80,12 +91,13 @@ bool Admin<type>::SetTableParam(List<type>& _list, int& page)
 }
 
 template <class type>
-bool Admin<type>::DoTable(List<type>& _list, int& page)
+int Admin<type>::DoTable(List<type>& _list, int& page)
 {
 	char key = 0;
 	int x =0, y=0;
-	if (!size_cols || !size_rows)return false;
-	int row, col, returning=1;
+	if (!size_cols)throw "size_cols is empty!";
+	if(!size_rows)throw "size_rows is empty!";
+	int row, col, result=1;
 	Message pag_left("<<", 5, 3, LeftBot, width / 2 - 8, 8);
 	Message pag_right(">>", 5, 3, LeftBot, width / 2 + 5, 8);
 	Message sort("Sort", 10, 3, RightTop, 8, 2);
@@ -109,13 +121,13 @@ bool Admin<type>::DoTable(List<type>& _list, int& page)
 		{
 			x -= size_cols;
 			DrawData(_list);
-			if ((returning = DrawButtons(sort, search, back)) != 2)return returning;
+			if ((result = DrawButtons(sort, search, back)) != 3)return result;
 		}	
 		if (y >= size_rows * rows)
 		{
 			y -= size_rows; 
 			DrawData(_list);
-			if ((returning = DrawPagination(pag_left, pag_right, page)) != 2)return returning;
+			if ((result = DrawPagination(pag_left, pag_right, page)) != 3)return result;
 		}
 		CheckXY(x, y);
 	}
@@ -196,7 +208,7 @@ int Admin<type>::DrawButtons(Message& sort, Message& search, Message& back)
 		if (y >= 3)y = 0;
 		if (y < 0)y = 2;
 	}
-	return 2;
+	return 3;
 }
 
 template <class type>
@@ -232,7 +244,7 @@ int Admin<type>::DrawPagination(Message& pag_left, Message& pag_right, int& page
 		if (x >= 2)x = 0;
 		if (x < 0)x = 1;
 	}
-	return 2;
+	return 3;
 }
 
 

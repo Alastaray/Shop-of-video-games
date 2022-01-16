@@ -54,9 +54,9 @@ void AdminProducts::Add(const char* name, int amount, double price, double pucha
 	list << Product(id, name, amount, price, puchase_price);
 	id++;
 }
-bool AdminProducts::Sort(int amount, double price, double purchase_price, bool low_to_high)
+int AdminProducts::Sort(int amount, double price, double purchase_price, bool low_to_high)
 {
-	List<Product> sorting;
+	sorted.RemoveAll();
 	if (amount && price && purchase_price)
 	{
 		for (int i = 0; i < list.GetCount(); i++)
@@ -65,8 +65,8 @@ bool AdminProducts::Sort(int amount, double price, double purchase_price, bool l
 				price >= list[i].GetPrice() &&
 				purchase_price == list[i].GetPurchasePrice())
 			{
-				if (low_to_high)sorting.AddTail(list[i]);
-				else sorting.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(list[i]);
+				else sorted.AddHead(list[i]);
 			}
 		}
 	}
@@ -77,8 +77,8 @@ bool AdminProducts::Sort(int amount, double price, double purchase_price, bool l
 			if (price >= list[i].GetPrice() &&
 				purchase_price >= list[i].GetPurchasePrice())
 			{
-				if (low_to_high)sorting.AddTail(list[i]);
-				else sorting.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(list[i]);
+				else sorted.AddHead(list[i]);
 			}
 		}
 	}
@@ -89,8 +89,8 @@ bool AdminProducts::Sort(int amount, double price, double purchase_price, bool l
 			if (price && price >= list[i].GetPrice() &&
 				amount && amount >= list[i].GetAmount())
 			{
-				if (low_to_high)sorting.AddTail(list[i]);
-				else sorting.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(list[i]);
+				else sorted.AddHead(list[i]);
 			}
 		}
 	}
@@ -101,8 +101,8 @@ bool AdminProducts::Sort(int amount, double price, double purchase_price, bool l
 			if (amount >= list[i].GetAmount() &&
 				purchase_price >= list[i].GetPurchasePrice())
 			{
-				if (low_to_high)sorting.AddTail(list[i]);
-				else sorting.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(list[i]);
+				else sorted.AddHead(list[i]);
 			}
 		}
 	}
@@ -114,8 +114,8 @@ bool AdminProducts::Sort(int amount, double price, double purchase_price, bool l
 				price >= list[i].GetPrice() ||
 				purchase_price >= list[i].GetPurchasePrice())
 			{
-				if (low_to_high)sorting.AddTail(list[i]);
-				else sorting.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(list[i]);
+				else sorted.AddHead(list[i]);
 			}
 		}
 	}
@@ -123,20 +123,21 @@ bool AdminProducts::Sort(int amount, double price, double purchase_price, bool l
 	{
 		for (int i = 0; i < list.GetCount(); i++)
 		{
-			if (low_to_high)sorting.AddTail(list[i]);
-			else sorting.AddHead(list[i]);
+			if (low_to_high)sorted.AddTail(list[i]);
+			else sorted.AddHead(list[i]);
 		}
 	}
-	if (sorting.GetCount())return Show(sorting);
+	if (sorted.GetCount())return 2;
 	else
 	{
 		DrawMessage("Page not found!");
+		sorted = list;
 		return true;
 	}
 }
-bool AdminProducts::Search(const char* val)
+int AdminProducts::Search(const char* val)
 {
-	List<Product> searching;
+	sorted.RemoveAll();
 	if (val)
 	{
 		for (int i = 0; i < list.GetCount(); i++)
@@ -145,13 +146,14 @@ bool AdminProducts::Search(const char* val)
 				atoi(val) == list[i].GetAmount() ||
 				atof(val) == list[i].GetPrice() ||
 				atof(val) == list[i].GetPurchasePrice())
-				searching << list[i];
+				sorted << list[i];
 		}
 	}
-	if (searching.GetCount())return Show(searching);
+	if (sorted.GetCount())return 2;
 	else
 	{
 		DrawMessage("Page not found!");
+		sorted = list;
 		return true;
 	}
 }
@@ -176,7 +178,7 @@ void AdminProducts::DrawElement(List<Product>& _list, int row, int col, int x, i
 		break;
 	}
 }
-bool AdminProducts::DrawSorting()
+int AdminProducts::DrawSorting()
 {
 	cls();
 	char key = 0;
@@ -235,7 +237,7 @@ bool AdminProducts::DrawSorting()
 	
 	return Sort(amount,price,puchase_price,low_to_high);
 }
-bool AdminProducts::DrawSearching()
+int AdminProducts::DrawSearching()
 {
 	cls();
 	char str[20];	
@@ -354,9 +356,9 @@ void AdminCustomers::Add(const char* name, const char* prod_name, int amount, do
 	list << Customer(id, name, prod_name, amount, price);
 	id++;
 }
-bool AdminCustomers::Sort(int amount, double price, bool low_to_high)
+int AdminCustomers::Sort(int amount, double price, bool low_to_high)
 {
-	List<Customer> sorting;
+	sorted.RemoveAll();
 	if (amount && price)
 	{
 		for (int i = 0; i < list.GetCount(); i++)
@@ -364,8 +366,8 @@ bool AdminCustomers::Sort(int amount, double price, bool low_to_high)
 			if (amount >= list[i].GetAmount() &&
 				price >= list[i].GetPrice())
 			{
-				if (low_to_high)sorting.AddTail(list[i]);
-				else sorting.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(list[i]);
+				else sorted.AddHead(list[i]);
 			}
 		}
 	}
@@ -376,8 +378,8 @@ bool AdminCustomers::Sort(int amount, double price, bool low_to_high)
 			if (amount >= list[i].GetAmount() ||
 				price >= list[i].GetPrice())
 			{
-				if (low_to_high)sorting.AddTail(list[i]);
-				else sorting.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(list[i]);
+				else sorted.AddHead(list[i]);
 			}
 		}
 	}
@@ -385,20 +387,21 @@ bool AdminCustomers::Sort(int amount, double price, bool low_to_high)
 	{
 		for (int i = 0; i < list.GetCount(); i++)
 		{
-			if (low_to_high)sorting.AddTail(list[i]);
-			else sorting.AddHead(list[i]);
+			if (low_to_high)sorted.AddTail(list[i]);
+			else sorted.AddHead(list[i]);
 		}
 	}
-	if (sorting.GetCount())return Show(sorting);
+	if (sorted.GetCount())return 2;
 	else
 	{
 		DrawMessage("Page not found!");
+		sorted = list;
 		return true;
 	}
 }
-bool AdminCustomers::Search(const char* val)
+int AdminCustomers::Search(const char* val)
 {
-	List<Customer> searching;
+	sorted.RemoveAll();
 	if (val)
 	{
 		for (int i = 0; i < list.GetCount(); i++)
@@ -407,17 +410,18 @@ bool AdminCustomers::Search(const char* val)
 				atoi(val) == list[i].GetAmount() ||
 				atof(val) == list[i].GetPrice() ||
 				CompareStr(val, list[i].GetProdName()))
-				searching << list[i];
+				sorted << list[i];
 		}
 	}
-	if (searching.GetCount())return Show(searching);
+	if (sorted.GetCount())return 2;
 	else
 	{
 		DrawMessage("Page not found!");
+		sorted = list;
 		return true;
 	}
 }
-bool AdminCustomers::DrawSorting()
+int AdminCustomers::DrawSorting()
 {
 	cls();
 	char key = 0;
@@ -469,7 +473,7 @@ bool AdminCustomers::DrawSorting()
 	}
 	return Sort(amount, price, low_to_high);
 }
-bool AdminCustomers::DrawSearching()
+int AdminCustomers::DrawSearching()
 {
 	cls();
 	char str[20];

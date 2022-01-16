@@ -34,6 +34,7 @@ void main()
 	}
 	catch (exception& error)
 	{
+		cls();
 		cout << error.what() << endl;
 	}
 };
