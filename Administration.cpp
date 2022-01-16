@@ -248,33 +248,26 @@ int AdminProducts::DrawSearching()
 	strcpy(str, Cin.Get(20));
 	return Search(str);
 }
-void AdminProducts::Edit(int id, int col)
+void AdminProducts::ChangeData(int id, int whom)
 {
-	if (!col)return;
+	if (id < 0)throw "Id can't be the negative!";
 	Input Cin;
-	for (int i = 0; i < list.GetCount(); i++)
+	switch (whom)
 	{
-		if (id == list[i].GetId())
-		{
-			switch (col)
-			{
-			case 1:
-				list[i].SetName(Cin.Get(15, 3, size_cols * col + 1));
-				break;
-			case 2:
-				list[i].SetAmount(Cin.GetInt(5, 0, size_cols * col + 1));
-				break;
-			case 3:
-				list[i].SetPrice(Cin.GetDouble(5, 0, size_cols * col + 1));
-				break;
-			case 4:
-				list[i].SetPurchasePrice(Cin.GetDouble(5, 0, size_cols * col + 1));
-				break;
-			}
-		}
+	case 1:
+		list[id].SetName(Cin.Get(15, 3, size_cols * whom + 1));
+		break;
+	case 2:
+		list[id].SetAmount(Cin.GetInt(5, 0, size_cols * whom + 1));
+		break;
+	case 3:
+		list[id].SetPrice(Cin.GetDouble(5, 0, size_cols * whom + 1));
+		break;
+	case 4:
+		list[id].SetPurchasePrice(Cin.GetDouble(5, 0, size_cols * whom + 1));
+		break;
 	}
 }
-
 
 
 
@@ -298,7 +291,8 @@ void AdminCustomers::DrawAdding()
 	product.SetWinParam(85, product.GetCount() * 2 + 1, LeftTop, 0, 2);
 	product.SetCols(5);
 	product.SetRows(product.GetCount());
-	if ((index = ShowProducts(product))==-1)return;
+	index = ShowProducts(product);
+	if (index == -1)return;
 	cls();
 	win.DrawBox("Enter the amount: ", 0, 0, 2, 2);
 	amount = Cin.GetInt(5);
@@ -506,31 +500,23 @@ void AdminCustomers::DrawElement(List<Customer>& _list, int row, int col, int x,
 		break;
 	}
 }
-void AdminCustomers::Edit(int id, int col)
+void AdminCustomers::ChangeData(int id, int whom)
 {
-	if (!col)return;
+	if (id < 0)throw "Id can't be the negative!";
 	Input Cin;
-	for (int i = 0; i < list.GetCount(); i++)
+	switch (whom)
 	{
-		if (id == list[i].GetId())
-		{
-			switch (col)
-			{
-			case 1:
-				list[i].SetName(Cin.Get(15, 3, size_cols * col + 1));
-				break;
-			case 2:
-				list[i].SetProdName(Cin.Get(15, 3, size_cols * col + 1));
-				break;
-			case 3:
-				list[i].SetAmount(Cin.GetInt(5, 0, size_cols * col + 1));
-				break;
-			case 4:
-				list[i].SetPrice(Cin.GetDouble(5, 0, size_cols * col + 1));
-				break;
-			}
-		}
-		
+	case 1:
+		list[id].SetName(Cin.Get(15, 3, size_cols * whom + 1));
+		break;
+	case 2:
+		list[id].SetProdName(Cin.Get(15, 3, size_cols * whom + 1));
+		break;
+	case 3:
+		list[id].SetAmount(Cin.GetInt(5, 0, size_cols * whom + 1));
+		break;
+	case 4:
+		list[id].SetPrice(Cin.GetDouble(5, 0, size_cols * whom + 1));
+		break;
 	}
-	
 }

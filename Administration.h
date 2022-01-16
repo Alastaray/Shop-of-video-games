@@ -20,16 +20,15 @@ public:
 		headlines[4] = "Purchase Price";
 		filename = _filename;
 	}	
-	virtual void DrawAdding();
-
+	virtual void DrawAdding();	
 protected:
 	virtual void DrawElement(List<Product>& _list, int row, int col, int x, int y);
 	virtual int DrawSearching();
 	virtual int DrawSorting();
-	virtual void Edit(int id, int col);
+	virtual void ChangeData(int id, int whom);
 	int Search(const char* val = 0);
 	int Sort(int amount = 0, double price = 0, double purchase_price = 0, bool low_to_high = true);
-	void Add(const char* name, int amount, double price, double puchase_price);
+	void Add(const char* name, int amount, double price, double puchase_price);	
 	friend class AdminCustomers;
 };
 
@@ -50,10 +49,11 @@ public:
 protected:
 	virtual int DrawSearching();
 	virtual int DrawSorting();
-	virtual void Edit(int id, int col);
+	virtual void ChangeData(int id, int whom);
 	int ShowProducts(AdminProducts& product);
 	virtual void DrawElement(List<Customer>& _list, int row, int col, int x, int y);
 	void Add(const char* name, const char* prod_name, int amount, double price);
 	int Search(const char* val = 0);
 	int Sort(int amount = 0, double price = 0, bool low_to_high = true);
+
 };

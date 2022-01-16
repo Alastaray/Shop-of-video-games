@@ -34,8 +34,9 @@ protected:
 	virtual void DrawElement(List<type>& _list, int row, int col, int x, int y) = 0;
 	virtual int DrawSearching() = 0;
 	virtual int DrawSorting() = 0;
-	virtual void Edit(int id, int col) = 0;
-
+	virtual void ChangeData(int id, int whom) = 0;
+	void Edit(int id, int col);
+	void Synchronization(int id);
 	const char* headlines[5];
 	List <type> sorted;
 };
@@ -116,7 +117,11 @@ int Admin<type>::DoTable(List<type>& _list, int& page)
 		DrawActiveCell(_list, row, col, x, y);
 		Move(key, x, y, size_cols, size_rows);
 		if (key == 27)break;
-		if (key == 13)Edit(_list[row].GetId(), col);
+		if (key == 13)
+		{
+			Edit(_list[row].GetId(), col);
+			return true;
+		}
 		if (x >= size_cols * cols)
 		{
 			x -= size_cols;
@@ -134,7 +139,6 @@ int Admin<type>::DoTable(List<type>& _list, int& page)
 	return true;
 
 }
-
 
 template <class type>
 void Admin<type>::DrawData(List<type>& _list)
@@ -324,6 +328,38 @@ bool Admin<type>::DrawDeleting()
 	}
 }
 
-
-
+template <class type>
+void Admin<type>::Edit(int id, int col)
+{
+	if (!col)return;
+	if (id < this->list.GetCount())
+	{
+		ChangeData(id, col);
+		Synchronization(id);
+	}
+	else
+	{
+		for (int i = 0; i < this->list.GetCount(); i++)
+		{
+			if (id == this->list[i].GetId())
+			{
+				ChangeData(i, col);
+				Synchronization(i);
+				break;
+			}
+		}
+	}
+}
+template <class type>
+void Admin<type>::Synchronization(int id)
+{
+	for (int i = 0; i < sorted.GetCount(); i++)
+	{
+		if (id == sorted[i].GetId())
+		{
+			sorted[i] = this->list[id];
+			break;
+		}
+	}
+}
 
