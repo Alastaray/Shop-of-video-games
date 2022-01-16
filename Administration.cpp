@@ -54,9 +54,9 @@ void AdminProducts::Add(const char* name, int amount, double price, double pucha
 	list << Product(id, name, amount, price, puchase_price);
 	id++;
 }
-bool AdminProducts::Sort(int amount, double price, double purchase_price, bool low_to_high)
+int AdminProducts::Sort(int amount, double price, double purchase_price, bool low_to_high)
 {
-	List<Product> sorting;
+	sorted.RemoveAll();
 	if (amount && price && purchase_price)
 	{
 		for (int i = 0; i < list.GetCount(); i++)
@@ -65,8 +65,8 @@ bool AdminProducts::Sort(int amount, double price, double purchase_price, bool l
 				price >= list[i].GetPrice() &&
 				purchase_price == list[i].GetPurchasePrice())
 			{
-				if (low_to_high)sorting.AddTail(list[i]);
-				else sorting.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(list[i]);
+				else sorted.AddHead(list[i]);
 			}
 		}
 	}
@@ -77,8 +77,8 @@ bool AdminProducts::Sort(int amount, double price, double purchase_price, bool l
 			if (price >= list[i].GetPrice() &&
 				purchase_price >= list[i].GetPurchasePrice())
 			{
-				if (low_to_high)sorting.AddTail(list[i]);
-				else sorting.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(list[i]);
+				else sorted.AddHead(list[i]);
 			}
 		}
 	}
@@ -89,8 +89,8 @@ bool AdminProducts::Sort(int amount, double price, double purchase_price, bool l
 			if (price && price >= list[i].GetPrice() &&
 				amount && amount >= list[i].GetAmount())
 			{
-				if (low_to_high)sorting.AddTail(list[i]);
-				else sorting.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(list[i]);
+				else sorted.AddHead(list[i]);
 			}
 		}
 	}
@@ -101,8 +101,8 @@ bool AdminProducts::Sort(int amount, double price, double purchase_price, bool l
 			if (amount >= list[i].GetAmount() &&
 				purchase_price >= list[i].GetPurchasePrice())
 			{
-				if (low_to_high)sorting.AddTail(list[i]);
-				else sorting.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(list[i]);
+				else sorted.AddHead(list[i]);
 			}
 		}
 	}
@@ -114,8 +114,8 @@ bool AdminProducts::Sort(int amount, double price, double purchase_price, bool l
 				price >= list[i].GetPrice() ||
 				purchase_price >= list[i].GetPurchasePrice())
 			{
-				if (low_to_high)sorting.AddTail(list[i]);
-				else sorting.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(list[i]);
+				else sorted.AddHead(list[i]);
 			}
 		}
 	}
@@ -123,20 +123,21 @@ bool AdminProducts::Sort(int amount, double price, double purchase_price, bool l
 	{
 		for (int i = 0; i < list.GetCount(); i++)
 		{
-			if (low_to_high)sorting.AddTail(list[i]);
-			else sorting.AddHead(list[i]);
+			if (low_to_high)sorted.AddTail(list[i]);
+			else sorted.AddHead(list[i]);
 		}
 	}
-	if (sorting.GetCount())return Show(sorting);
+	if (sorted.GetCount())return 2;
 	else
 	{
 		DrawMessage("Page not found!");
+		sorted = list;
 		return true;
 	}
 }
-bool AdminProducts::Search(const char* val)
+int AdminProducts::Search(const char* val)
 {
-	List<Product> searching;
+	sorted.RemoveAll();
 	if (val)
 	{
 		for (int i = 0; i < list.GetCount(); i++)
@@ -145,13 +146,14 @@ bool AdminProducts::Search(const char* val)
 				atoi(val) == list[i].GetAmount() ||
 				atof(val) == list[i].GetPrice() ||
 				atof(val) == list[i].GetPurchasePrice())
-				searching << list[i];
+				sorted << list[i];
 		}
 	}
-	if (searching.GetCount())return Show(searching);
+	if (sorted.GetCount())return 2;
 	else
 	{
 		DrawMessage("Page not found!");
+		sorted = list;
 		return true;
 	}
 }
@@ -176,7 +178,7 @@ void AdminProducts::DrawElement(List<Product>& _list, int row, int col, int x, i
 		break;
 	}
 }
-bool AdminProducts::DrawSorting()
+int AdminProducts::DrawSorting()
 {
 	cls();
 	char key = 0;
@@ -193,24 +195,24 @@ bool AdminProducts::DrawSorting()
 	Message sort("Sort", 6, 3, CenterTop, 6, 17);
 	while (true)
 	{		
-		enter_amount.DoTable();
-		enter_price.DoTable();
-		enter_pur_price.DoTable();
-		sort.DrawBox();
-		High_to_low.DrawBox();
-		Low_to_high.DrawBox();
+		enter_amount.WriteMessage();
+		enter_price.WriteMessage();
+		enter_pur_price.WriteMessage();
+		sort.DrawMessage();
+		High_to_low.DrawMessage();
+		Low_to_high.DrawMessage();
 		switch (y)
 		{
 		case 0:
-			enter_amount.FillLine();
+			enter_amount.FillMessage();
 			if (key == 13)amount = Cin.GetInt(5,0,0,0,1);
 			break;
 		case 1:
-			enter_price.FillLine();
+			enter_price.FillMessage();
 			if (key == 13)price = Cin.GetDouble(5, 0, 0, 0, 1);
 			break;
 		case 2:
-			enter_pur_price.FillLine();
+			enter_pur_price.FillMessage();
 			if (key == 13)puchase_price = Cin.GetDouble(5, 0, 0, 0, 1);
 			break;
 		case 3:
@@ -235,7 +237,7 @@ bool AdminProducts::DrawSorting()
 	
 	return Sort(amount,price,puchase_price,low_to_high);
 }
-bool AdminProducts::DrawSearching()
+int AdminProducts::DrawSearching()
 {
 	cls();
 	char str[20];	
@@ -246,33 +248,26 @@ bool AdminProducts::DrawSearching()
 	strcpy(str, Cin.Get(20));
 	return Search(str);
 }
-void AdminProducts::Edit(int id, int col)
+void AdminProducts::ChangeData(int id, int whom)
 {
-	if (!col)return;
+	if (id < 0)throw exception("Id can't be the negative!");
 	Input Cin;
-	for (int i = 0; i < list.GetCount(); i++)
+	switch (whom)
 	{
-		if (id == list[i].GetId())
-		{
-			switch (col)
-			{
-			case 1:
-				list[i].SetName(Cin.Get(15, 3, size_cols * col + 1));
-				break;
-			case 2:
-				list[i].SetAmount(Cin.GetInt(5, 0, size_cols * col + 1));
-				break;
-			case 3:
-				list[i].SetPrice(Cin.GetDouble(5, 0, size_cols * col + 1));
-				break;
-			case 4:
-				list[i].SetPurchasePrice(Cin.GetDouble(5, 0, size_cols * col + 1));
-				break;
-			}
-		}
+	case 1:
+		list[id].SetName(Cin.Get(15, 3, size_cols * whom + 1));
+		break;
+	case 2:
+		list[id].SetAmount(Cin.GetInt(5, 0, size_cols * whom + 1));
+		break;
+	case 3:
+		list[id].SetPrice(Cin.GetDouble(5, 0, size_cols * whom + 1));
+		break;
+	case 4:
+		list[id].SetPurchasePrice(Cin.GetDouble(5, 0, size_cols * whom + 1));
+		break;
 	}
 }
-
 
 
 
@@ -296,7 +291,8 @@ void AdminCustomers::DrawAdding()
 	product.SetWinParam(85, product.GetCount() * 2 + 1, LeftTop, 0, 2);
 	product.SetCols(5);
 	product.SetRows(product.GetCount());
-	if ((index = ShowProducts(product))==-1)return;
+	index = ShowProducts(product);
+	if (index == -1)return;
 	cls();
 	win.DrawBox("Enter the amount: ", 0, 0, 2, 2);
 	amount = Cin.GetInt(5);
@@ -322,7 +318,7 @@ int AdminCustomers::ShowProducts(AdminProducts& product)
 	while (true)
 	{
 		product.DrawData(product.GetList());
-		back.DrawBox();
+		back.DrawMessage();
 		if (!size_cols || !size_rows)break;
 		row = y / size_rows;
 		col = x / size_cols;
@@ -354,9 +350,9 @@ void AdminCustomers::Add(const char* name, const char* prod_name, int amount, do
 	list << Customer(id, name, prod_name, amount, price);
 	id++;
 }
-bool AdminCustomers::Sort(int amount, double price, bool low_to_high)
+int AdminCustomers::Sort(int amount, double price, bool low_to_high)
 {
-	List<Customer> sorting;
+	sorted.RemoveAll();
 	if (amount && price)
 	{
 		for (int i = 0; i < list.GetCount(); i++)
@@ -364,8 +360,8 @@ bool AdminCustomers::Sort(int amount, double price, bool low_to_high)
 			if (amount >= list[i].GetAmount() &&
 				price >= list[i].GetPrice())
 			{
-				if (low_to_high)sorting.AddTail(list[i]);
-				else sorting.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(list[i]);
+				else sorted.AddHead(list[i]);
 			}
 		}
 	}
@@ -376,8 +372,8 @@ bool AdminCustomers::Sort(int amount, double price, bool low_to_high)
 			if (amount >= list[i].GetAmount() ||
 				price >= list[i].GetPrice())
 			{
-				if (low_to_high)sorting.AddTail(list[i]);
-				else sorting.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(list[i]);
+				else sorted.AddHead(list[i]);
 			}
 		}
 	}
@@ -385,20 +381,21 @@ bool AdminCustomers::Sort(int amount, double price, bool low_to_high)
 	{
 		for (int i = 0; i < list.GetCount(); i++)
 		{
-			if (low_to_high)sorting.AddTail(list[i]);
-			else sorting.AddHead(list[i]);
+			if (low_to_high)sorted.AddTail(list[i]);
+			else sorted.AddHead(list[i]);
 		}
 	}
-	if (sorting.GetCount())return Show(sorting);
+	if (sorted.GetCount())return 2;
 	else
 	{
 		DrawMessage("Page not found!");
+		sorted = list;
 		return true;
 	}
 }
-bool AdminCustomers::Search(const char* val)
+int AdminCustomers::Search(const char* val)
 {
-	List<Customer> searching;
+	sorted.RemoveAll();
 	if (val)
 	{
 		for (int i = 0; i < list.GetCount(); i++)
@@ -407,17 +404,18 @@ bool AdminCustomers::Search(const char* val)
 				atoi(val) == list[i].GetAmount() ||
 				atof(val) == list[i].GetPrice() ||
 				CompareStr(val, list[i].GetProdName()))
-				searching << list[i];
+				sorted << list[i];
 		}
 	}
-	if (searching.GetCount())return Show(searching);
+	if (sorted.GetCount())return 2;
 	else
 	{
 		DrawMessage("Page not found!");
+		sorted = list;
 		return true;
 	}
 }
-bool AdminCustomers::DrawSorting()
+int AdminCustomers::DrawSorting()
 {
 	cls();
 	char key = 0;
@@ -433,19 +431,19 @@ bool AdminCustomers::DrawSorting()
 	Message sort("Sort", 6, 3, CenterTop, 6, 17);
 	while (true)
 	{
-		enter_amount.DoTable();
-		enter_price.DoTable();
-		sort.DrawBox();
-		High_to_low.DrawBox();
-		Low_to_high.DrawBox();
+		enter_amount.WriteMessage();
+		enter_price.WriteMessage();
+		sort.DrawMessage();
+		High_to_low.DrawMessage();
+		Low_to_high.DrawMessage();
 		switch (y)
 		{
 		case 0:
-			enter_amount.FillLine();
+			enter_amount.FillMessage();
 			if (key == 13)amount = Cin.GetInt(5, 0, 0, 0, 1);
 			break;
 		case 1:
-			enter_price.FillLine();
+			enter_price.FillMessage();
 			if (key == 13)price = Cin.GetDouble(5, 0, 0, 0, 1);
 			break;
 		
@@ -469,7 +467,7 @@ bool AdminCustomers::DrawSorting()
 	}
 	return Sort(amount, price, low_to_high);
 }
-bool AdminCustomers::DrawSearching()
+int AdminCustomers::DrawSearching()
 {
 	cls();
 	char str[20];
@@ -502,31 +500,23 @@ void AdminCustomers::DrawElement(List<Customer>& _list, int row, int col, int x,
 		break;
 	}
 }
-void AdminCustomers::Edit(int id, int col)
+void AdminCustomers::ChangeData(int id, int whom)
 {
-	if (!col)return;
+	if (id < 0)throw exception("Id can't be the negative!");
 	Input Cin;
-	for (int i = 0; i < list.GetCount(); i++)
+	switch (whom)
 	{
-		if (id == list[i].GetId())
-		{
-			switch (col)
-			{
-			case 1:
-				list[i].SetName(Cin.Get(15, 3, size_cols * col + 1));
-				break;
-			case 2:
-				list[i].SetProdName(Cin.Get(15, 3, size_cols * col + 1));
-				break;
-			case 3:
-				list[i].SetAmount(Cin.GetInt(5, 0, size_cols * col + 1));
-				break;
-			case 4:
-				list[i].SetPrice(Cin.GetDouble(5, 0, size_cols * col + 1));
-				break;
-			}
-		}
-		
+	case 1:
+		list[id].SetName(Cin.Get(15, 3, size_cols * whom + 1));
+		break;
+	case 2:
+		list[id].SetProdName(Cin.Get(15, 3, size_cols * whom + 1));
+		break;
+	case 3:
+		list[id].SetAmount(Cin.GetInt(5, 0, size_cols * whom + 1));
+		break;
+	case 4:
+		list[id].SetPrice(Cin.GetDouble(5, 0, size_cols * whom + 1));
+		break;
 	}
-	
 }

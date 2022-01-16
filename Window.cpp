@@ -4,7 +4,7 @@
 
 
 
-Window::Window(unsigned int _width, unsigned int _height, int position, int indent_letf, int indent_top)
+Window::Window(unsigned int _width, unsigned int _height, unsigned int position, int indent_letf, int indent_top)
 {
 	borders[TopLeftAngle] = 218;
 	borders[TopRightAngle] = 191;
@@ -61,14 +61,12 @@ void Window::DrawBox()
 void Window::FillLine(int _x, int _y)
 {
 	GotoXY(GetX()+_x,GetY() + _y);
-
 	for (int i = 0; i < GetWidth(); i++) {
 		cout << " ";
 	}
 
 }
-
-void Window::SetWinParam(unsigned int _width, unsigned int _height, int position, int indent_letf, int indent_top)
+void Window::SetWinParam(unsigned int _width, unsigned int _height, unsigned int position, int indent_letf, int indent_top)
 {
 	height = _height;
 	width = _width;
@@ -111,74 +109,46 @@ void Window::SetWinParam(unsigned int _width, unsigned int _height, int position
 
 }
 
-//void Menu::DoMenu(const char** _menu_headlines, int _size, void (*func1) (), void (*func2) (), void (*func3) (), void (*func4) (), void (*func5) ())
-//{
-//	if (!_size)
-//	{
-//		_menu_headlines = menu_headlines;
-//		_size = headlines_count;
-//	}
-//	char key;
-//	int pos = 0,
-//		pos_max = _size * 2;
-//	while (true)
-//	{
-//		cls();
-//		DrawMenu(_menu_headlines, _size);
-//		SetColor(activeTxcolor, activeBgcolor);
-//		FillRow(pos);
-//		WriteLine(_menu_headlines[pos / 2], 0, pos, 4);
-//		SetColor(txcolor, bgcolor);
-//		key = _getch();
-//		if (key == 27)break;
-//		if (key == 13)
-//		{
-//			switch (pos / 2)
-//			{
-//			case 0:
-//				if (*func1)func1();
-//				break;
-//			case 1:
-//				if (*func2)func2();
-//				break;
-//			case 2:
-//				if (*func3)func3();
-//				break;
-//			case 3:
-//				if (*func4)func4();
-//				break;
-//			case 4:
-//				if (*func5)func5();
-//				return;
-//				break;
-//			}
-//		}
-//		if (key == 'w')pos -= 2;
-//		if (key == 's')pos += 2;
-//		if (key == -32) {
-//			key = _getch();
-//			//down
-//			if (key == 80) pos += 2;
-//			//up
-//			if (key == 72) pos -= 2;
-//		}
-//		if (pos >= pos_max)pos = 0;
-//		if (pos < 0)pos = pos_max - 2;
-//	}
-//}
-//void Menu::DrawMenu(const char** _menu_headlines, int _size)
-//{
-//	DrawBox();
-//	if (!_size)
-//	{
-//		_menu_headlines = menu_headlines;
-//		_size = headlines_count;
-//	}
-//	for (int i = 0, j = 0; i < _size * 2; j++, i += 2)
-//	{
-//		WriteLine(_menu_headlines[j], 0, i, 4);
-//	}
-//}
+void Menu::SetMenuParam(int indent_letf, int indent_top)
+{
+	if (menu.GetCount())
+	{
+		int width = 0,len = 0;
+		for (int i = 0; i < menu.GetCount(); i++)
+		{
+			len = strlen(menu[i]);
+			if (width < len)width = len;
+		}
+		SetWinParam(width + 8, menu.GetCount() * 2 + 1, position, indent_letf, indent_top);
+	}
+}
+int Menu::DoMenu()
+{
+	char key;
+	int active = 0,
+		step = 2;
+	while (true)
+	{
+		DrawMenu();
+		FillLine(menu[active/ step],3,active);
+		Move(key, active, active, 0, step);
+		if (key == 13)return active / step;
+		if (key == 27)return -1;
+		if (active < 0)active = GetSizeMenu()-1;
+		if (active >= GetSizeMenu()* step) active = 0;
+	}
+}
+void Menu::DrawMenu()
+{
+	DrawBox();
+	for (int i = 0; i < GetSizeMenu(); i++)
+	{
+		WriteLine(menu[i], 3, i * 2);
+	}
+}
+
+
+
 
 
 Table::Table(unsigned int _width, unsigned int _height, unsigned int position, unsigned int _cols, unsigned int _rows, int indent_letf, int indent_top) :Window(_width, _height, position, indent_letf, indent_top)
@@ -486,7 +456,7 @@ void DrawMessage(const char* message, unsigned int width, unsigned int height, u
 {
 	cls();
 	Message msg(message, width, height, position, indent_letf, indent_top);
-	msg.DoTable();
+	msg.WriteMessage();
 	_getch();
 	cls();
 }
