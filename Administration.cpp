@@ -3,6 +3,7 @@
 
 void AdminProducts::DrawAdding()
 {
+	cls();
 	const char* phrases[5] = {
 		"Enter the name: ",
 		"Enter the amount: ",
@@ -22,13 +23,16 @@ void AdminProducts::DrawAdding()
 		switch (i)
 		{
 		case 0:
-			strcpy(name, Cin.Get(15, 3));
+			strcpy(name, Cin.GetData(15, 3));
+			if (!Cin.Success())return;
 			break;
 		case 1:
 			amount = Cin.GetInt(4, 1);
+			if (!Cin.Success())return;
 			break;
 		case 2:
 			price = Cin.GetDouble(8, 1);
+			if (!Cin.Success())return;
 			break;
 		case 3:
 			x = GetCurrentX();
@@ -36,6 +40,7 @@ void AdminProducts::DrawAdding()
 			while (true)
 			{
 				puchase_price = Cin.GetDouble(8, 1);
+				if (!Cin.Success())return;
 				if (price > puchase_price)break;
 				win.WriteLine(phrases[4], 2, 3);
 				GotoXY(x, y);
@@ -245,17 +250,17 @@ int AdminProducts::DrawSearching()
 	Input Cin;
 	win.DrawBox();
 	win.WriteLine("Enter: ", 2);
-	strcpy(str, Cin.Get(20));
+	strcpy(str, Cin.GetData(20));
 	return Search(str);
 }
 bool AdminProducts::ChangeData(int index, int whom)
 {
-	if (index < 0)throw exception("Id can't be the negative!");
+	if (index < 0)throw exception("Index can't be the negative!");
 	Input Cin;
 	switch (whom)
 	{
 	case 1:
-		list[index].SetName(Cin.Get(GetWidth() / cols, 3, GetX()+size_col * whom));
+		list[index].SetName(Cin.GetData(GetWidth() / cols, 3, GetX()+size_col * whom));
 		break;
 	case 2:
 		list[index].SetAmount(Cin.GetInt(GetWidth() / cols, 1, GetX() + size_col * whom));
@@ -267,7 +272,7 @@ bool AdminProducts::ChangeData(int index, int whom)
 		list[index].SetPurchasePrice(Cin.GetDouble(GetWidth() / cols, 1, GetX() + size_col * whom));
 		break;
 	}
-	return atoi(Cin.GetBuff());
+	return Cin.Success();
 }
 
 
@@ -286,6 +291,7 @@ void AdminCustomers::DrawAdding()
 	cls();
 	win.DrawBox("Enter the name: ", 2, 1);
 	strcpy(name, Cin.GetStr(15, 3));	
+	if(!Cin.Success())return;
 	if ((id = ChooseProduct(product)) == -1)return;
 
 	cls();
@@ -515,7 +521,7 @@ int AdminCustomers::DrawSearching()
 	Input Cin;
 	win.DrawBox();
 	win.WriteLine("Enter: ", 2);
-	strcpy(str, Cin.Get(20));
+	strcpy(str, Cin.GetData(20));
 	return Search(str);
 }
 void AdminCustomers::DrawElement(List<Customer>& _list, int row, int col, int x, int y)
@@ -542,15 +548,15 @@ void AdminCustomers::DrawElement(List<Customer>& _list, int row, int col, int x,
 }
 bool AdminCustomers::ChangeData(int index, int whom)
 {
-	if (index < 0)throw exception("Id can't be the negative!");
+	if (index < 0)throw exception("Index can't be the negative!");
 	Input Cin;
 	switch (whom)
 	{
 	case 1:
-		list[index].SetName(Cin.Get(GetWidth() / cols, 3, GetX() + size_col * whom));
+		list[index].SetName(Cin.GetData(GetWidth() / cols, 3, GetX() + size_col * whom));
 		break;
 	case 2:
-		list[index].SetProdName(Cin.Get(GetWidth() / cols, 3, GetX() + size_col * whom));
+		list[index].SetProdName(Cin.GetData(GetWidth() / cols, 3, GetX() + size_col * whom));
 		break;
 	case 3:
 		list[index].SetAmount(Cin.GetInt(GetWidth() / cols, 1, GetX() + size_col * whom));
@@ -559,5 +565,5 @@ bool AdminCustomers::ChangeData(int index, int whom)
 		list[index].SetPrice(Cin.GetDouble(GetWidth() / cols, 1, GetX() + size_col * whom));
 		break;
 	}
-	return atoi(Cin.GetBuff());
+	return Cin.Success();
 }

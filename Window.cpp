@@ -124,18 +124,21 @@ void Menu::SetMenuParam(int indent_letf, int indent_top)
 }
 int Menu::DoMenu()
 {
+	cls();
 	char key;
 	int active = 0,
 		step = 2;
 	while (true)
 	{
 		DrawMenu();
-		FillLine(menu_items[active/ step],3,active);
+		FillLine(menu_items[active/ step], 
+			aling ? (GetWidth() - strlen(menu_items[active / step])) / 2 : 3
+			, active);
 		Move(key, active, active, 0, step);
 		if (key == 13)return active / step;
 		if (key == 27)return -1;
-		if (active < 0)active = GetSizeMenu()-1;
-		if (active >= GetSizeMenu()* step) active = 0;
+		if (active < 0)active = (GetSizeMenu()-1) * step;
+		if (active >= GetSizeMenu() * step) active = 0;
 	}
 }
 void Menu::DrawMenu()
@@ -143,7 +146,9 @@ void Menu::DrawMenu()
 	DrawBox();
 	for (int i = 0; i < GetSizeMenu(); i++)
 	{
-		WriteLine(menu_items[i], 3, i * 2);
+		WriteLine(menu_items[i], 
+			aling ? (GetWidth() - strlen(menu_items[i])) / 2 : 3,
+			i * 2);
 	}
 }
 
@@ -251,145 +256,6 @@ void Table::SetRows(unsigned int num_rows)
 	}
 	else rows = size_row = num_rows;
 	
-}
-
-
-
-int Input::GetInt(int max_len, int min_len, int px, int py, int indent_letf, int indent_top)
-{
-	DataPreparation(max_len, px, py, indent_letf, indent_top);
-	int key, i = 0;
-	while (i < max_len)
-	{
-		key = _getch();
-		if (key == 27) { buff[0] = 0; return 0; }
-		if (key == 13) { if (i >= min_len)break; }
-		if (key == 8)
-		{
-			buff[--i] = 0;
-			GotoXY(GetCurrentX() - 1, GetCurrentY());
-			cout << " ";
-		}
-		if (key >= '0' && key <= '9') {
-			buff[i] = key;
-			i++;
-			buff[i] = 0;
-		}
-		GotoXY(px, py);
-		cout << buff;
-	}
-	ShowCaret(false);
-	return atoi(buff);
-}
-double Input::GetDouble(int max_len, int min_len, int px, int py, int indent_letf, int indent_top)
-{
-	DataPreparation(max_len, px, py, indent_letf, indent_top);
-	int key, i = 0;
-	bool is_dot = false;
-	while (i < max_len)
-	{
-		key = _getch();
-		if (key == 27) { buff[0] = 0; return 0; }
-		if (key == 13) { if (i >= min_len)break; }
-		if (key == 8)
-		{
-			buff[--i] = 0;
-			GotoXY(GetCurrentX() - 1, GetCurrentY());
-			cout << " ";
-		}
-		if ((key >= '0' && key <= '9') || (key == '.' && !is_dot))
-		{
-			if (key == '.')is_dot = true;
-			buff[i] = key;
-			i++;
-			buff[i] = 0;
-		}
-		GotoXY(px, py);
-		cout << buff;
-	}
-	ShowCaret(false);
-	return atof(buff);
-}
-char* Input::GetStr(int max_len, int min_len, int px, int py, int indent_letf, int indent_top)
-{
-	DataPreparation(max_len, px, py, indent_letf, indent_top);
-	int key, i = 0;
-	while (i < max_len)
-	{
-		key = _getch();
-		if (key == 27) { buff[0] = 0; return buff; }
-		if (key == 13) { if (i >= min_len)break; }
-		if (key == 8)
-		{
-			buff[--i] = 0;
-			GotoXY(GetCurrentX() - 1, GetCurrentY());
-			cout << " ";
-		}
-		if (key == 32)
-		{
-			buff[i] = key;
-			i++;
-			buff[i] = 0;
-		}
-		if ((key >= 'A' && key <= 'Z' && !i) || (key >= 'a' && key <= 'z'))
-		{
-			buff[i] = key;
-			i++;
-			buff[i] = 0;
-		}
-		GotoXY(px, py);
-		cout << buff;
-	}
-	ShowCaret(false);
-	return buff;
-}
-char* Input::Get(int max_len, int min_len, int px, int py, int indent_letf, int indent_top)
-{
-	DataPreparation(max_len, px, py, indent_letf, indent_top);
-	int key, i = 0;	
-	bool is_dot = false;
-	while (i < max_len)
-	{
-		key = _getch();
-		if (key == 27) { buff[0] = 0; return buff; }
-		if (key == 13) { if(i>=min_len)break; }
-		if(key==8)
-		{			
-			buff[--i] = 0;
-			GotoXY(GetCurrentX() - 1, GetCurrentY());
-			cout << " ";
-		}
-		if (key == 32)
-		{
-			buff[i] = key;
-			i++;
-			buff[i] = 0;
-		}
-		if ((key >= 'A' && key <= 'Z' && !i) || (key >= 'a' && key <= 'z')|| (key >= '0' && key <= '9') || (key == '.' && !is_dot))
-		{
-			if (key == '.')is_dot = true;
-			buff[i] = key;
-			i++;
-			buff[i] = 0;
-		}
-		GotoXY(px, py);
-		cout << buff;
-	}
-	ShowCaret(false);
-	return buff;
-}
-void Input::DataPreparation(int max_len, int& px, int& py, int indent_letf, int indent_top)
-{
-	ShowCaret(true);
-	if (buff)delete buff;
-	buff = new char[(max_len + 1)];
-	buff[0] = 0;
-	if (!px)px = GetCurrentX() + indent_letf;
-	if (!py)py = GetCurrentY() + indent_top;
-	GotoXY(px, py);
-	for (int i = 0; i < max_len; i++)
-		cout << " ";
-	GotoXY(px, py);
 }
 
 
