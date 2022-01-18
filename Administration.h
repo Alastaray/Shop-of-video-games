@@ -4,6 +4,7 @@
 #include "List.h"
 #include "Admin.h"
 #include "Products and customers.h"
+#include "Functions.h"
 using namespace std;
 
 

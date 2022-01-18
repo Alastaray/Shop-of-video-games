@@ -1,13 +1,10 @@
 #include <iostream>
-#include <fstream>
 #include <windows.h>
 #include <conio.h>
 #include "fun_console.h"
 #include "Window.h"
-#include "List.h"
-#include "Admin.h"
 #include "Administration.h"
-#include "Products and customers.h"
+
 using namespace std;
 #pragma warning(disable: 4996)
 
@@ -18,11 +15,10 @@ void main()
 {
 	try
 	{
-		AdminProducts product("products.txt");
-		product.Show();
-/*		AdminCustomers product("customers.txt");
-		product.DrawAdding();
-		product.Show()*/;
+		///*AdminProducts product("products.txt");
+		//product.Show();*/
+		//AdminCustomers product("customers.txt");
+		//product.DrawAdding();
 
 	}
 	catch (ListException& error)

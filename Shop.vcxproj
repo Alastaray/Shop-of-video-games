@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Administration.cpp" />
+    <ClCompile Include="Functions.cpp" />
     <ClCompile Include="fun_console.cpp" />
     <ClCompile Include="Products and customers.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -148,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="Admin.h" />
     <ClInclude Include="Administration.h" />
+    <ClInclude Include="Functions.h" />
     <ClInclude Include="fun_console.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="Management.h" />

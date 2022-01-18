@@ -50,7 +50,7 @@ void AdminProducts::DrawAdding()
 }
 void AdminProducts::Add(const char* name, int amount, double price, double puchase_price)
 {
-	static int id = number_st;
+	static int id = list[list.GetCount()-1].GetId() + 1;
 	list << Product(id, name, amount, price, puchase_price);
 	id++;
 }
@@ -274,21 +274,24 @@ void AdminProducts::ChangeData(int index, int whom)
 
 void AdminCustomers::DrawAdding()
 {
-	cls();
 	int id,
 		index,
 		amount;
 	char name[16];
 	Window win(35, 5, CenterTop, 0, 7);
 	Input Cin;
-	win.DrawBox("Enter the name: ", 0, 0, 2, 2);
-	strcpy(name, Cin.GetStr(15, 3));
 	AdminProducts product("products.txt");
-	if((id = ChooseProduct(product))==-1)throw exception("Incorrect returning from the func ChooseProduct!");
+
+	cls();
+	win.DrawBox("Enter the name: ", 0, 0, 2, 2);
+	strcpy(name, Cin.GetStr(15, 3));	
+	if ((id = ChooseProduct(product)) == -1)return;
+
 	cls();
 	win.DrawBox("Enter the amount: ", 0, 0, 2, 2);
 	amount = Cin.GetInt(5);
 	index = product.SeekElement(product.GetList(), id);
+
 	if (amount >= product[index].GetAmount())
 	{
 		Add(name, product[index].GetName(), product[index].GetAmount(), product[index].GetPrice());
@@ -333,18 +336,23 @@ int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& _list, i
 		prod_size_row = product.GetSizeRow(),
 		prod_cols = product.GetCols(),
 		prod_rows = product.GetRows();
+	if (!prod_size_col)throw exception("prod_size_col can't be zero!");
+	if (!prod_size_row)throw exception("prod_size_row can't be zero!");
 	if (!prod_size_col || !prod_size_row)return -1;
 	char key;
 	int x = 0, y = 0,
 		row, col;
 	Message back("Back", 10, 3, RightTop, 8, 2);
-	Message pag_left("<<", 5, 3, LeftTop, product.GetWidth() / 2 - 10, prod_size_row * prod_rows + 3);
-	Message pag_right(">>", 5, 3, LeftTop, product.GetWidth() / 2 + 3, prod_size_row * prod_rows + 3);
+	Message pag_left("<<", 5, 3, LeftTop, product.GetWidth() / 2 - 8, prod_size_row * prod_rows + 3);
+	Message current_page(IntToChar(page), 5, 3, LeftTop, product.GetWidth() / 2 - 1, prod_size_row * prod_rows + 3);
+	Message pag_right(">>", 5, 3, LeftTop, product.GetWidth() / 2 + 6, prod_size_row * prod_rows + 3);
+	
 	while (true)
 	{
 		product.DrawData(_list);
 		back.DrawMessage();	
 		pag_left.DrawMessage();
+		current_page.DrawMessage(1);
 		pag_right.DrawMessage();
 		row = y / prod_size_row;
 		col = x / prod_size_col;
@@ -378,7 +386,7 @@ int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& _list, i
 }
 void AdminCustomers::Add(const char* name, const char* prod_name, int amount, double price)
 {
-	static int id = number_st;
+	static int id = list[list.GetCount() - 1].GetId() + 1;
 	list << Customer(id, name, prod_name, amount, price);
 	id++;
 }

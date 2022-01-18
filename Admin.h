@@ -4,6 +4,7 @@
 #include "Management.h"
 #include "List.h"
 #include "cmath"
+#include "Functions.h"
 using namespace std;
 
 
@@ -19,8 +20,10 @@ public:
 		this->Read();
 	}
 	bool Show();
-	void DoDeleting();	
-	int SeekElement(List<type>& _list, int id);
+	void DrawDeleting();	
+	int SeekElement(List<type>& _list, unsigned int id);
+	virtual void DrawAdding() = 0;
+
 	void SetLimit(unsigned int _limit)
 	{
 		if (_limit == 0)throw exception("Limit can't be zero!");
@@ -28,20 +31,22 @@ public:
 	}
 	int GetLimit() { return limit; }
 	List<type>& GetSortedList() { return sorted; }
-	virtual void DrawAdding() = 0;
 protected:
 	int SetTableParam(List<type>& _list, int &page);
-	void DrawHeadlines();
 	int DoTable(List<type>& _list, int& page);
 	void DrawData(List<type>& _list);
 	void DrawActiveCell(List<type>& _list, int row, int col, int x, int y);
 	bool DrawPagination(Message& pag_left, Message& pag_right, int& page);
 	int DrawButtons(Message& sort, Message& search, Message& back);
-	bool DrawDeleting();
-	void CheckXY(int& x, int& y);
 	virtual void DrawElement(List<type>& _list, int row, int col, int x, int y) = 0;
+
+	void CheckXY(int& x, int& y);
+	void DrawHeadlines();
+
+	bool DoDeleting(List<type> _list, int& page);
 	virtual int DrawSearching() = 0;
 	virtual int DrawSorting() = 0;
+
 	virtual void ChangeData(int id, int whom) = 0;
 	void Edit(int id, int col);
 	void Synchronization(int index);
@@ -98,10 +103,11 @@ int Admin<type>::DoTable(List<type>& _list, int& page)
 {
 	char key = 0;
 	int x =0, y=0;
-	if (!size_col)throw exception("size_cols is empty!");
-	if(!size_row)throw exception("size_rows is empty!");
+	if (!size_col)throw exception("size_col can't be zero!");
+	if (!size_row)throw exception("size_row can't be zero!");
 	int row, col, result=1;
-	Message pag_left("<<", 5, 3, LeftTop, width / 2 - 8, size_row * rows + 3);
+	Message pag_left("<<", 5, 3, LeftTop, width / 2 - 9, size_row * rows + 3);
+	Message current_page(IntToChar(page), 5, 3, LeftTop, width / 2 - 2, size_row * rows + 3);
 	Message pag_right(">>", 5, 3, LeftTop, width / 2 + 5, size_row * rows + 3);
 	Message sort("Sort", 10, 3, RightTop, 8, 2 + rows / 3);
 	Message search("Search", 10, 3, RightTop, 8, 5 + rows / 3 * 2);
@@ -113,6 +119,7 @@ int Admin<type>::DoTable(List<type>& _list, int& page)
 		search.DrawMessage();
 		back.DrawMessage();
 		pag_left.DrawMessage();
+		current_page.DrawMessage(1);
 		pag_right.DrawMessage();
 		row = y / size_row;
 		col = x / size_col;
@@ -274,47 +281,66 @@ void Admin<type>::CheckXY(int& x, int& y)
 }
 
 template <class type>
-void Admin<type>::DoDeleting()
+void Admin<type>::DrawDeleting()
 {
+	int index,
+		page = 0,
+		number_pages = 0;
 	while (true)
 	{
 		cls();
-		SetWinParam(85, this->GetCount() * 2 + 1, LeftTop, 0, 2);
+		number_pages = ceil(this->list.GetCount() / (limit * 1.0));
+		if (number_pages <= page)page = 0;
+		if (0 > page)page = number_pages - 1;
+		List<type> l;
+		for (int i = page * limit, j = 0; i < this->list.GetCount(); i++, j++)
+		{
+			if (j >= limit)break;
+			l << this->list[i];
+		}		
+		SetWinParam(85, l.GetCount() * 2 + 1, LeftTop, 0, 2);
 		SetCols(5);
-		SetRows(this->GetCount());
-		if (!DrawDeleting())return;
+		SetRows(l.GetCount());
+		if (!DoDeleting(l, page))return;
 	}
 }
 
 template <class type>
-bool Admin<type>::DrawDeleting()
+bool Admin<type>::DoDeleting(List<type> _list, int &page)
 {
+	if (!size_col)throw exception("size_col can't be zero!");
+	if (!size_row)throw exception("size_row can't be zero!");
 	char key;
 	int x = 0, y = 0,
 		row, col;
+	Message pag_left("<<", 5, 3, LeftTop, width / 2 - 9, size_row * rows + 3);
+	Message current_page(IntToChar(page), 5, 3, LeftTop, width / 2-2, size_row * rows + 3);
+	Message pag_right(">>", 5, 3, LeftTop, width / 2 + 5, size_row * rows + 3);
 	Message back("Back", 10, 3, RightTop, 8, 2);
 	while (true)
 	{
-		DrawData();
+		DrawData(_list);
+		pag_left.DrawMessage();
+		current_page.DrawMessage(1);
+		pag_right.DrawMessage();
 		back.DrawMessage();
-		if (!size_col || !size_row)break;
 		row = y / size_row;
 		col = x / size_col;
 		for (int i = 0; i < cols; i++)
 		{
 			x = size_col * i;
-			DrawActiveCell(y / size_row, x / size_col, x, y);
+			DrawActiveCell(_list, y / size_row, x / size_col, x, y);
 		}
 		Move(key, x, y, size_col, size_row);
 		if (key == 27)return false;
 		if (key == 13)
 		{
-			Management<type>::RemoveAt(row);
+			this->list.RemoveAt(SeekElement(this->list, _list[row].GetId()));
 			return true;
 		}
 		if (x >= size_col * cols)
 		{
-			DrawData();
+			DrawData(_list);
 			back.DrawActiveMsg();
 			Move(key, x, y, size_col, size_row);
 			if (key == 13)return false;
@@ -322,6 +348,12 @@ bool Admin<type>::DrawDeleting()
 				y += size_row;
 			if (key == 80 || key == 's' || key == 'S')
 				y -= size_row;
+		}
+		if (y >= size_row * rows)
+		{
+			y -= size_row;
+			DrawData(_list);
+			if (DrawPagination(pag_left, pag_right, page))return -2;
 		}
 		CheckXY(x, y);
 	}
@@ -350,7 +382,7 @@ void Admin<type>::Synchronization(int index)
 }
 
 template <class type>
-int Admin<type>::SeekElement(List<type>& _list, int id)
+int Admin<type>::SeekElement(List<type>& _list, unsigned int id)
 {
 	for (int i = 0; i < _list.GetCount(); i++)
 	{

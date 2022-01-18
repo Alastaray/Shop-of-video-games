@@ -401,57 +401,6 @@ void Input::DataPreparation(int max_len, int& px, int& py, int indent_letf, int 
 
 
 
-
-
-bool CompareStr(const char* value, const char* source)
-{
-	int len = strlen(value);
-	int number_let = 0;
-	switch (len)
-	{
-	case 1:
-		for (int i = 0; i < strlen(source); i++)
-			if (value[0] == source[i])
-				return true;
-		break;
-	case 2:
-		for (int i = 0; i < strlen(source); i++)
-			if (value[0] == source[i] && value[1] == source[i+1])
-				return true;
-	case 3:
-		for (int i = 0; i < strlen(source); i++)
-			if (value[0] == source[i] && value[1] == source[i + 1] && value[1] == source[i + 2]&& i + 2 < strlen(source))
-				return true;
-	default:
-		for (int i = 0; i < len; i++)
-			if (value[i] == source[i])
-				number_let++;
-		break;
-	}
-	
-	if (number_let == len)return true;
-	else return false;
-}
-void Move(char &key, int& x, int& y, int how_change_x, int how_change_y)
-{
-	key = _getch();
-	if (key == 'w')y -= how_change_y;
-	if (key == 's')y += how_change_y;
-	if (key == 'd')x += how_change_x;
-	if (key == 'a')x -= how_change_x;
-	if (key == -32)
-	{
-		key = _getch();
-		//down
-		if (key == 80) y += how_change_y;
-		//up
-		if (key == 72) y -= how_change_y;
-		//left
-		if (key == 75) x -= how_change_x;
-		//right
-		if (key == 77) x += how_change_x;
-	}
-}
 void DrawMessage(const char* message, unsigned int width, unsigned int height, unsigned int position, int indent_letf, int indent_top)
 {
 	cls();

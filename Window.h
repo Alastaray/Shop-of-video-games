@@ -4,7 +4,7 @@
 #include "fun_console.h"
 #include "Products and customers.h"
 #include "List.h"
-
+#include "Functions.h"
 using namespace std;
 
 enum position
@@ -17,8 +17,7 @@ enum position
 	RightBot
 };
 
-bool CompareStr(const char* value, const char* source);
-void Move(char &key, int& x, int& y, int how_change_x = 0, int how_change_y = 0);
+
 void DrawMessage(const char* message, unsigned int _width = 17, unsigned int _height = 3, unsigned int position = CenterTop, int indent_letf = 0, int indent_top = 10);
 
 
