@@ -159,10 +159,10 @@ Table::Table(unsigned int _width, unsigned int _height, unsigned int position, u
 void Table::FillLine(int _x, int _y)
 {
 
-	for (int i = 0; i < size_rows - 1; i++)
+	for (int i = 0; i < size_row - 1; i++)
 	{
 		GotoXY(GetX() + _x, GetY() + _y + i);
-		for (int j = 0; j < size_cols - 1; j++)
+		for (int j = 0; j < size_col - 1; j++)
 		{
 			cout << " ";
 		}
@@ -178,17 +178,17 @@ void Table::DrawCols()
 		for (int j = 1; j <= GetWidth(); j++)
 		{
 			if (i == 0 &&
-				j % size_cols == 0 &&
-				j + size_cols - 2 <= GetWidth())
+				j % size_col == 0 &&
+				j + size_col - 2 <= GetWidth())
 				cout << borders[TopCrosshair];
 
 			else if (i == height - 1 &&
-				j % size_cols == 0 &&
-				j + size_cols - 2 <= GetWidth())
+				j % size_col == 0 &&
+				j + size_col - 2 <= GetWidth())
 				cout << borders[BotCrosshair];
 
-			else if (j % size_cols == 0 &&
-				j + size_cols - 2 <= GetWidth())
+			else if (j % size_col == 0 &&
+				j + size_col - 2 <= GetWidth())
 				cout << borders[VerticalLine];
 
 			else if (i == 0 || i == height - 1)
@@ -215,8 +215,8 @@ void Table::DrawRows()
 				cout << borders[LeftCrosshair];
 			else if (j == width - 1)
 				cout << borders[RightCrosshair];
-			else if (cols&& j != 0 && j % size_cols == 0 &&
-				j + size_cols - 2 <= GetWidth())
+			else if (cols&& j != 0 && j % size_col == 0 &&
+				j + size_col - 2 <= GetWidth())
 				cout << borders[Crosshair];
 			else 
 				cout << borders[HorizontalLine];
@@ -231,12 +231,12 @@ void Table::DrawTable()
 }
 void Table::DrawHeadlines(const char** headlines)
 {
-	size_cols = width / cols;
+	size_col = width / cols;
 	int pos_x = 0;
 	for (int j = 0; j < cols; j++)
 	{
 		WriteLine(headlines[j], pos_x);
-		pos_x += size_cols;
+		pos_x += size_col;
 	}
 
 };
@@ -245,18 +245,18 @@ void Table::SetCols(unsigned int num_cols)
 	if (num_cols > 0)
 	{
 		cols = num_cols;
-		size_cols = width / cols;
+		size_col = width / cols;
 	}
-	else cols = size_cols = num_cols;
+	else cols = size_col = num_cols;
 }
 void Table::SetRows(unsigned int num_rows)
 {
 	if (num_rows > 0)
 	{
 		rows = num_rows;
-		size_rows = height / rows;
+		size_row = height / rows;
 	}
-	else rows = size_rows = num_rows;
+	else rows = size_row = num_rows;
 	
 }
 

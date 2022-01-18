@@ -18,10 +18,11 @@ void main()
 {
 	try
 	{
-		//AdminProducts product("products.txt");
-		//product.Show();
-		AdminCustomers product("customers.txt");
+		AdminProducts product("products.txt");
+		product.Show();
+/*		AdminCustomers product("customers.txt");
 		product.DrawAdding();
+		product.Show()*/;
 
 	}
 	catch (ListException& error)

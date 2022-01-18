@@ -50,7 +50,8 @@ protected:
 	virtual int DrawSearching();
 	virtual int DrawSorting();
 	virtual void ChangeData(int id, int whom);
-	int ShowProducts(AdminProducts& product);
+	int ChooseProduct(AdminProducts& product);
+	int ShowProducts(AdminProducts& product, List<Product>& _list, int& page);
 	virtual void DrawElement(List<Customer>& _list, int row, int col, int x, int y);
 	void Add(const char* name, const char* prod_name, int amount, double price);
 	int Search(const char* val = 0);
