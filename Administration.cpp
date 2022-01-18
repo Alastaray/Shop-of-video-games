@@ -248,23 +248,23 @@ int AdminProducts::DrawSearching()
 	strcpy(str, Cin.Get(20));
 	return Search(str);
 }
-void AdminProducts::ChangeData(int id, int whom)
+void AdminProducts::ChangeData(int index, int whom)
 {
-	if (id < 0)throw exception("Id can't be the negative!");
+	if (index < 0)throw exception("Id can't be the negative!");
 	Input Cin;
 	switch (whom)
 	{
 	case 1:
-		list[id].SetName(Cin.Get(15, 3, size_cols * whom + 1));
+		list[index].SetName(Cin.Get(15, 3, size_col * whom + 1));
 		break;
 	case 2:
-		list[id].SetAmount(Cin.GetInt(5, 0, size_cols * whom + 1));
+		list[index].SetAmount(Cin.GetInt(5, 0, size_col * whom + 1));
 		break;
 	case 3:
-		list[id].SetPrice(Cin.GetDouble(5, 0, size_cols * whom + 1));
+		list[index].SetPrice(Cin.GetDouble(5, 0, size_col * whom + 1));
 		break;
 	case 4:
-		list[id].SetPurchasePrice(Cin.GetDouble(5, 0, size_cols * whom + 1));
+		list[index].SetPurchasePrice(Cin.GetDouble(5, 0, size_col * whom + 1));
 		break;
 	}
 }
@@ -275,27 +275,20 @@ void AdminProducts::ChangeData(int id, int whom)
 void AdminCustomers::DrawAdding()
 {
 	cls();
-	int index,
+	int id,
+		index,
 		amount;
 	char name[16];
 	Window win(35, 5, CenterTop, 0, 7);
 	Input Cin;
 	win.DrawBox("Enter the name: ", 0, 0, 2, 2);
 	strcpy(name, Cin.GetStr(15, 3));
-
 	AdminProducts product("products.txt");
-	product.Read();
-	this->SetWinParam(85, product.GetCount() * 2 + 1, LeftTop, 0, 2);
-	this->SetCols(5);
-	this->SetRows(product.GetCount());
-	product.SetWinParam(85, product.GetCount() * 2 + 1, LeftTop, 0, 2);
-	product.SetCols(5);
-	product.SetRows(product.GetCount());
-	index = ShowProducts(product);
-	if (index == -1)return;
+	if((id = ChooseProduct(product))==-1)throw exception("Incorrect returning from the func ChooseProduct!");
 	cls();
 	win.DrawBox("Enter the amount: ", 0, 0, 2, 2);
 	amount = Cin.GetInt(5);
+	index = product.SeekElement(product.GetList(), id);
 	if (amount >= product[index].GetAmount())
 	{
 		Add(name, product[index].GetName(), product[index].GetAmount(), product[index].GetPrice());
@@ -309,39 +302,78 @@ void AdminCustomers::DrawAdding()
 	
 	DrawMessage("Product was bought!");
 }
-int AdminCustomers::ShowProducts(AdminProducts& product)
+int AdminCustomers::ChooseProduct(AdminProducts& product)
 {
+	int index,
+		page=0,
+		number_pages = ceil(product.GetCount() / (limit * 1.0));
+	while (true)
+	{
+		cls();
+		List<Product> l;
+		for (int i = page * limit, j = 0; i < product.GetCount(); i++, j++)
+		{
+			if (j >= limit)break;
+			l << product.GetList()[i];
+		}
+		product.SetWinParam(85, l.GetCount() * 2 + 1, LeftTop, 0, 2);
+		product.SetCols(5);
+		product.SetRows(l.GetCount());
+		index = ShowProducts(product, l, page);
+		if (index >= 0)return l[index].GetId();
+		if (index == -1)return index;
+		if (number_pages <= page)page = 0;
+		if (0 > page)page = number_pages - 1;
+	}
+	return -1;
+}
+int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& _list, int& page)
+{
+	int prod_size_col = product.GetSizeCol(),
+		prod_size_row = product.GetSizeRow(),
+		prod_cols = product.GetCols(),
+		prod_rows = product.GetRows();
+	if (!prod_size_col || !prod_size_row)return -1;
 	char key;
 	int x = 0, y = 0,
 		row, col;
 	Message back("Back", 10, 3, RightTop, 8, 2);
+	Message pag_left("<<", 5, 3, LeftTop, product.GetWidth() / 2 - 10, prod_size_row * prod_rows + 3);
+	Message pag_right(">>", 5, 3, LeftTop, product.GetWidth() / 2 + 3, prod_size_row * prod_rows + 3);
 	while (true)
 	{
-		product.DrawData(product.GetList());
-		back.DrawMessage();
-		if (!size_cols || !size_rows)break;
-		row = y / size_rows;
-		col = x / size_cols;
-		for (int i = 0; i < cols; i++)
+		product.DrawData(_list);
+		back.DrawMessage();	
+		pag_left.DrawMessage();
+		pag_right.DrawMessage();
+		row = y / prod_size_row;
+		col = x / prod_size_col;
+		for (int i = 0; i < prod_cols; i++)
 		{
-			x = size_cols * i;
-			product.DrawActiveCell(product.GetList(), y / size_rows, x / size_cols, x, y);
+			x = prod_size_col * i;
+			product.DrawActiveCell(_list, y / prod_size_row, x / prod_size_col, x, y);
 		}
-		Move(key, x, y, size_cols, size_rows);
+		Move(key, x, y, prod_size_col, prod_size_row);
 		if (key == 27)return -1;
 		if (key == 13)return row;
-		if (x >= size_cols * cols)
+		if (x >= prod_size_col * prod_cols)
 		{
-			product.DrawData(product.GetList());
+			product.DrawData(_list);
 			back.DrawActiveMsg();
-			Move(key, x, y, size_cols, size_rows);
+			Move(key, x, y, prod_size_col, prod_size_row);
 			if (key == 13)return -1;
 			if (key == 72 || key == 'w' || key == 'W')
-				y += size_rows;
+				y += prod_size_row;
 			if (key == 80 || key == 's' || key == 'S')
-				y -= size_rows;
+				y -= prod_size_row;
 		}
-		CheckXY(x, y);
+		if (y >= prod_size_row * prod_rows)
+		{
+			y -= prod_size_row;
+			product.DrawData(_list);
+			if(product.DrawPagination(pag_left, pag_right,page))return -2;
+		}
+		product.CheckXY(x, y);
 	}
 }
 void AdminCustomers::Add(const char* name, const char* prod_name, int amount, double price)
@@ -500,23 +532,23 @@ void AdminCustomers::DrawElement(List<Customer>& _list, int row, int col, int x,
 		break;
 	}
 }
-void AdminCustomers::ChangeData(int id, int whom)
+void AdminCustomers::ChangeData(int index, int whom)
 {
-	if (id < 0)throw exception("Id can't be the negative!");
+	if (index < 0)throw exception("Id can't be the negative!");
 	Input Cin;
 	switch (whom)
 	{
 	case 1:
-		list[id].SetName(Cin.Get(15, 3, size_cols * whom + 1));
+		list[index].SetName(Cin.Get(15, 3, size_col * whom + 1));
 		break;
 	case 2:
-		list[id].SetProdName(Cin.Get(15, 3, size_cols * whom + 1));
+		list[index].SetProdName(Cin.Get(15, 3, size_col * whom + 1));
 		break;
 	case 3:
-		list[id].SetAmount(Cin.GetInt(5, 0, size_cols * whom + 1));
+		list[index].SetAmount(Cin.GetInt(5, 0, size_col * whom + 1));
 		break;
 	case 4:
-		list[id].SetPrice(Cin.GetDouble(5, 0, size_cols * whom + 1));
+		list[index].SetPrice(Cin.GetDouble(5, 0, size_col * whom + 1));
 		break;
 	}
 }

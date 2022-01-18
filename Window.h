@@ -92,13 +92,17 @@ public:
 	void DrawTable();
 	void SetCols(unsigned int num_cols);
 	void SetRows(unsigned int num_cols);
+	unsigned int GetRows() { return rows; }
+	unsigned int GetCols() { return cols; }
+	unsigned int GetSizeRow() { return size_row; }
+	unsigned int GetSizeCol() { return size_col; }
 	void DrawHeadlines(const char** headlines);
 	void FillLine(int _x = 0, int _y = 0);
 protected:
 	void DrawCols();
 	void DrawRows();
 	unsigned int cols, rows,
-		size_cols, size_rows;
+		size_col, size_row;
 };
 
 
@@ -120,7 +124,7 @@ private:
 	unsigned int position;
 };
 
-class Message :public Window
+class Message :protected Window
 {
 public:
 	Message(const char* _name, unsigned int _width, unsigned int _height, unsigned int position, int indent_letf = 0, int indent_top = 0) : Window(_width, _height, position, indent_letf, indent_top)

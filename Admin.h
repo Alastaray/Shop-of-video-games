@@ -8,7 +8,6 @@ using namespace std;
 
 
 
-
 template <class type>
 class Admin : public Management<type>, public Table
 {
@@ -21,20 +20,22 @@ public:
 	}
 	bool Show();
 	void DoDeleting();	
-	virtual void DrawAdding() = 0;
+	int SeekElement(List<type>& _list, int id);
 	void SetLimit(unsigned int _limit)
 	{
 		if (_limit == 0)throw exception("Limit can't be zero!");
 		limit = _limit;
 	}
 	int GetLimit() { return limit; }
+	List<type>& GetSortedList() { return sorted; }
+	virtual void DrawAdding() = 0;
 protected:
 	int SetTableParam(List<type>& _list, int &page);
 	void DrawHeadlines();
 	int DoTable(List<type>& _list, int& page);
 	void DrawData(List<type>& _list);
 	void DrawActiveCell(List<type>& _list, int row, int col, int x, int y);
-	int DrawPagination(Message& pag_left, Message& pag_right, int& page);
+	bool DrawPagination(Message& pag_left, Message& pag_right, int& page);
 	int DrawButtons(Message& sort, Message& search, Message& back);
 	bool DrawDeleting();
 	void CheckXY(int& x, int& y);
@@ -43,13 +44,12 @@ protected:
 	virtual int DrawSorting() = 0;
 	virtual void ChangeData(int id, int whom) = 0;
 	void Edit(int id, int col);
-	void Synchronization(int id);
+	void Synchronization(int index);
 
 	const char* headlines[5];
 	List <type> sorted;
 	unsigned int limit;
 };
-
 
 
 
@@ -98,11 +98,11 @@ int Admin<type>::DoTable(List<type>& _list, int& page)
 {
 	char key = 0;
 	int x =0, y=0;
-	if (!size_cols)throw exception("size_cols is empty!");
-	if(!size_rows)throw exception("size_rows is empty!");
+	if (!size_col)throw exception("size_cols is empty!");
+	if(!size_row)throw exception("size_rows is empty!");
 	int row, col, result=1;
-	Message pag_left("<<", 5, 3, LeftTop, width / 2 - 8, size_rows * rows + 3);
-	Message pag_right(">>", 5, 3, LeftTop, width / 2 + 5, size_rows * rows + 3);
+	Message pag_left("<<", 5, 3, LeftTop, width / 2 - 8, size_row * rows + 3);
+	Message pag_right(">>", 5, 3, LeftTop, width / 2 + 5, size_row * rows + 3);
 	Message sort("Sort", 10, 3, RightTop, 8, 2 + rows / 3);
 	Message search("Search", 10, 3, RightTop, 8, 5 + rows / 3 * 2);
 	Message back("Back", 10, 3, RightTop, 8, 8 + rows / 3 * 3);
@@ -114,27 +114,27 @@ int Admin<type>::DoTable(List<type>& _list, int& page)
 		back.DrawMessage();
 		pag_left.DrawMessage();
 		pag_right.DrawMessage();
-		row = y / size_rows;
-		col = x / size_cols;
+		row = y / size_row;
+		col = x / size_col;
 		DrawActiveCell(_list, row, col, x, y);
-		Move(key, x, y, size_cols, size_rows);
+		Move(key, x, y, size_col, size_row);
 		if (key == 27)break;
 		if (key == 13)
 		{
 			Edit(_list[row].GetId(), col);
 			return true;
 		}
-		if (x >= size_cols * cols)
+		if (x >= size_col * cols)
 		{
-			x -= size_cols;
+			x -= size_col;
 			DrawData(_list);
-			if ((result = DrawButtons(sort, search, back)) != 3)return result;
+			if ((result = DrawButtons(sort, search, back)) != -1)return result;
 		}	
-		if (y >= size_rows * rows)
+		if (y >= size_row * rows)
 		{
-			y -= size_rows; 
+			y -= size_row; 
 			DrawData(_list);
-			if ((result = DrawPagination(pag_left, pag_right, page)) != 3)return result;
+			if (DrawPagination(pag_left, pag_right, page))return true;
 		}
 		CheckXY(x, y);
 	}
@@ -155,9 +155,9 @@ void Admin<type>::DrawData(List<type>& _list)
 		for (int j = 0; j < cols; j++)
 		{
 			DrawElement(_list, i, j, pos_x, pos_y);
-			pos_x += size_cols;
+			pos_x += size_col;
 		}
-		pos_y += size_rows;
+		pos_y += size_row;
 	}
 
 }
@@ -214,11 +214,11 @@ int Admin<type>::DrawButtons(Message& sort, Message& search, Message& back)
 		if (y >= 3)y = 0;
 		if (y < 0)y = 2;
 	}
-	return 3;
+	return -1;
 }
 
 template <class type>
-int Admin<type>::DrawPagination(Message& pag_left, Message& pag_right, int& page)
+bool Admin<type>::DrawPagination(Message& pag_left, Message& pag_right, int& page)
 {
 	int x = 0, y = 0;
 	char key;
@@ -250,11 +250,8 @@ int Admin<type>::DrawPagination(Message& pag_left, Message& pag_right, int& page
 		if (x >= 2)x = 0;
 		if (x < 0)x = 1;
 	}
-	return 3;
+	return false;
 }
-
-
-
 
 
 template <class type>
@@ -270,10 +267,10 @@ void Admin<type>::DrawHeadlines()
 template <class type>
 void Admin<type>::CheckXY(int& x, int& y)
 {
-	if (y < 0)y = size_rows * (rows - 1);
-	if (y >= size_rows * rows)y = 0;
-	if (x >= size_cols * cols)x = 0;
-	if (x < 0)x = size_cols * (cols - 1);
+	if (y < 0)y = size_row * (rows - 1);
+	if (y >= size_row * rows)y = 0;
+	if (x >= size_col * cols)x = 0;
+	if (x < 0)x = size_col * (cols - 1);
 }
 
 template <class type>
@@ -300,31 +297,31 @@ bool Admin<type>::DrawDeleting()
 	{
 		DrawData();
 		back.DrawMessage();
-		if (!size_cols || !size_rows)break;
-		row = y / size_rows;
-		col = x / size_cols;
+		if (!size_col || !size_row)break;
+		row = y / size_row;
+		col = x / size_col;
 		for (int i = 0; i < cols; i++)
 		{
-			x = size_cols * i;
-			DrawActiveCell(y / size_rows, x / size_cols, x, y);
+			x = size_col * i;
+			DrawActiveCell(y / size_row, x / size_col, x, y);
 		}
-		Move(key, x, y, size_cols, size_rows);
+		Move(key, x, y, size_col, size_row);
 		if (key == 27)return false;
 		if (key == 13)
 		{
 			Management<type>::RemoveAt(row);
 			return true;
 		}
-		if (x >= size_cols * cols)
+		if (x >= size_col * cols)
 		{
 			DrawData();
 			back.DrawActiveMsg();
-			Move(key, x, y, size_cols, size_rows);
+			Move(key, x, y, size_col, size_row);
 			if (key == 13)return false;
 			if (key == 72 || key == 'w' || key == 'W')
-				y += size_rows;
+				y += size_row;
 			if (key == 80 || key == 's' || key == 'S')
-				y -= size_rows;
+				y -= size_row;
 		}
 		CheckXY(x, y);
 	}
@@ -334,35 +331,33 @@ template <class type>
 void Admin<type>::Edit(int id, int col)
 {
 	if (!col)return;
-	if (id < this->list.GetCount())
-	{
-		ChangeData(id, col);
-		Synchronization(id);
-	}
-	else
-	{
-		for (int i = 0; i < this->list.GetCount(); i++)
-		{
-			if (id == this->list[i].GetId())
-			{
-				ChangeData(i, col);
-				Synchronization(i);
-				break;
-			}
-		}
-	}
+	int index = SeekElement(this->list, id);
+	ChangeData(index, col);
+	Synchronization(index);
 }
 
 template <class type>
-void Admin<type>::Synchronization(int id)
+void Admin<type>::Synchronization(int index)
 {
 	for (int i = 0; i < sorted.GetCount(); i++)
 	{
-		if (id == sorted[i].GetId())
+		if (this->list[index].GetId() == sorted[i].GetId())
 		{
-			sorted[i] = this->list[id];
+			sorted[i] = this->list[index];
 			break;
 		}
 	}
 }
 
+template <class type>
+int Admin<type>::SeekElement(List<type>& _list, int id)
+{
+	for (int i = 0; i < _list.GetCount(); i++)
+	{
+		if (id == _list[i].GetId())
+		{
+			return i;
+		}
+	}
+	return -1;
+}
