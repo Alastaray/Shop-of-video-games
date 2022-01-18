@@ -4,7 +4,7 @@
 #include "Management.h"
 #include "List.h"
 #include "cmath"
-#include "Functions.h"
+#include "Others.h"
 using namespace std;
 
 
@@ -13,13 +13,13 @@ template <class type>
 class Admin : public Management<type>, public Table
 {
 public:
-
 	Admin(const char* _filename) : Management<type>(_filename)
 	{
+		headlines[0] = "0";
 		limit = 10;
 		width = 90;
 		SetCols(5);
-		this->Read();
+		if(!this->Read())throw exception("File wasn't found or can't be read!");
 	}
 	bool Show();
 	void DrawDeleting();	
@@ -34,6 +34,10 @@ public:
 	int GetLimit() { return limit; }
 	List<type>& GetSortedList() { return sorted; }
 protected:
+	const char* headlines[5];
+	List <type> sorted;
+	unsigned int limit;
+
 	int SetTableParam(List<type>& _list, int &page);
 	int DoTable(List<type>& _list, int& page);
 	void DrawData(List<type>& _list);
@@ -53,9 +57,6 @@ protected:
 	bool Edit(int id, int col);
 	void Synchronization(int index);
 
-	const char* headlines[5];
-	List <type> sorted;
-	unsigned int limit;
 };
 
 
@@ -264,7 +265,7 @@ bool Admin<type>::DrawPagination(Message& pag_left, Message& pag_right, int& pag
 template <class type>
 void Admin<type>::DrawHeadlines()
 {
-	if (headlines)
+	if (!CompareStr(headlines[0], "0"))
 	{
 		Table hl(width, 4, LeftTop, 5,0,5);
 		hl.DrawHeadlines(headlines);

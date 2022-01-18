@@ -4,7 +4,7 @@
 #include "fun_console.h"
 #include "Products and customers.h"
 #include "List.h"
-#include "Functions.h"
+#include "Others.h"
 using namespace std;
 
 enum position
@@ -113,16 +113,19 @@ public:
 	Menu(unsigned int position, unsigned int _width = 0, unsigned int _height = 0, int indent_letf = 0, int indent_top = 0) :Window(_width, _height, position, indent_letf, indent_top)
 	{
 		this->position = position;
+		aling = true;
 	}
-	void SetMenuParam(int indent_letf = 0, int indent_top = 0);
-	int GetSizeMenu() { return menu_items.GetCount(); }
 	int DoMenu();
 	void DrawMenu();
+	void SetMenuParam(int indent_letf = 0, int indent_top = 0);
+	int GetSizeMenu() { return menu_items.GetCount(); }
+	void SetAling(bool _aling) { aling = _aling; }
 	void AddMenuItem(const char* item) { menu_items << item; }
 	Menu& operator<<(const char* item) { AddMenuItem(item); return *this; }
 private:
 	List<const char*>menu_items;
 	unsigned int position;
+	bool aling;
 };
 
 class Message :protected Window
@@ -150,18 +153,4 @@ public:
 };
 
 
-class Input
-{
-public:
-	Input() { buff = 0; }
-	~Input() { delete buff; }
-	double GetDouble(int max_len, int min_len = 0, int px = 0, int py = 0, int indent_letf = 0, int indent_top = 0);
-	int GetInt(int max_len, int min_len = 0, int px = 0, int py = 0, int indent_letf = 0, int indent_top = 0);
-	char* GetStr(int max_len, int min_len = 0, int px = 0, int py = 0, int indent_letf = 0, int indent_top = 0);
-	char* Get(int max_len, int min_len=0, int px = 0, int py = 0, int indent_letf = 0, int indent_top = 0);
-	char* GetBuff() { return buff; }
-private:
-	void DataPreparation(int max_len, int &px, int &py, int indent_letf = 0, int indent_top = 0);
-	char* buff;
-};
 
