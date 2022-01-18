@@ -111,31 +111,34 @@ void Window::SetWinParam(unsigned int _width, unsigned int _height, unsigned int
 
 void Menu::SetMenuParam(int indent_letf, int indent_top)
 {
-	if (menu.GetCount())
+	if (menu_items.GetCount())
 	{
 		int width = 0,len = 0;
-		for (int i = 0; i < menu.GetCount(); i++)
+		for (int i = 0; i < menu_items.GetCount(); i++)
 		{
-			len = strlen(menu[i]);
+			len = strlen(menu_items[i]);
 			if (width < len)width = len;
 		}
-		SetWinParam(width + 8, menu.GetCount() * 2 + 1, position, indent_letf, indent_top);
+		SetWinParam(width + 8, menu_items.GetCount() * 2 + 1, position, indent_letf, indent_top);
 	}
 }
 int Menu::DoMenu()
 {
+	cls();
 	char key;
 	int active = 0,
 		step = 2;
 	while (true)
 	{
 		DrawMenu();
-		FillLine(menu[active/ step],3,active);
+		FillLine(menu_items[active/ step], 
+			aling ? (GetWidth() - strlen(menu_items[active / step])) / 2 : 3
+			, active);
 		Move(key, active, active, 0, step);
 		if (key == 13)return active / step;
 		if (key == 27)return -1;
-		if (active < 0)active = GetSizeMenu()-1;
-		if (active >= GetSizeMenu()* step) active = 0;
+		if (active < 0)active = (GetSizeMenu()-1) * step;
+		if (active >= GetSizeMenu() * step) active = 0;
 	}
 }
 void Menu::DrawMenu()
@@ -143,19 +146,14 @@ void Menu::DrawMenu()
 	DrawBox();
 	for (int i = 0; i < GetSizeMenu(); i++)
 	{
-		WriteLine(menu[i], 3, i * 2);
+		WriteLine(menu_items[i], 
+			aling ? (GetWidth() - strlen(menu_items[i])) / 2 : 3,
+			i * 2);
 	}
 }
 
 
 
-
-
-Table::Table(unsigned int _width, unsigned int _height, unsigned int position, unsigned int _cols, unsigned int _rows, int indent_letf, int indent_top) :Window(_width, _height, position, indent_letf, indent_top)
-{
-	SetCols(_cols);
-	SetRows(_rows);
-}
 void Table::FillLine(int _x, int _y)
 {
 
@@ -262,196 +260,6 @@ void Table::SetRows(unsigned int num_rows)
 
 
 
-int Input::GetInt(int max_len, int min_len, int px, int py, int indent_letf, int indent_top)
-{
-	DataPreparation(max_len, px, py, indent_letf, indent_top);
-	int key, i = 0;
-	while (i < max_len)
-	{
-		key = _getch();
-		if (key == 27) { buff[0] = 0; return 0; }
-		if (key == 13) { if (i >= min_len)break; }
-		if (key == 8)
-		{
-			buff[--i] = 0;
-			GotoXY(GetCurrentX() - 1, GetCurrentY());
-			cout << " ";
-		}
-		if (key >= '0' && key <= '9') {
-			buff[i] = key;
-			i++;
-			buff[i] = 0;
-		}
-		GotoXY(px, py);
-		cout << buff;
-	}
-	ShowCaret(false);
-	return atoi(buff);
-}
-double Input::GetDouble(int max_len, int min_len, int px, int py, int indent_letf, int indent_top)
-{
-	DataPreparation(max_len, px, py, indent_letf, indent_top);
-	int key, i = 0;
-	bool is_dot = false;
-	while (i < max_len)
-	{
-		key = _getch();
-		if (key == 27) { buff[0] = 0; return 0; }
-		if (key == 13) { if (i >= min_len)break; }
-		if (key == 8)
-		{
-			buff[--i] = 0;
-			GotoXY(GetCurrentX() - 1, GetCurrentY());
-			cout << " ";
-		}
-		if ((key >= '0' && key <= '9') || (key == '.' && !is_dot))
-		{
-			if (key == '.')is_dot = true;
-			buff[i] = key;
-			i++;
-			buff[i] = 0;
-		}
-		GotoXY(px, py);
-		cout << buff;
-	}
-	ShowCaret(false);
-	return atof(buff);
-}
-char* Input::GetStr(int max_len, int min_len, int px, int py, int indent_letf, int indent_top)
-{
-	DataPreparation(max_len, px, py, indent_letf, indent_top);
-	int key, i = 0;
-	while (i < max_len)
-	{
-		key = _getch();
-		if (key == 27) { buff[0] = 0; return buff; }
-		if (key == 13) { if (i >= min_len)break; }
-		if (key == 8)
-		{
-			buff[--i] = 0;
-			GotoXY(GetCurrentX() - 1, GetCurrentY());
-			cout << " ";
-		}
-		if (key == 32)
-		{
-			buff[i] = key;
-			i++;
-			buff[i] = 0;
-		}
-		if ((key >= 'A' && key <= 'Z' && !i) || (key >= 'a' && key <= 'z'))
-		{
-			buff[i] = key;
-			i++;
-			buff[i] = 0;
-		}
-		GotoXY(px, py);
-		cout << buff;
-	}
-	ShowCaret(false);
-	return buff;
-}
-char* Input::Get(int max_len, int min_len, int px, int py, int indent_letf, int indent_top)
-{
-	DataPreparation(max_len, px, py, indent_letf, indent_top);
-	int key, i = 0;	
-	bool is_dot = false;
-	while (i < max_len)
-	{
-		key = _getch();
-		if (key == 27) { buff[0] = 0; return buff; }
-		if (key == 13) { if(i>=min_len)break; }
-		if(key==8)
-		{			
-			buff[--i] = 0;
-			GotoXY(GetCurrentX() - 1, GetCurrentY());
-			cout << " ";
-		}
-		if (key == 32)
-		{
-			buff[i] = key;
-			i++;
-			buff[i] = 0;
-		}
-		if ((key >= 'A' && key <= 'Z' && !i) || (key >= 'a' && key <= 'z')|| (key >= '0' && key <= '9') || (key == '.' && !is_dot))
-		{
-			if (key == '.')is_dot = true;
-			buff[i] = key;
-			i++;
-			buff[i] = 0;
-		}
-		GotoXY(px, py);
-		cout << buff;
-	}
-	ShowCaret(false);
-	return buff;
-}
-void Input::DataPreparation(int max_len, int& px, int& py, int indent_letf, int indent_top)
-{
-	ShowCaret(true);
-	if (buff)delete buff;
-	buff = new char[max_len + 1];
-	buff[0] = 0;
-	if (!px)px = GetCurrentX() + indent_letf;
-	if (!py)py = GetCurrentY() + indent_top;
-	GotoXY(px, py);
-	for (int i = 0; i < max_len; i++)
-		cout << " ";
-	GotoXY(px, py);
-}
-
-
-
-
-
-bool CompareStr(const char* value, const char* source)
-{
-	int len = strlen(value);
-	int number_let = 0;
-	switch (len)
-	{
-	case 1:
-		for (int i = 0; i < strlen(source); i++)
-			if (value[0] == source[i])
-				return true;
-		break;
-	case 2:
-		for (int i = 0; i < strlen(source); i++)
-			if (value[0] == source[i] && value[1] == source[i+1])
-				return true;
-	case 3:
-		for (int i = 0; i < strlen(source); i++)
-			if (value[0] == source[i] && value[1] == source[i + 1] && value[1] == source[i + 2]&& i + 2 < strlen(source))
-				return true;
-	default:
-		for (int i = 0; i < len; i++)
-			if (value[i] == source[i])
-				number_let++;
-		break;
-	}
-	
-	if (number_let == len)return true;
-	else return false;
-}
-void Move(char &key, int& x, int& y, int how_change_x, int how_change_y)
-{
-	key = _getch();
-	if (key == 'w')y -= how_change_y;
-	if (key == 's')y += how_change_y;
-	if (key == 'd')x += how_change_x;
-	if (key == 'a')x -= how_change_x;
-	if (key == -32)
-	{
-		key = _getch();
-		//down
-		if (key == 80) y += how_change_y;
-		//up
-		if (key == 72) y -= how_change_y;
-		//left
-		if (key == 75) x -= how_change_x;
-		//right
-		if (key == 77) x += how_change_x;
-	}
-}
 void DrawMessage(const char* message, unsigned int width, unsigned int height, unsigned int position, int indent_letf, int indent_top)
 {
 	cls();
