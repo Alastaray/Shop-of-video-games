@@ -111,15 +111,15 @@ void Window::SetWinParam(unsigned int _width, unsigned int _height, unsigned int
 
 void Menu::SetMenuParam(int indent_letf, int indent_top)
 {
-	if (menu.GetCount())
+	if (menu_items.GetCount())
 	{
 		int width = 0,len = 0;
-		for (int i = 0; i < menu.GetCount(); i++)
+		for (int i = 0; i < menu_items.GetCount(); i++)
 		{
-			len = strlen(menu[i]);
+			len = strlen(menu_items[i]);
 			if (width < len)width = len;
 		}
-		SetWinParam(width + 8, menu.GetCount() * 2 + 1, position, indent_letf, indent_top);
+		SetWinParam(width + 8, menu_items.GetCount() * 2 + 1, position, indent_letf, indent_top);
 	}
 }
 int Menu::DoMenu()
@@ -130,7 +130,7 @@ int Menu::DoMenu()
 	while (true)
 	{
 		DrawMenu();
-		FillLine(menu[active/ step],3,active);
+		FillLine(menu_items[active/ step],3,active);
 		Move(key, active, active, 0, step);
 		if (key == 13)return active / step;
 		if (key == 27)return -1;
@@ -143,19 +143,12 @@ void Menu::DrawMenu()
 	DrawBox();
 	for (int i = 0; i < GetSizeMenu(); i++)
 	{
-		WriteLine(menu[i], 3, i * 2);
+		WriteLine(menu_items[i], 3, i * 2);
 	}
 }
 
 
 
-
-
-Table::Table(unsigned int _width, unsigned int _height, unsigned int position, unsigned int _cols, unsigned int _rows, int indent_letf, int indent_top) :Window(_width, _height, position, indent_letf, indent_top)
-{
-	SetCols(_cols);
-	SetRows(_rows);
-}
 void Table::FillLine(int _x, int _y)
 {
 
@@ -389,7 +382,7 @@ void Input::DataPreparation(int max_len, int& px, int& py, int indent_letf, int 
 {
 	ShowCaret(true);
 	if (buff)delete buff;
-	buff = new char[max_len + 1];
+	buff = new char[(max_len + 1)];
 	buff[0] = 0;
 	if (!px)px = GetCurrentX() + indent_letf;
 	if (!py)py = GetCurrentY() + indent_top;

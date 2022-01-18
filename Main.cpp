@@ -8,17 +8,33 @@
 using namespace std;
 #pragma warning(disable: 4996)
 
-
+		
 
 
 void main()
 {
 	try
 	{
-		///*AdminProducts product("products.txt");
-		//product.Show();*/
-		//AdminCustomers product("customers.txt");
-		//product.DrawAdding();
+		/*Menu menu_items(CenterTop);
+		menu_items << "Add product"
+			<< "Show products"
+			<< "Delete product"
+			<< "Add customer"
+			<< "Show customers"
+			<< "Delete customer"
+			<< "Create report of income"
+			<< "Exit";
+		menu_items.SetMenuParam(0,4);
+		switch (menu_items.DoMenu())
+		{
+
+		default:
+			break;
+		}*/
+		AdminProducts product("products.txt");
+		product.Show();
+		//AdminCustomers prod("customers.txt");
+		//prod.DrawAdding();
 
 	}
 	catch (ListException& error)

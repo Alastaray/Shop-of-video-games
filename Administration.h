@@ -26,7 +26,7 @@ protected:
 	virtual void DrawElement(List<Product>& _list, int row, int col, int x, int y);
 	virtual int DrawSearching();
 	virtual int DrawSorting();
-	virtual void ChangeData(int index, int whom);
+	virtual bool ChangeData(int index, int whom);
 	int Search(const char* val = 0);
 	int Sort(int amount = 0, double price = 0, double purchase_price = 0, bool low_to_high = true);
 	void Add(const char* name, int amount, double price, double puchase_price);	
@@ -50,7 +50,7 @@ public:
 protected:
 	virtual int DrawSearching();
 	virtual int DrawSorting();
-	virtual void ChangeData(int index, int whom);
+	virtual bool ChangeData(int index, int whom);
 	int ChooseProduct(AdminProducts& product);
 	int ShowProducts(AdminProducts& product, List<Product>& _list, int& page);
 	virtual void DrawElement(List<Customer>& _list, int row, int col, int x, int y);

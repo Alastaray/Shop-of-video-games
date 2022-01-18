@@ -17,6 +17,8 @@ public:
 	Admin(const char* _filename) : Management<type>(_filename)
 	{
 		limit = 10;
+		width = 90;
+		SetCols(5);
 		this->Read();
 	}
 	bool Show();
@@ -47,8 +49,8 @@ protected:
 	virtual int DrawSearching() = 0;
 	virtual int DrawSorting() = 0;
 
-	virtual void ChangeData(int id, int whom) = 0;
-	void Edit(int id, int col);
+	virtual bool ChangeData(int id, int whom) = 0;
+	bool Edit(int id, int col);
 	void Synchronization(int index);
 
 	const char* headlines[5];
@@ -92,8 +94,7 @@ int Admin<type>::SetTableParam(List<type>& _list, int& page)
 {
 	if (!_list.GetCount())throw exception("List is empty!");
 	cls();
-	SetWinParam(85, _list.GetCount() * 2 + 1, LeftTop, 0, 2);
-	SetCols(5);
+	SetWinParam(width, _list.GetCount() * 2 + 1, LeftTop, 5, 2);
 	SetRows(_list.GetCount());
 	return DoTable(_list, page);
 }
@@ -101,17 +102,17 @@ int Admin<type>::SetTableParam(List<type>& _list, int& page)
 template <class type>
 int Admin<type>::DoTable(List<type>& _list, int& page)
 {
-	char key = 0;
-	int x =0, y=0;
 	if (!size_col)throw exception("size_col can't be zero!");
 	if (!size_row)throw exception("size_row can't be zero!");
-	int row, col, result=1;
-	Message pag_left("<<", 5, 3, LeftTop, width / 2 - 9, size_row * rows + 3);
-	Message current_page(IntToChar(page), 5, 3, LeftTop, width / 2 - 2, size_row * rows + 3);
-	Message pag_right(">>", 5, 3, LeftTop, width / 2 + 5, size_row * rows + 3);
-	Message sort("Sort", 10, 3, RightTop, 8, 2 + rows / 3);
-	Message search("Search", 10, 3, RightTop, 8, 5 + rows / 3 * 2);
-	Message back("Back", 10, 3, RightTop, 8, 8 + rows / 3 * 3);
+	char key = 0;
+	int x = 0, y = 0,
+		 row, col, result=1;
+	Message pag_left("<<", 5, 3, LeftTop, width / 2 - 4, size_row * rows + 3);
+	Message current_page(IntToChar(page), 5, 3, LeftTop, width / 2 + 3, size_row * rows + 3);
+	Message pag_right(">>", 5, 3, LeftTop, width / 2 + 10, size_row * rows + 3);
+	Message sort("Sort", 10, 3, RightTop, 19, 2 + rows / 3);
+	Message search("Search", 10, 3, RightTop, 19, 5 + rows / 3 * 2);
+	Message back("Back", 10, 3, RightTop, 19, 8 + rows / 3 * 3);
 	while (true)
 	{		
 		DrawData(_list);
@@ -128,8 +129,7 @@ int Admin<type>::DoTable(List<type>& _list, int& page)
 		if (key == 27)break;
 		if (key == 13)
 		{
-			Edit(_list[row].GetId(), col);
-			return true;
+			if(Edit(_list[row].GetId(), col))return true;
 		}
 		if (x >= size_col * cols)
 		{
@@ -139,7 +139,7 @@ int Admin<type>::DoTable(List<type>& _list, int& page)
 		}	
 		if (y >= size_row * rows)
 		{
-			y -= size_row; 
+			y -= size_row;
 			DrawData(_list);
 			if (DrawPagination(pag_left, pag_right, page))return true;
 		}
@@ -266,7 +266,7 @@ void Admin<type>::DrawHeadlines()
 {
 	if (headlines)
 	{
-		Table hl(85, 4, LeftTop, 5);
+		Table hl(width, 4, LeftTop, 5,0,5);
 		hl.DrawHeadlines(headlines);
 	}
 }
@@ -298,8 +298,7 @@ void Admin<type>::DrawDeleting()
 			if (j >= limit)break;
 			l << this->list[i];
 		}		
-		SetWinParam(85, l.GetCount() * 2 + 1, LeftTop, 0, 2);
-		SetCols(5);
+		SetWinParam(width, l.GetCount() * 2 + 1, LeftTop, 5, 2);
 		SetRows(l.GetCount());
 		if (!DoDeleting(l, page))return;
 	}
@@ -313,10 +312,10 @@ bool Admin<type>::DoDeleting(List<type> _list, int &page)
 	char key;
 	int x = 0, y = 0,
 		row, col;
-	Message pag_left("<<", 5, 3, LeftTop, width / 2 - 9, size_row * rows + 3);
-	Message current_page(IntToChar(page), 5, 3, LeftTop, width / 2-2, size_row * rows + 3);
-	Message pag_right(">>", 5, 3, LeftTop, width / 2 + 5, size_row * rows + 3);
-	Message back("Back", 10, 3, RightTop, 8, 2);
+	Message pag_left("<<", 5, 3, LeftTop, width / 2 - 4, size_row * rows + 3);
+	Message current_page(IntToChar(page), 5, 3, LeftTop, width / 2 + 3, size_row * rows + 3);
+	Message pag_right(">>", 5, 3, LeftTop, width / 2 + 10, size_row * rows + 3);
+	Message back("Back", 10, 3, RightTop, 19, 2);
 	while (true)
 	{
 		DrawData(_list);
@@ -360,12 +359,13 @@ bool Admin<type>::DoDeleting(List<type> _list, int &page)
 }
 
 template <class type>
-void Admin<type>::Edit(int id, int col)
+bool Admin<type>::Edit(int id, int col)
 {
-	if (!col)return;
+	if (!col)return false;
 	int index = SeekElement(this->list, id);
-	ChangeData(index, col);
-	Synchronization(index);
+	bool result = ChangeData(index, col);
+	if(result)Synchronization(index);
+	return result;
 }
 
 template <class type>

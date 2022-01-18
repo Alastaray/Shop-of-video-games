@@ -24,7 +24,6 @@ void DrawMessage(const char* message, unsigned int _width = 17, unsigned int _he
 class Window
 {
 public:
-	
 	Window(unsigned int _width, unsigned int _height, unsigned int position, int indent_letf = 0, int indent_top = 0);
 	~Window();
 	void SetWinParam(unsigned int _width, unsigned int _height, unsigned int position, int indent_letf = 0, int indent_top = 0);
@@ -36,11 +35,11 @@ public:
 	int GetY() { return py + 1; }
 
 	template <class type>
-	void WriteLine(type val, int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1);
+	void WriteLine(type val, int indent_letf = 0, int indent_top = 0);
 	template <class type>
-	void DrawBox(type val, int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1);
+	void DrawBox(type val, int indent_letf = 0, int indent_top = 0);
 	template <class type>
-	void FillLine(type val, int pos_x=0, int pos_y=0);
+	void FillLine(type val, int indent_letf = 0, int indent_top = 0);
 protected:	
 	enum Borders_name
 	{
@@ -63,23 +62,23 @@ protected:
 		activeTxcolor, activeBgcolor;
 };
 template <class type>
-void Window::WriteLine(type val, int pos_x, int pos_y, int indent_letf, int indent_top)
+void Window::WriteLine(type val, int indent_letf, int indent_top)
 {
-	GotoXY(px + pos_x + indent_letf, py + pos_y + indent_top);
+	GotoXY(GetX() + indent_letf, GetY() + indent_top);
 	cout << val;
 }
 template <class type>
-void Window::DrawBox(type val, int pos_x, int pos_y, int indent_x, int indent_y)
+void Window::DrawBox(type val, int indent_letf, int indent_top)
 {
 	DrawBox();
-	WriteLine(val, pos_x, pos_y, indent_x, indent_y);
+	WriteLine(val, indent_letf, indent_top);
 }
 template <class type>
-void Window::FillLine(type val, int pos_x, int pos_y)
+void Window::FillLine(type val, int indent_letf, int indent_top)
 {
 	SetColor(activeTxcolor, activeBgcolor);
-	FillLine(0, pos_y);
-	WriteLine(val, pos_x, pos_y);
+	FillLine(0, indent_top);
+	WriteLine(val, indent_letf, indent_top);
 	SetColor(txcolor, bgcolor);
 }
 
@@ -87,7 +86,11 @@ void Window::FillLine(type val, int pos_x, int pos_y)
 class Table:public Window
 {
 public:
-	Table(unsigned int _width=0, unsigned int _height=0, unsigned int position=0, unsigned int _cols = 0, unsigned int _rows = 0, int indent_letf = 0, int indent_top = 0);
+	Table(unsigned int _width=0, unsigned int _height=0, unsigned int position=0, unsigned int _cols = 0, unsigned int _rows = 0, int indent_letf = 0, int indent_top = 0) :Window(_width, _height, position, indent_letf, indent_top)
+	{
+		SetCols(_cols);
+		SetRows(_rows);
+	}
 	void DrawTable();
 	void SetCols(unsigned int num_cols);
 	void SetRows(unsigned int num_cols);
@@ -100,10 +103,9 @@ public:
 protected:
 	void DrawCols();
 	void DrawRows();
-	unsigned int cols, rows,
+	int cols, rows,
 		size_col, size_row;
 };
-
 
 class Menu :public Window
 {
@@ -113,32 +115,37 @@ public:
 		this->position = position;
 	}
 	void SetMenuParam(int indent_letf = 0, int indent_top = 0);
-	int GetSizeMenu() { return menu.GetCount(); }
+	int GetSizeMenu() { return menu_items.GetCount(); }
 	int DoMenu();
 	void DrawMenu();
-	void AddMenuItem(const char* item) { menu << item; }
+	void AddMenuItem(const char* item) { menu_items << item; }
 	Menu& operator<<(const char* item) { AddMenuItem(item); return *this; }
 private:
-	List<const char*>menu;
+	List<const char*>menu_items;
 	unsigned int position;
 };
 
 class Message :protected Window
 {
 public:
+	Message(unsigned int _width = 0, unsigned int _height = 0, unsigned int position = 0, int indent_letf = 0, int indent_top = 0) : Window(_width, _height, position, indent_letf, indent_top) 
+	{ name[0] = '\0'; }
 	Message(const char* _name, unsigned int _width, unsigned int _height, unsigned int position, int indent_letf = 0, int indent_top = 0) : Window(_width, _height, position, indent_letf, indent_top)
+	{ SetName(_name); }
+	void SetMsgParam(const char* _name, unsigned int _width, unsigned int _height, unsigned int position, int indent_letf = 0, int indent_top = 0)
 	{
-		strcpy(name, _name);
+		SetName(_name);
+		SetWinParam(_width, _height, position, indent_letf, indent_top);
 	}
-	void DrawActiveMsg(int pos_x = 0, int pos_y = 0) 
+	void SetName(const char* _name) { strcpy(name, _name); }
+	void DrawActiveMsg(int indent_letf = 0, int indent_top = 0)
 	{
 		Window::DrawBox();
-		Window::FillLine(name, pos_x, pos_y); 
+		Window::FillLine(name, indent_letf, indent_top);
 	}
-	void DrawMessage(int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1) { Window::DrawBox(name, pos_x, pos_y, indent_x, indent_y); }
-	void WriteMessage(int pos_x = 0, int pos_y = 0, int indent_x = 1, int indent_y = 1) { Window::WriteLine(name, pos_x, pos_y, indent_x, indent_y); }
-	void FillMessage(int pos_x = 0, int pos_y = 0) { Window::FillLine(name, pos_x, pos_y); }
-private:
+	void DrawMessage(int indent_letf = 0, int indent_top = 0) { Window::DrawBox(name, indent_letf, indent_top); }
+	void WriteMessage(int indent_letf = 0, int indent_top = 0) { Window::WriteLine(name, indent_letf, indent_top); }
+	void FillMessage(int indent_letf = 0, int indent_top = 0) {	Window::FillLine(name, indent_letf, indent_top); }
 	char name[25];
 };
 
@@ -152,6 +159,7 @@ public:
 	int GetInt(int max_len, int min_len = 0, int px = 0, int py = 0, int indent_letf = 0, int indent_top = 0);
 	char* GetStr(int max_len, int min_len = 0, int px = 0, int py = 0, int indent_letf = 0, int indent_top = 0);
 	char* Get(int max_len, int min_len=0, int px = 0, int py = 0, int indent_letf = 0, int indent_top = 0);
+	char* GetBuff() { return buff; }
 private:
 	void DataPreparation(int max_len, int &px, int &py, int indent_letf = 0, int indent_top = 0);
 	char* buff;

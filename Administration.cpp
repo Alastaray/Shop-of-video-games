@@ -18,7 +18,7 @@ void AdminProducts::DrawAdding()
 	int x, y;
 	for (int i = 0; i < 4; i++)
 	{
-		win.DrawBox(phrases[i], 0, 0, 2, 2);
+		win.DrawBox(phrases[i], 2, 1);
 		switch (i)
 		{
 		case 0:
@@ -37,7 +37,7 @@ void AdminProducts::DrawAdding()
 			{
 				puchase_price = Cin.GetDouble(8, 1);
 				if (price > puchase_price)break;
-				win.WriteLine(phrases[4], 0, 0, 2, 3);
+				win.WriteLine(phrases[4], 2, 3);
 				GotoXY(x, y);
 				cout << "        ";
 				GotoXY(x, y);
@@ -248,25 +248,26 @@ int AdminProducts::DrawSearching()
 	strcpy(str, Cin.Get(20));
 	return Search(str);
 }
-void AdminProducts::ChangeData(int index, int whom)
+bool AdminProducts::ChangeData(int index, int whom)
 {
 	if (index < 0)throw exception("Id can't be the negative!");
 	Input Cin;
 	switch (whom)
 	{
 	case 1:
-		list[index].SetName(Cin.Get(15, 3, size_col * whom + 1));
+		list[index].SetName(Cin.Get(GetWidth() / cols, 3, GetX()+size_col * whom));
 		break;
 	case 2:
-		list[index].SetAmount(Cin.GetInt(5, 0, size_col * whom + 1));
+		list[index].SetAmount(Cin.GetInt(GetWidth() / cols, 1, GetX() + size_col * whom));
 		break;
 	case 3:
-		list[index].SetPrice(Cin.GetDouble(5, 0, size_col * whom + 1));
+		list[index].SetPrice(Cin.GetDouble(GetWidth() / cols, 1, GetX() + size_col * whom));
 		break;
 	case 4:
-		list[index].SetPurchasePrice(Cin.GetDouble(5, 0, size_col * whom + 1));
+		list[index].SetPurchasePrice(Cin.GetDouble(GetWidth() / cols, 1, GetX() + size_col * whom));
 		break;
 	}
+	return atoi(Cin.GetBuff());
 }
 
 
@@ -283,12 +284,12 @@ void AdminCustomers::DrawAdding()
 	AdminProducts product("products.txt");
 
 	cls();
-	win.DrawBox("Enter the name: ", 0, 0, 2, 2);
+	win.DrawBox("Enter the name: ", 2, 1);
 	strcpy(name, Cin.GetStr(15, 3));	
 	if ((id = ChooseProduct(product)) == -1)return;
 
 	cls();
-	win.DrawBox("Enter the amount: ", 0, 0, 2, 2);
+	win.DrawBox("Enter the amount: ", 2, 1);
 	amount = Cin.GetInt(5);
 	index = product.SeekElement(product.GetList(), id);
 
@@ -319,8 +320,7 @@ int AdminCustomers::ChooseProduct(AdminProducts& product)
 			if (j >= limit)break;
 			l << product.GetList()[i];
 		}
-		product.SetWinParam(85, l.GetCount() * 2 + 1, LeftTop, 0, 2);
-		product.SetCols(5);
+		product.SetWinParam(width, l.GetCount() * 2 + 1, LeftTop, 5, 2);
 		product.SetRows(l.GetCount());
 		index = ShowProducts(product, l, page);
 		if (index >= 0)return l[index].GetId();
@@ -342,10 +342,10 @@ int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& _list, i
 	char key;
 	int x = 0, y = 0,
 		row, col;
-	Message back("Back", 10, 3, RightTop, 8, 2);
-	Message pag_left("<<", 5, 3, LeftTop, product.GetWidth() / 2 - 8, prod_size_row * prod_rows + 3);
-	Message current_page(IntToChar(page), 5, 3, LeftTop, product.GetWidth() / 2 - 1, prod_size_row * prod_rows + 3);
-	Message pag_right(">>", 5, 3, LeftTop, product.GetWidth() / 2 + 6, prod_size_row * prod_rows + 3);
+	Message back("Back", 10, 3, RightTop, 19, 2);
+	Message pag_left("<<", 5, 3, LeftTop, product.GetWidth() / 2 - 3, prod_size_row * prod_rows + 3);
+	Message current_page(IntToChar(page), 5, 3, LeftTop, product.GetWidth() / 2 + 4, prod_size_row * prod_rows + 3);
+	Message pag_right(">>", 5, 3, LeftTop, product.GetWidth() / 2 + 11, prod_size_row * prod_rows + 3);
 	
 	while (true)
 	{
@@ -540,23 +540,24 @@ void AdminCustomers::DrawElement(List<Customer>& _list, int row, int col, int x,
 		break;
 	}
 }
-void AdminCustomers::ChangeData(int index, int whom)
+bool AdminCustomers::ChangeData(int index, int whom)
 {
 	if (index < 0)throw exception("Id can't be the negative!");
 	Input Cin;
 	switch (whom)
 	{
 	case 1:
-		list[index].SetName(Cin.Get(15, 3, size_col * whom + 1));
+		list[index].SetName(Cin.Get(GetWidth() / cols, 3, GetX() + size_col * whom));
 		break;
 	case 2:
-		list[index].SetProdName(Cin.Get(15, 3, size_col * whom + 1));
+		list[index].SetProdName(Cin.Get(GetWidth() / cols, 3, GetX() + size_col * whom));
 		break;
 	case 3:
-		list[index].SetAmount(Cin.GetInt(5, 0, size_col * whom + 1));
+		list[index].SetAmount(Cin.GetInt(GetWidth() / cols, 1, GetX() + size_col * whom));
 		break;
 	case 4:
-		list[index].SetPrice(Cin.GetDouble(5, 0, size_col * whom + 1));
+		list[index].SetPrice(Cin.GetDouble(GetWidth() / cols, 1, GetX() + size_col * whom));
 		break;
 	}
+	return atoi(Cin.GetBuff());
 }
