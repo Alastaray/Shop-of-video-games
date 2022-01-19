@@ -1,11 +1,8 @@
 #pragma once
-#include <iostream>
-#include <conio.h>
-#include "fun_console.h"
-#include "Products and customers.h"
 #include "List.h"
 #include "Others.h"
-using namespace std;
+
+
 
 enum position
 {
@@ -18,7 +15,7 @@ enum position
 };
 
 
-void DrawMessage(const char* message, unsigned int _width = 17, unsigned int _height = 3, unsigned int position = CenterTop, int indent_letf = 0, int indent_top = 10);
+
 
 
 class Window
@@ -27,7 +24,7 @@ public:
 	Window(unsigned int _width, unsigned int _height, unsigned int position, int indent_letf = 0, int indent_top = 0);
 	~Window();
 	void SetWinParam(unsigned int _width, unsigned int _height, unsigned int position, int indent_letf = 0, int indent_top = 0);
-	void DrawBox();
+	void DrawFrame();
 	virtual void FillLine(int _x = 0, int _y = 0);
 	int GetWidth() { return width - 2; }
 	int GetHeight() { return height - 2; }
@@ -37,7 +34,7 @@ public:
 	template <class type>
 	void WriteLine(type val, int indent_letf = 0, int indent_top = 0);
 	template <class type>
-	void DrawBox(type val, int indent_letf = 0, int indent_top = 0);
+	void DrawFrame(type val, int indent_letf = 0, int indent_top = 0);
 	template <class type>
 	void FillLine(type val, int indent_letf = 0, int indent_top = 0);
 protected:	
@@ -68,9 +65,9 @@ void Window::WriteLine(type val, int indent_letf, int indent_top)
 	cout << val;
 }
 template <class type>
-void Window::DrawBox(type val, int indent_letf, int indent_top)
+void Window::DrawFrame(type val, int indent_letf, int indent_top)
 {
-	DrawBox();
+	DrawFrame();
 	WriteLine(val, indent_letf, indent_top);
 }
 template <class type>
@@ -92,13 +89,13 @@ public:
 		SetRows(_rows);
 	}
 	void DrawTable();
-	void SetCols(unsigned int num_cols);
-	void SetRows(unsigned int num_cols);
-	unsigned int GetRows() { return rows; }
-	unsigned int GetCols() { return cols; }
-	unsigned int GetSizeRow() { return size_row; }
-	unsigned int GetSizeCol() { return size_col; }
-	void DrawHeadlines(const char** headlines);
+	void SetCols(unsigned int);
+	void SetRows(unsigned int);
+	int GetRows() { return rows; }
+	int GetCols() { return cols; }
+	int GetSizeRow() { return size_row; }
+	int GetSizeCol() { return size_col; }
+	void DrawHeadlines(const char**);
 	void FillLine(int _x = 0, int _y = 0);
 protected:
 	void DrawCols();
@@ -130,6 +127,7 @@ private:
 
 class Message :protected Window
 {
+	char name[25];
 public:
 	Message(unsigned int _width = 0, unsigned int _height = 0, unsigned int position = 0, int indent_letf = 0, int indent_top = 0) : Window(_width, _height, position, indent_letf, indent_top) 
 	{ name[0] = '\0'; }
@@ -143,13 +141,20 @@ public:
 	void SetName(const char* _name) { strcpy(name, _name); }
 	void DrawActiveMsg(int indent_letf = 0, int indent_top = 0)
 	{
-		Window::DrawBox();
+		Window::DrawFrame();
 		Window::FillLine(name, indent_letf, indent_top);
 	}
-	void DrawMessage(int indent_letf = 0, int indent_top = 0) { Window::DrawBox(name, indent_letf, indent_top); }
-	void WriteMessage(int indent_letf = 0, int indent_top = 0) { Window::WriteLine(name, indent_letf, indent_top); }
+	void DrawMsgWithFrame(int indent_letf = 0, int indent_top = 0) { Window::DrawFrame(name, indent_letf, indent_top); }
+	void DrawMessage(int indent_letf = 0, int indent_top = 0) { Window::WriteLine(name, indent_letf, indent_top); }
 	void FillMessage(int indent_letf = 0, int indent_top = 0) {	Window::FillLine(name, indent_letf, indent_top); }
-	char name[25];
+	static void DrawMessage(const char* message, unsigned int _width = 17, unsigned int _height = 3, unsigned int position = CenterTop, int indent_letf = 10, int indent_top = 12)
+	{
+		cls();
+		Message msg(message, _width, _height, position, indent_letf, indent_top);
+		msg.DrawMessage();
+		_getch();
+		cls();
+	}
 };
 
 

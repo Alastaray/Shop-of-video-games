@@ -1,10 +1,7 @@
 #include <iostream>
 #include <windows.h>
-#include <conio.h>
-#include "fun_console.h"
-#include "Window.h"
-#include "Administration.h"
-
+#include "AdminCustomers.h"
+#include "AdminProducts.h"
 using namespace std;
 #pragma warning(disable: 4996)
 
@@ -13,19 +10,19 @@ using namespace std;
 
 void main()
 {
-	try
+	Menu menu(CenterTop);
+	menu << "Show products"
+		<< "Add product"
+		<< "Delete product"
+		<< "Show customers"
+		<< "Add customer"
+		<< "Delete customer"
+		<< "Create report of income"
+		<< "Exit";
+	menu.SetMenuParam(5, 5);
+	while (true)
 	{
-		Menu menu(CenterTop);
-		menu << "Show products"
-			<< "Add product"
-			<< "Delete product"			
-			<< "Show customers"
-			<< "Add customer"
-			<< "Delete customer"
-			<< "Create report of income"
-			<< "Exit";
-		menu.SetMenuParam(0,4);
-		while (true)
+		try
 		{
 			int item = menu.DoMenu();
 			switch (item)
@@ -69,23 +66,31 @@ void main()
 				break;
 			}
 			case 6:
+			{
+				AdminCustomers admin_cust("customers.txt");
+				AdminProducts admin_prod("products.txt");				
+				char result[20] = {"Income is "};
+				strcat(result, IntToChar(CreateReport(admin_prod, admin_cust)));
+				Message::DrawMessage(result);
+				break;
+			}
 			case 7:
 				cls();
 				return;
 				break;
 			}
 		}
+		catch (ListException& error)
+		{
+			cls();
+			cout << error.what() << endl
+				<< "Index = " << error.GetValue() << endl
+				<< "Count = " << error.GetCount() << endl;
+		}
+		catch (exception& error)
+		{
+			cls();
+			Message::DrawMessage(error.what());
+		}
 	}
-	catch (ListException& error)
-	{
-		cls();
-		cout << error.what()<<endl
-			<<"Index = "<<error.GetValue() << endl
-			<< "Count = " << error.GetCount() << endl;
-	}
-	catch (exception& error)
-	{
-		cls();
-		cout << error.what() << endl;
-	}
-};
+}

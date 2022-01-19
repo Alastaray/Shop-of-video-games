@@ -139,7 +139,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Administration.cpp" />
+    <ClCompile Include="AdminCustomers.cpp" />
+    <ClCompile Include="AdminProducts.cpp" />
     <ClCompile Include="Others.cpp" />
     <ClCompile Include="fun_console.cpp" />
     <ClCompile Include="Products and customers.cpp" />
@@ -148,11 +149,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Admin.h" />
-    <ClInclude Include="Administration.h" />
+    <ClInclude Include="AdminCustomers.h" />
+    <ClInclude Include="AdminProducts.h" />
     <ClInclude Include="Others.h" />
     <ClInclude Include="fun_console.h" />
     <ClInclude Include="List.h" />
-    <ClInclude Include="Management.h" />
+    <ClInclude Include="FileManagement.h" />
     <ClInclude Include="Products and customers.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

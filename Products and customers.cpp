@@ -5,8 +5,8 @@ Product::Product(int _id, const char* _name, int _amount, double _price, double 
 	id = _id;
 	strcpy(name, _name);
 	amount = _amount;
-	price = _price;
 	purchase_price = _purchase_price;
+	price = _price;
 
 }
 Product::Product(const Product& product)
@@ -14,8 +14,8 @@ Product::Product(const Product& product)
 	id = product.id;
 	strcpy(name, product.name);
 	amount = product.amount;
-	price = product.price;
 	purchase_price = product.purchase_price;
+	price = product.price;
 }
 void Product::SetName(char* _name)
 {
@@ -34,15 +34,15 @@ void Product::SetAmount(int _amount)
 		amount = _amount;
 
 }
-void Product::SetPurchasePrice(double _purchase_price)
-{
-	if (_purchase_price > 0)
-		purchase_price = _purchase_price;
-}
 void Product::SetPrice(double _price)
 {
 	if (_price > 0)
 		price = _price;
+}
+void Product::SetPurchasePrice(double _purchase_price)
+{
+	if (_purchase_price > 0)
+		purchase_price = _purchase_price;
 }
 
 

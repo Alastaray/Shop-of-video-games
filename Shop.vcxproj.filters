@@ -14,9 +14,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Administration.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="fun_console.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -32,6 +29,12 @@
     <ClCompile Include="Others.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="AdminProducts.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="AdminCustomers.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fun_console.h">
@@ -40,7 +43,7 @@
     <ClInclude Include="List.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Management.h">
+    <ClInclude Include="FileManagement.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Products and customers.h">
@@ -52,10 +55,13 @@
     <ClInclude Include="Admin.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Administration.h">
+    <ClInclude Include="Others.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Others.h">
+    <ClInclude Include="AdminProducts.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="AdminCustomers.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,16 +1,13 @@
 #pragma once
 #include <iostream>
-#include <fstream>
-#include "List.h"
-
-#pragma warning(disable: 4996)
 using namespace std;
+#pragma warning(disable: 4996)
 
 class Product
 {
 public:
 	Product() {}
-	Product(int _id, const char* _name, int _amount, double _price, double _puchase_price);
+	Product(int _id, const char* _name, int _amount, double _price, double _purchase_price);
 	Product(const Product& product);
 
 	int GetId() { return id; }
@@ -18,11 +15,11 @@ public:
 	void SetName(char* _name);
 	char* GetName() { return name; }
 
-	void SetPurchasePrice(double _purchase_price);
-	double GetPurchasePrice() { return purchase_price; }
-
-	void SetPrice(double _price);
+	void SetPrice(double _purchase_price);
 	double GetPrice() { return price; }
+
+	void SetPurchasePrice(double _price);
+	double GetPurchasePrice() { return purchase_price; }
 
 	void ChangeAmount(int _amount);
 	void SetAmount(int _amount);
@@ -34,8 +31,8 @@ private:
 	int id;
 	char name[15];
 	int amount;
-	double price;
 	double purchase_price;
+	double price;
 };
 class Customer
 {

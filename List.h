@@ -1,8 +1,6 @@
 #pragma once
 #include <iostream>
 using namespace std;
-
-
 class ListException : public exception
 {
 public:

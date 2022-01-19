@@ -1,29 +1,26 @@
 #pragma once
 #include <iostream>
 #include "Window.h"
-#include "Management.h"
-#include "List.h"
+#include "FileManagement.h"
 #include "cmath"
-#include "Others.h"
-using namespace std;
 
 
 
 template <class type>
-class Admin : public Management<type>, public Table
+class Admin : public FileManagement<type>, public Table
 {
 public:
-	Admin(const char* _filename) : Management<type>(_filename)
+	Admin(const char* _filename, int _limit = 10, int _width = 90, int _cols = 5) : FileManagement<type>(_filename)
 	{
 		headlines[0] = "0";
-		limit = 10;
-		width = 90;
-		SetCols(5);
-		if(!this->Read())throw exception("File wasn't found or can't be read!");
+		limit = _limit;
+		width = _width;
+		SetCols(_cols);
+		!this->Read();
 	}
 	bool Show();
 	void DrawDeleting();	
-	int SeekElement(List<type>& _list, unsigned int id);
+	int SeekElement(List<type>&, unsigned int);
 	virtual void DrawAdding() = 0;
 
 	void SetLimit(unsigned int _limit)
@@ -38,24 +35,24 @@ protected:
 	List <type> sorted;
 	unsigned int limit;
 
-	int SetTableParam(List<type>& _list, int &page);
-	int DoTable(List<type>& _list, int& page);
-	void DrawData(List<type>& _list);
-	void DrawActiveCell(List<type>& _list, int row, int col, int x, int y);
-	bool DrawPagination(Message& pag_left, Message& pag_right, int& page);
-	int DrawButtons(Message& sort, Message& search, Message& back);
-	virtual void DrawElement(List<type>& _list, int row, int col, int x, int y) = 0;
+	int SetTableParam(List<type>&, int &);
+	int DoTable(List<type>&, int& );
+	void DrawData(List<type>&);
+	void DrawActiveCell(List<type>&, int, int, int, int);
+	bool DrawPagination(Message&, Message&, int&);
+	int DrawButtons(Message&, Message&, Message&);
+	virtual void DrawElement(List<type>&, int, int, int, int) = 0;
 
-	void CheckXY(int& x, int& y);
+	void CheckXY(int&, int&);
 	void DrawHeadlines();
 
-	bool DoDeleting(List<type> _list, int& page);
+	bool DoDeleting(List<type>, int&);
 	virtual int DrawSearching() = 0;
 	virtual int DrawSorting() = 0;
 
-	virtual bool ChangeData(int id, int whom) = 0;
-	bool Edit(int id, int col);
-	void Synchronization(int index);
+	virtual bool ChangeData(int, int) = 0;
+	bool Edit(int, int);
+	void Synchronization(int);
 
 };
 
@@ -64,6 +61,7 @@ protected:
 template <class type>
 bool Admin<type>::Show()
 {
+	if(!this->number_st)throw exception("File is empty!");
 	sorted = this->list;
 	int page = 0,
 		result = 1,
@@ -117,17 +115,17 @@ int Admin<type>::DoTable(List<type>& _list, int& page)
 	while (true)
 	{		
 		DrawData(_list);
-		sort.DrawMessage();
-		search.DrawMessage();
-		back.DrawMessage();
-		pag_left.DrawMessage();
-		current_page.DrawMessage(1);
-		pag_right.DrawMessage();
+		sort.DrawMsgWithFrame();
+		search.DrawMsgWithFrame();
+		back.DrawMsgWithFrame();
+		pag_left.DrawMsgWithFrame();
+		current_page.DrawMsgWithFrame(1);
+		pag_right.DrawMsgWithFrame();
 		row = y / size_row;
 		col = x / size_col;
 		DrawActiveCell(_list, row, col, x, y);
 		Move(key, x, y, size_col, size_row);
-		if (key == 27)break;
+		if (key == 27)return false;
 		if (key == 13)
 		{
 			if(Edit(_list[row].GetId(), col))return true;
@@ -189,18 +187,18 @@ int Admin<type>::DrawButtons(Message& sort, Message& search, Message& back)
 		switch (y)
 		{
 		case 0:
-			search.DrawMessage();
-			back.DrawMessage();
+			search.DrawMsgWithFrame();
+			back.DrawMsgWithFrame();
 			sort.DrawActiveMsg();
 			break;
 		case 1:
-			sort.DrawMessage();
-			back.DrawMessage();
+			sort.DrawMsgWithFrame();
+			back.DrawMsgWithFrame();
 			search.DrawActiveMsg();
 			break;
 		case 2:
-			sort.DrawMessage();
-			search.DrawMessage();
+			sort.DrawMsgWithFrame();
+			search.DrawMsgWithFrame();
 			back.DrawActiveMsg();
 			break;
 		}
@@ -235,11 +233,11 @@ bool Admin<type>::DrawPagination(Message& pag_left, Message& pag_right, int& pag
 		switch (x)
 		{
 		case 0:
-			pag_left.DrawMessage();
+			pag_left.DrawMsgWithFrame();
 			pag_right.DrawActiveMsg();
 			break;
 		case 1:
-			pag_right.DrawMessage();
+			pag_right.DrawMsgWithFrame();
 			pag_left.DrawActiveMsg();
 			break;
 		}
@@ -284,6 +282,7 @@ void Admin<type>::CheckXY(int& x, int& y)
 template <class type>
 void Admin<type>::DrawDeleting()
 {
+	if (!this->number_st)throw exception("File is empty!");
 	int index,
 		page = 0,
 		number_pages = 0;
@@ -320,10 +319,10 @@ bool Admin<type>::DoDeleting(List<type> _list, int &page)
 	while (true)
 	{
 		DrawData(_list);
-		pag_left.DrawMessage();
-		current_page.DrawMessage(1);
-		pag_right.DrawMessage();
-		back.DrawMessage();
+		pag_left.DrawMsgWithFrame();
+		current_page.DrawMsgWithFrame(1);
+		pag_right.DrawMsgWithFrame();
+		back.DrawMsgWithFrame();
 		row = y / size_row;
 		col = x / size_col;
 		for (int i = 0; i < cols; i++)
