@@ -29,7 +29,7 @@ Window::~Window()
 {
 	SetColor(txcolor, bgcolor);
 }
-void Window::DrawBox()
+void Window::DrawFrame()
 {
 	GotoXY(px, py);
 	cout << borders[TopLeftAngle];
@@ -143,7 +143,7 @@ int Menu::DoMenu()
 }
 void Menu::DrawMenu()
 {
-	DrawBox();
+	DrawFrame();
 	for (int i = 0; i < GetSizeMenu(); i++)
 	{
 		WriteLine(menu_items[i], 
@@ -223,7 +223,7 @@ void Table::DrawRows()
 }
 void Table::DrawTable()
 {
-	DrawBox();
+	DrawFrame();
 	if (cols)DrawCols();
 	if (rows)DrawRows();
 }
@@ -254,17 +254,5 @@ void Table::SetRows(unsigned int num_rows)
 		rows = num_rows;
 		size_row = height / rows;
 	}
-	else rows = size_row = num_rows;
-	
-}
-
-
-
-void DrawMessage(const char* message, unsigned int width, unsigned int height, unsigned int position, int indent_letf, int indent_top)
-{
-	cls();
-	Message msg(message, width, height, position, indent_letf, indent_top);
-	msg.WriteMessage();
-	_getch();
-	cls();
+	else rows = size_row = num_rows;	
 }

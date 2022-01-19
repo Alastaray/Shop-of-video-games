@@ -1,7 +1,7 @@
 #include "Others.h"
 
 
-char* IntToChar(int value)
+char* IntToChar(unsigned int value)
 {
 	int len_value = 1,
 		val = value;

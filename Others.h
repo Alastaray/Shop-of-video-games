@@ -4,9 +4,12 @@
 #include "fun_console.h"
 using namespace std;
 #pragma warning(disable: 4996)
-char* IntToChar(int value);
-bool CompareStr(const char* value, const char* source);
+
+
+char* IntToChar(unsigned int);
+bool CompareStr(const char*, const char*);
 void Move(char& key, int& x, int& y, int how_change_x = 0, int how_change_y = 0);
+
 
 class Input
 {

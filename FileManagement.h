@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <fstream>
 #include "List.h"
 #include "Products and customers.h"
 using namespace std;
@@ -8,22 +9,21 @@ using namespace std;
 
 
 template <class type>
-class Management
+class FileManagement
 {
 public:
 
-	Management(const char* _filename)
+	FileManagement(const char* _filename)
 	{
 		filename = _filename;
 		sizeof_st = sizeof(type);
-		QuiryNumberSt();
 	}
-	~Management()
+	~FileManagement()
 	{
 		if (filename)Write();
 		else cls();
 	}
-	int Read(int amount = 0, int offset = 0);
+	bool Read(int amount = 0, int offset = 0);
 	void FileDelete();
 	void Write();
 	void QuiryNumberSt();
@@ -41,7 +41,7 @@ protected:
 };
 
 template <class type>
-void Management<type>::QuiryNumberSt()
+void FileManagement<type>::QuiryNumberSt()
 {
 	fstream file;
 	file.open(filename, ios::out | ios::in | ios::binary | ios::app);
@@ -50,7 +50,7 @@ void Management<type>::QuiryNumberSt()
 	file.close();
 }
 template <class type>
-void Management<type>::FileDelete()
+void FileManagement<type>::FileDelete()
 {
 	fstream file;
 	file.open(filename, ios::out | ios::in | ios::trunc);
@@ -58,8 +58,9 @@ void Management<type>::FileDelete()
 }
 
 template <class type>
-int Management<type>::Read(int amount, int offset)
+bool FileManagement<type>::Read(int amount, int offset)
 {
+	QuiryNumberSt();
 	if (number_st && offset < number_st)
 	{	
 		type st;
@@ -77,17 +78,17 @@ int Management<type>::Read(int amount, int offset)
 			list << st;
 		}
 		file.close();
-		return 1;
+		return true;
 	}
 	else
 	{
-		return 0;
+		return false;
 	}
 
 }
 
 template <class type>
-void Management<type>::Write()
+void FileManagement<type>::Write()
 {	
 	FileDelete();
 	fstream file;
