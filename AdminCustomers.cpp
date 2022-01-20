@@ -70,7 +70,6 @@ int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& _list, i
 		prod_rows = product.GetRows();
 	if (!prod_size_col)throw exception("prod_size_col can't be zero!");
 	if (!prod_size_row)throw exception("prod_size_row can't be zero!");
-	if (!prod_size_col || !prod_size_row)return -1;
 	char key;
 	int x = 0, y = 0,
 		row, col;
@@ -113,7 +112,7 @@ int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& _list, i
 }
 void AdminCustomers::Add(const char* name, const char* prod_name, int amount, double price)
 {
-	static int id = number_st? list[list.GetCount() - 1].GetId() + 1: 0;
+	static int id = number_st ? list[list.GetCount() - 1].GetId() + 1: 0;
 	list << Customer(id, name, prod_name, amount, price);
 	id++;
 }

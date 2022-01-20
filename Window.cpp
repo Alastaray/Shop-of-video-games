@@ -26,10 +26,6 @@ Window::Window(unsigned int _width, unsigned int _height, unsigned int position,
 	ShowCaret(false);
 	SetWinParam(_width, _height, position, indent_letf, indent_top);
 }
-Window::~Window()
-{
-	SetColor(txcolor, bgcolor);
-}
 void Window::DrawFrame()
 {
 	GotoXY(px, py);

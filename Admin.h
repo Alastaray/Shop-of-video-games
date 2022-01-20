@@ -23,13 +23,11 @@ public:
 	bool Show();
 	void DrawDeleting();
 	int SeekElement(List<type>&, unsigned int);
+	virtual int DrawSearching() = 0;
+	virtual int DrawSorting() = 0;
 	virtual void DrawAdding() = 0;
 
-	void SetLimit(unsigned int _limit)
-	{
-		if (_limit == 0)throw exception("Limit can't be zero!");
-		limit = _limit;
-	}
+	void SetLimit(unsigned int);
 	int GetLimit() { return limit; }
 	List<type>& GetSortedList() { return sorted; }
 protected:
@@ -47,27 +45,27 @@ protected:
 	int DoTable(List<type>&, int&);
 	void DrawData(List<type>&);
 	void DrawActiveCell(List<type>&, int, int, int, int);
-	void SetPaginationParam(int& page);
+	virtual void DrawElement(List<type>&, int, int, int, int) = 0;
+
+	void SetPaginationParam(int&);
 	void DrawPagination();
-	bool DoPagination(int& page);
+	bool DoPagination(int&);
+
 	void SetButtonsParam();
 	void DrawButtons();
 	int DoButtons();
-	virtual void DrawElement(List<type>&, int, int, int, int) = 0;
+
 
 	void CheckXY(int&, int&);
 	void DrawHeadlines();
 
 	bool DoDeleting(List<type>, int&);
-	virtual int DrawSearching() = 0;
-	virtual int DrawSorting() = 0;
 
 	virtual bool ChangeData(int, int) = 0;
 	bool Edit(int, int);
 	void Synchronization(int);
 
 };
-
 
 template <class type>
 Admin<type>::Admin(const char* _filename, int _limit, int _width, int _cols) : FileManagement<type>(_filename)
@@ -196,6 +194,7 @@ void Admin<type>::DrawActiveCell(List<type>& _list, int row, int col, int x, int
 	SetColor(txcolor, bgcolor);
 }
 
+
 template <class type>
 void Admin<type>::SetButtonsParam()
 {
@@ -211,7 +210,6 @@ void Admin<type>::DrawButtons()
 	search->DrawMessage();
 	back->DrawMessage();
 }
-
 
 template <class type>
 int Admin<type>::DoButtons()
@@ -258,6 +256,7 @@ int Admin<type>::DoButtons()
 	}
 	return -1;
 }
+
 
 template <class type>
 void Admin<type>::SetPaginationParam(int &page)
@@ -330,6 +329,13 @@ void Admin<type>::CheckXY(int& x, int& y)
 	if (y >= size_row * rows)y = 0;
 	if (x >= size_col * cols)x = 0;
 	if (x < 0)x = size_col * (cols - 1);
+}
+
+template <class type>
+void Admin<type>::SetLimit(unsigned int _limit)
+{
+	if (_limit == 0)throw exception("Limit can't be zero!");
+	limit = _limit;
 }
 
 template <class type>
@@ -406,6 +412,7 @@ bool Admin<type>::DoDeleting(List<type> _list, int &page)
 		CheckXY(x, y);
 	}
 }
+
 
 template <class type>
 bool Admin<type>::Edit(int id, int col)
