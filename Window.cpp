@@ -21,6 +21,7 @@ Window::Window(unsigned int _width, unsigned int _height, unsigned int position,
 	bgcolor = Black;
 	activeTxcolor = Black;
 	activeBgcolor = White;
+	this->position = position;
 	SetColor(txcolor, bgcolor);
 	ShowCaret(false);
 	SetWinParam(_width, _height, position, indent_letf, indent_top);
@@ -64,7 +65,6 @@ void Window::FillLine(int _x, int _y)
 	for (int i = 0; i < GetWidth(); i++) {
 		cout << " ";
 	}
-
 }
 void Window::SetWinParam(unsigned int _width, unsigned int _height, unsigned int position, int indent_letf, int indent_top)
 {
@@ -102,12 +102,18 @@ void Window::SetWinParam(unsigned int _width, unsigned int _height, unsigned int
 		py = 15 + indent_top;
 		if (width >= 40)width = 40;
 		break;
-	default:
-		cout << "Îøèáêà!" << endl;
-		break;
 	}
 
 }
+void Window::SetIndents(int indent_letf, int indent_top)
+{
+	if (width && height)
+	{
+		SetWinParam(width, height, position, indent_letf, indent_top);
+	}
+	else throw exception("You can't set indents if don't set win param!");
+}
+
 
 void Menu::SetMenuParam(int indent_letf, int indent_top)
 {

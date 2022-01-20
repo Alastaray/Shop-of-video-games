@@ -36,7 +36,7 @@ void AdminCustomers::DrawAdding()
 		Add(name, product[index].GetName(), amount, product[index].GetPrice());
 	}
 
-	Message::DrawMessage("Product was bought!");
+	Message::WriteMessage("Product was bought!");
 }
 int AdminCustomers::ChooseProduct(AdminProducts& product)
 {
@@ -74,18 +74,13 @@ int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& _list, i
 	char key;
 	int x = 0, y = 0,
 		row, col;
-	Message back("Back", 10, 3, RightTop, 19, 2);
-	Message pag_left("<<", 5, 3, LeftTop, product.GetWidth() / 2 - 3, prod_size_row * prod_rows + 3);
-	Message current_page(IntToChar(page), 5, 3, LeftTop, product.GetWidth() / 2 + 4, prod_size_row * prod_rows + 3);
-	Message pag_right(">>", 5, 3, LeftTop, product.GetWidth() / 2 + 11, prod_size_row * prod_rows + 3);
-
+	product.back->SetIndents(19, 2);
+	product.SetPaginationParam(page);
 	while (true)
 	{
 		product.DrawData(_list);
-		back.DrawMsgWithFrame();
-		pag_left.DrawMsgWithFrame();
-		current_page.DrawMsgWithFrame(1);
-		pag_right.DrawMsgWithFrame();
+		product.back->DrawMessage();
+		product.DrawPagination();
 		row = y / prod_size_row;
 		col = x / prod_size_col;
 		for (int i = 0; i < prod_cols; i++)
@@ -99,7 +94,7 @@ int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& _list, i
 		if (x >= prod_size_col * prod_cols)
 		{
 			product.DrawData(_list);
-			back.DrawActiveMsg();
+			product.back->DrawActiveMsg();
 			Move(key, x, y, prod_size_col, prod_size_row);
 			if (key == 13)return -1;
 			if (key == 72 || key == 'w' || key == 'W')
@@ -111,7 +106,7 @@ int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& _list, i
 		{
 			y -= prod_size_row;
 			product.DrawData(_list);
-			if (product.DrawPagination(pag_left, pag_right, page))return -2;
+			if (product.DoPagination(page))return -2;
 		}
 		product.CheckXY(x, y);
 	}
@@ -160,7 +155,7 @@ int AdminCustomers::Sort(int amount, double price, bool low_to_high)
 	if (sorted.GetCount())return 2;
 	else
 	{
-		Message::DrawMessage("Page not found!");
+		Message::WriteMessage("Page not found!");
 		sorted = list;
 		return true;
 	}
@@ -182,7 +177,7 @@ int AdminCustomers::Search(const char* val)
 	if (sorted.GetCount())return 2;
 	else
 	{
-		Message::DrawMessage("Page not found!");
+		Message::WriteMessage("Page not found!");
 		sorted = list;
 		return true;
 	}
@@ -203,11 +198,11 @@ int AdminCustomers::DrawSorting()
 	Message sort("Sort", 6, 3, CenterTop, 6, 17);
 	while (true)
 	{
-		enter_amount.DrawMessage();
-		enter_price.DrawMessage();
-		sort.DrawMsgWithFrame();
-		High_to_low.DrawMsgWithFrame();
-		Low_to_high.DrawMsgWithFrame();
+		enter_amount.WriteMessage();
+		enter_price.WriteMessage();
+		sort.DrawMessage();
+		High_to_low.DrawMessage();
+		Low_to_high.DrawMessage();
 		switch (y)
 		{
 		case 0:

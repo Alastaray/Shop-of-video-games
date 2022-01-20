@@ -10,16 +10,18 @@ template <class type>
 class Admin : public FileManagement<type>, public Table
 {
 public:
-	Admin(const char* _filename, int _limit = 10, int _width = 90, int _cols = 5) : FileManagement<type>(_filename)
+	Admin(const char* _filename, int _limit = 10, int _width = 90, int _cols = 5);
+	~Admin()
 	{
-		headlines[0] = "0";
-		limit = _limit;
-		width = _width;
-		SetCols(_cols);
-		!this->Read();
+		delete pag_left;
+		delete current_page;
+		delete pag_right;
+		delete sort;
+		delete search;
+		delete back;
 	}
 	bool Show();
-	void DrawDeleting();	
+	void DrawDeleting();
 	int SeekElement(List<type>&, unsigned int);
 	virtual void DrawAdding() = 0;
 
@@ -34,13 +36,23 @@ protected:
 	const char* headlines[5];
 	List <type> sorted;
 	unsigned int limit;
+	Message* pag_left,
+		* current_page,
+		* pag_right,
+		* sort,
+		* search,
+		* back;
 
-	int SetTableParam(List<type>&, int &);
-	int DoTable(List<type>&, int& );
+	int SetTableParam(List<type>&, int&);
+	int DoTable(List<type>&, int&);
 	void DrawData(List<type>&);
 	void DrawActiveCell(List<type>&, int, int, int, int);
-	bool DrawPagination(Message&, Message&, int&);
-	int DrawButtons(Message&, Message&, Message&);
+	void SetPaginationParam(int& page);
+	void DrawPagination();
+	bool DoPagination(int& page);
+	void SetButtonsParam();
+	void DrawButtons();
+	int DoButtons();
 	virtual void DrawElement(List<type>&, int, int, int, int) = 0;
 
 	void CheckXY(int&, int&);
@@ -56,6 +68,22 @@ protected:
 
 };
 
+
+template <class type>
+Admin<type>::Admin(const char* _filename, int _limit, int _width, int _cols) : FileManagement<type>(_filename)
+{
+	headlines[0] = "0";
+	limit = _limit;
+	width = _width;
+	SetCols(_cols);
+	!this->Read();
+	pag_left = new Message("<<", 5, 3, LeftTop);
+	current_page = new Message("0", 5, 3, LeftTop);
+	pag_right = new Message(">>", 5, 3, LeftTop);
+	sort = new Message("Sort", 10, 3, RightTop);
+	search = new Message("Search", 10, 3, RightTop);
+	back = new Message("Back", 10, 3, RightTop);
+}
 
 
 template <class type>
@@ -87,7 +115,6 @@ bool Admin<type>::Show()
 	return true;
 }
 
-
 template <class type>
 int Admin<type>::SetTableParam(List<type>& _list, int& page)
 {
@@ -106,21 +133,13 @@ int Admin<type>::DoTable(List<type>& _list, int& page)
 	char key = 0;
 	int x = 0, y = 0,
 		 row, col, result=1;
-	Message pag_left("<<", 5, 3, LeftTop, width / 2 - 4, size_row * rows + 3);
-	Message current_page(IntToChar(page), 5, 3, LeftTop, width / 2 + 3, size_row * rows + 3);
-	Message pag_right(">>", 5, 3, LeftTop, width / 2 + 10, size_row * rows + 3);
-	Message sort("Sort", 10, 3, RightTop, 19, 2 + rows / 3);
-	Message search("Search", 10, 3, RightTop, 19, 5 + rows / 3 * 2);
-	Message back("Back", 10, 3, RightTop, 19, 8 + rows / 3 * 3);
+	SetButtonsParam();
+	SetPaginationParam(page);
 	while (true)
 	{		
 		DrawData(_list);
-		sort.DrawMsgWithFrame();
-		search.DrawMsgWithFrame();
-		back.DrawMsgWithFrame();
-		pag_left.DrawMsgWithFrame();
-		current_page.DrawMsgWithFrame(1);
-		pag_right.DrawMsgWithFrame();
+		DrawButtons();
+		DrawPagination();
 		row = y / size_row;
 		col = x / size_col;
 		DrawActiveCell(_list, row, col, x, y);
@@ -134,13 +153,13 @@ int Admin<type>::DoTable(List<type>& _list, int& page)
 		{
 			x -= size_col;
 			DrawData(_list);
-			if ((result = DrawButtons(sort, search, back)) != -1)return result;
+			if ((result = DoButtons()) != -1)return result;
 		}	
 		if (y >= size_row * rows)
 		{
 			y -= size_row;
 			DrawData(_list);
-			if (DrawPagination(pag_left, pag_right, page))return true;
+			if (DoPagination(page))return true;
 		}
 		CheckXY(x, y);
 	}
@@ -178,7 +197,24 @@ void Admin<type>::DrawActiveCell(List<type>& _list, int row, int col, int x, int
 }
 
 template <class type>
-int Admin<type>::DrawButtons(Message& sort, Message& search, Message& back)
+void Admin<type>::SetButtonsParam()
+{
+	sort->SetIndents(19, 2 + rows / 3);
+	search->SetIndents(19, 5 + rows / 3 * 2);
+	back->SetIndents(19, 8 + rows / 3 * 3);
+}
+
+template <class type>
+void Admin<type>::DrawButtons()
+{
+	sort->DrawMessage();
+	search->DrawMessage();
+	back->DrawMessage();
+}
+
+
+template <class type>
+int Admin<type>::DoButtons()
 {
 	int x = 0, y = 0;
 	char key;
@@ -187,19 +223,19 @@ int Admin<type>::DrawButtons(Message& sort, Message& search, Message& back)
 		switch (y)
 		{
 		case 0:
-			search.DrawMsgWithFrame();
-			back.DrawMsgWithFrame();
-			sort.DrawActiveMsg();
+			search->DrawMessage();
+			back->DrawMessage();
+			sort->DrawActiveMsg();
 			break;
 		case 1:
-			sort.DrawMsgWithFrame();
-			back.DrawMsgWithFrame();
-			search.DrawActiveMsg();
+			sort->DrawMessage();
+			back->DrawMessage();
+			search->DrawActiveMsg();
 			break;
 		case 2:
-			sort.DrawMsgWithFrame();
-			search.DrawMsgWithFrame();
-			back.DrawActiveMsg();
+			sort->DrawMessage();
+			search->DrawMessage();
+			back->DrawActiveMsg();
 			break;
 		}
 		Move(key, x, y, 0, 1);
@@ -224,7 +260,24 @@ int Admin<type>::DrawButtons(Message& sort, Message& search, Message& back)
 }
 
 template <class type>
-bool Admin<type>::DrawPagination(Message& pag_left, Message& pag_right, int& page)
+void Admin<type>::SetPaginationParam(int &page)
+{
+	current_page->SetName(IntToChar(page));
+	pag_left->SetIndents(width / 2 - 4, size_row * rows + 3);
+	current_page->SetIndents(width / 2 + 3, size_row * rows + 3);
+	pag_right->SetIndents(width / 2 + 10, size_row * rows + 3);
+}
+
+template <class type>
+void Admin<type>::DrawPagination()
+{
+	pag_left->DrawMessage();
+	current_page->DrawMessage(1);
+	pag_right->DrawMessage();
+}
+
+template <class type>
+bool Admin<type>::DoPagination(int& page)
 {
 	int x = 0, y = 0;
 	char key;
@@ -233,12 +286,12 @@ bool Admin<type>::DrawPagination(Message& pag_left, Message& pag_right, int& pag
 		switch (x)
 		{
 		case 0:
-			pag_left.DrawMsgWithFrame();
-			pag_right.DrawActiveMsg();
+			pag_left->DrawMessage();
+			pag_right->DrawActiveMsg();
 			break;
 		case 1:
-			pag_right.DrawMsgWithFrame();
-			pag_left.DrawActiveMsg();
+			pag_right->DrawMessage();
+			pag_left->DrawActiveMsg();
 			break;
 		}
 		Move(key, x, y, 1, 0);
@@ -312,17 +365,13 @@ bool Admin<type>::DoDeleting(List<type> _list, int &page)
 	char key;
 	int x = 0, y = 0,
 		row, col;
-	Message pag_left("<<", 5, 3, LeftTop, width / 2 - 4, size_row * rows + 3);
-	Message current_page(IntToChar(page), 5, 3, LeftTop, width / 2 + 3, size_row * rows + 3);
-	Message pag_right(">>", 5, 3, LeftTop, width / 2 + 10, size_row * rows + 3);
-	Message back("Back", 10, 3, RightTop, 19, 2);
+	SetPaginationParam(page);
+	back->SetIndents(19, 2);
 	while (true)
 	{
 		DrawData(_list);
-		pag_left.DrawMsgWithFrame();
-		current_page.DrawMsgWithFrame(1);
-		pag_right.DrawMsgWithFrame();
-		back.DrawMsgWithFrame();
+		DrawPagination();
+		back->DrawMessage();
 		row = y / size_row;
 		col = x / size_col;
 		for (int i = 0; i < cols; i++)
@@ -340,7 +389,7 @@ bool Admin<type>::DoDeleting(List<type> _list, int &page)
 		if (x >= size_col * cols)
 		{
 			DrawData(_list);
-			back.DrawActiveMsg();
+			back->DrawActiveMsg();
 			Move(key, x, y, size_col, size_row);
 			if (key == 13)return false;
 			if (key == 72 || key == 'w' || key == 'W')
@@ -352,7 +401,7 @@ bool Admin<type>::DoDeleting(List<type> _list, int &page)
 		{
 			y -= size_row;
 			DrawData(_list);
-			if (DrawPagination(pag_left, pag_right, page))return -2;
+			if (DoPagination(page))return -2;
 		}
 		CheckXY(x, y);
 	}

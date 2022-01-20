@@ -71,7 +71,7 @@ void main()
 				AdminProducts admin_prod("products.txt");				
 				char result[20] = {"Income is "};
 				strcat(result, IntToChar(CreateReport(admin_prod, admin_cust)));
-				Message::DrawMessage(result);
+				Message::WriteMessage(result);
 				break;
 			}
 			case 7:
@@ -90,7 +90,7 @@ void main()
 		catch (exception& error)
 		{
 			cls();
-			Message::DrawMessage(error.what());
+			Message::WriteMessage(error.what());
 		}
 	}
 }

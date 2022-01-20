@@ -30,7 +30,7 @@ public:
 	int GetHeight() { return height - 2; }
 	int GetX() { return px + 1; }
 	int GetY() { return py + 1; }
-
+	void SetIndents(int indent_letf, int indent_top);
 	template <class type>
 	void WriteLine(type val, int indent_letf = 0, int indent_top = 0);
 	template <class type>
@@ -54,7 +54,8 @@ protected:
 	};
 	char borders[11];
 	unsigned int height, width,
-		px, py;
+		px, py,
+		position;
 	unsigned txcolor, bgcolor,
 		activeTxcolor, activeBgcolor;
 };
@@ -109,7 +110,6 @@ class Menu :public Window
 public:
 	Menu(unsigned int position, unsigned int _width = 0, unsigned int _height = 0, int indent_letf = 0, int indent_top = 0) :Window(_width, _height, position, indent_letf, indent_top)
 	{
-		this->position = position;
 		aling = true;
 	}
 	int DoMenu();
@@ -121,7 +121,6 @@ public:
 	Menu& operator<<(const char* item) { AddMenuItem(item); return *this; }
 private:
 	List<const char*>menu_items;
-	unsigned int position;
 	bool aling;
 };
 
@@ -138,20 +137,21 @@ public:
 		SetName(_name);
 		SetWinParam(_width, _height, position, indent_letf, indent_top);
 	}
+	void SetIndents(int indent_letf, int indent_top) { Window::SetIndents(indent_letf, indent_top); }
 	void SetName(const char* _name) { strcpy(name, _name); }
 	void DrawActiveMsg(int indent_letf = 0, int indent_top = 0)
 	{
 		Window::DrawFrame();
 		Window::FillLine(name, indent_letf, indent_top);
 	}
-	void DrawMsgWithFrame(int indent_letf = 0, int indent_top = 0) { Window::DrawFrame(name, indent_letf, indent_top); }
-	void DrawMessage(int indent_letf = 0, int indent_top = 0) { Window::WriteLine(name, indent_letf, indent_top); }
+	void DrawMessage(int indent_letf = 0, int indent_top = 0) { Window::DrawFrame(name, indent_letf, indent_top); }
+	void WriteMessage(int indent_letf = 0, int indent_top = 0) { Window::WriteLine(name, indent_letf, indent_top); }
 	void FillMessage(int indent_letf = 0, int indent_top = 0) {	Window::FillLine(name, indent_letf, indent_top); }
-	static void DrawMessage(const char* message, unsigned int _width = 17, unsigned int _height = 3, unsigned int position = CenterTop, int indent_letf = 10, int indent_top = 12)
+	static void WriteMessage(const char* message, unsigned int _width = 17, unsigned int _height = 3, unsigned int position = CenterTop, int indent_letf = 10, int indent_top = 12)
 	{
 		cls();
 		Message msg(message, _width, _height, position, indent_letf, indent_top);
-		msg.DrawMessage();
+		msg.WriteMessage();
 		_getch();
 		cls();
 	}
