@@ -17,6 +17,7 @@ public:
 	{
 		filename = _filename;
 		sizeof_st = sizeof(type);
+		number_st = 0;
 	}
 	~FileManagement()
 	{
@@ -92,7 +93,6 @@ void FileManagement<type>::Write()
 {	
 	FileDelete();
 	fstream file;
-	type st;
 	file.open(filename, ios::out | ios::in | ios::binary | ios::app);
 	file.seekg(ios::beg);
 	for (int i = 0; i < list.GetCount(); i++)

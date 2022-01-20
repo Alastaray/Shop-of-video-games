@@ -6,7 +6,7 @@ using namespace std;
 class Product
 {
 public:
-	Product() {}
+	Product() = default;
 	Product(int _id, const char* _name, int _amount, double _price, double _purchase_price);
 	Product(const Product& product);
 
@@ -37,7 +37,7 @@ private:
 class Customer
 {
 public:
-	Customer() {}
+	Customer() = default;
 	Customer(int _id, const char* _name, const char* _prod_name, int _amount, double _price);
 	Customer(const Customer& t);
 

@@ -2,8 +2,7 @@
 #include <iostream>
 #include "Window.h"
 #include "FileManagement.h"
-#include "cmath"
-
+#include "Others.h"
 
 
 template <class type>
@@ -74,13 +73,13 @@ Admin<type>::Admin(const char* _filename, int _limit, int _width, int _cols) : F
 	limit = _limit;
 	width = _width;
 	SetCols(_cols);
-	!this->Read();
 	pag_left = new Message("<<", 5, 3, LeftTop);
 	current_page = new Message("0", 5, 3, LeftTop);
 	pag_right = new Message(">>", 5, 3, LeftTop);
 	sort = new Message("Sort", 10, 3, RightTop);
 	search = new Message("Search", 10, 3, RightTop);
 	back = new Message("Back", 10, 3, RightTop);
+	this->Read();
 }
 
 

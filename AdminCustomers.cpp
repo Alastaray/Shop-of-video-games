@@ -36,7 +36,7 @@ void AdminCustomers::DrawAdding()
 		Add(name, product[index].GetName(), amount, product[index].GetPrice());
 	}
 
-	Message::WriteMessage("Product was bought!");
+	DrawSomething("Product was bought!");
 }
 int AdminCustomers::ChooseProduct(AdminProducts& product)
 {
@@ -154,7 +154,7 @@ int AdminCustomers::Sort(int amount, double price, bool low_to_high)
 	if (sorted.GetCount())return 2;
 	else
 	{
-		Message::WriteMessage("Page not found!");
+		DrawSomething("Page not found!");
 		sorted = list;
 		return true;
 	}
@@ -176,7 +176,7 @@ int AdminCustomers::Search(const char* val)
 	if (sorted.GetCount())return 2;
 	else
 	{
-		Message::WriteMessage("Page not found!");
+		DrawSomething("Page not found!");
 		sorted = list;
 		return true;
 	}

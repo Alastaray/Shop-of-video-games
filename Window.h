@@ -14,8 +14,20 @@ enum position
 	RightBot
 };
 
-
-
+enum Borders_name
+{
+	TopLeftAngle,
+	TopRightAngle,
+	BotLeftAngle,
+	BotRightAngle,
+	HorizontalLine,
+	VerticalLine,
+	TopCrosshair,
+	BotCrosshair,
+	LeftCrosshair,
+	RightCrosshair,
+	Crosshair,
+};
 
 
 class Window
@@ -37,20 +49,6 @@ public:
 	template <class type>
 	void FillLine(type val, int indent_letf = 0, int indent_top = 0);
 protected:	
-	enum Borders_name
-	{
-		TopLeftAngle,
-		TopRightAngle,
-		BotLeftAngle,
-		BotRightAngle,
-		HorizontalLine,
-		VerticalLine,
-		TopCrosshair,
-		BotCrosshair,
-		LeftCrosshair,
-		RightCrosshair,
-		Crosshair,
-	};
 	char borders[11];
 	unsigned int height, width,
 		px, py,
@@ -146,15 +144,16 @@ public:
 	void DrawMessage(int indent_letf = 0, int indent_top = 0) { Window::DrawFrame(name, indent_letf, indent_top); }
 	void WriteMessage(int indent_letf = 0, int indent_top = 0) { Window::WriteLine(name, indent_letf, indent_top); }
 	void FillMessage(int indent_letf = 0, int indent_top = 0) {	Window::FillLine(name, indent_letf, indent_top); }
-	static void WriteMessage(const char* message, unsigned int _width = 17, unsigned int _height = 3, unsigned int position = CenterTop, int indent_letf = 10, int indent_top = 12)
-	{
-		cls();
-		Message msg(message, _width, _height, position, indent_letf, indent_top);
-		msg.WriteMessage();
-		_getch();
-		cls();
-	}
 };
 
-
+template <class type>
+void DrawSomething(type something, unsigned int _width = 17, unsigned int _height = 3, unsigned int position = CenterTop, int indent_letf = 10, int indent_top = 12, bool frame = false)
+{
+	cls();
+	Window msg(_width, _height, position, indent_letf, indent_top);
+	if (frame) msg.DrawFrame(something);
+	else msg.WriteLine(something);
+	_getch();
+	cls();
+}
 
