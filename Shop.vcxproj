@@ -141,7 +141,7 @@
   <ItemGroup>
     <ClCompile Include="AdminCustomers.cpp" />
     <ClCompile Include="AdminProducts.cpp" />
-    <ClCompile Include="Others.cpp" />
+    <ClCompile Include="Other.cpp" />
     <ClCompile Include="fun_console.cpp" />
     <ClCompile Include="Products and customers.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -151,7 +151,7 @@
     <ClInclude Include="Admin.h" />
     <ClInclude Include="AdminCustomers.h" />
     <ClInclude Include="AdminProducts.h" />
-    <ClInclude Include="Others.h" />
+    <ClInclude Include="Other.h" />
     <ClInclude Include="fun_console.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="FileManagement.h" />

@@ -6,7 +6,7 @@ using namespace std;
 #pragma warning(disable: 4996)
 
 
-char* IntToChar(unsigned int);
+char* IntToChar(int);
 bool CompareStr(const char*, const char*);
 void Move(char& key, int& x, int& y, int how_change_x = 0, int how_change_y = 0);
 

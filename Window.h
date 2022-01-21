@@ -1,6 +1,6 @@
 #pragma once
 #include "List.h"
-#include "Others.h"
+#include "Other.h"
 
 
 
@@ -43,11 +43,11 @@ public:
 	int GetY() { return py + 1; }
 	void SetIndents(int indent_letf, int indent_top);
 	template <class type>
-	void WriteLine(type val, int indent_letf = 0, int indent_top = 0);
+	void WriteLine(const type& val, int indent_letf = 0, int indent_top = 0);
 	template <class type>
-	void DrawFrame(type val, int indent_letf = 0, int indent_top = 0);
+	void DrawFrame(const type& val, int indent_letf = 0, int indent_top = 0);
 	template <class type>
-	void FillLine(type val, int indent_letf = 0, int indent_top = 0);
+	void FillLine(const type& val, int indent_letf = 0, int indent_top = 0);
 protected:	
 	char borders[11];
 	unsigned int height, width,
@@ -57,19 +57,19 @@ protected:
 		activeTxcolor, activeBgcolor;
 };
 template <class type>
-void Window::WriteLine(type val, int indent_letf, int indent_top)
+void Window::WriteLine(const type& val, int indent_letf, int indent_top)
 {
 	GotoXY(GetX() + indent_letf, GetY() + indent_top);
 	cout << val;
 }
 template <class type>
-void Window::DrawFrame(type val, int indent_letf, int indent_top)
+void Window::DrawFrame(const type& val, int indent_letf, int indent_top)
 {
 	DrawFrame();
 	WriteLine(val, indent_letf, indent_top);
 }
 template <class type>
-void Window::FillLine(type val, int indent_letf, int indent_top)
+void Window::FillLine(const type& val, int indent_letf, int indent_top)
 {
 	SetColor(activeTxcolor, activeBgcolor);
 	FillLine(0, indent_top);
@@ -147,7 +147,7 @@ public:
 };
 
 template <class type>
-void DrawSomething(type something, unsigned int _width = 17, unsigned int _height = 3, unsigned int position = CenterTop, int indent_letf = 10, int indent_top = 12, bool frame = false)
+void DrawSomething(const type& something, bool frame = false, unsigned int _width = 17, unsigned int _height = 3, unsigned int position = CenterTop, int indent_letf = 10, int indent_top = 12)
 {
 	cls();
 	Window msg(_width, _height, position, indent_letf, indent_top);

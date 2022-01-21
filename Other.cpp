@@ -1,16 +1,24 @@
-#include "Others.h"
+#include "Other.h"
 
 
-char* IntToChar(unsigned int value)
+char* IntToChar(int value)
 {
-	int len_value = 1,
-		val = value;
-	char str[20];
+	char str[100];
+	int len_value = 1;
+	bool negative = false;
+	if (value < 0)
+	{
+		negative = true;
+		len_value++;
+		value -= value * 2;
+	}
+	int val = value;
 	while ((val /= 10) > 0) len_value++;
-	for (int i = len_value - 1, j = 10, k = 1; i >= 0; i--, j *= 10, k *= 10)
+	for (int i = len_value - 1, j = 10, k = 1; i >= negative; i--, j *= 10, k *= 10)
 	{
 		str[i] = '0' + value % j / k;
 	}
+	if (negative)str[0] = '-';
 	str[len_value] = '\0';
 	return str;
 }

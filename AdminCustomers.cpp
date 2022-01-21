@@ -289,7 +289,7 @@ bool AdminCustomers::ChangeData(int index, int whom)
 }
 
 
-int CreateReport(AdminProducts& admin_prod, AdminCustomers& admin_cust)
+double CreateReport(AdminProducts& admin_prod, AdminCustomers& admin_cust)
 {
 	double costs = 0,
 		profit = 0;

@@ -26,7 +26,7 @@
     <ClCompile Include="Window.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Others.cpp">
+    <ClCompile Include="Other.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="AdminProducts.cpp">
@@ -55,7 +55,7 @@
     <ClInclude Include="Admin.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Others.h">
+    <ClInclude Include="Other.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="AdminProducts.h">
