@@ -53,7 +53,6 @@ void Window::DrawFrame()
 		cout << borders[HorizontalLine];
 	}
 	cout << borders[BotRightAngle] << endl;
-
 }
 void Window::FillLine(int _x, int _y)
 {
@@ -62,8 +61,10 @@ void Window::FillLine(int _x, int _y)
 		cout << " ";
 	}
 }
-void Window::SetWinParam(unsigned int _width, unsigned int _height, unsigned int position, int indent_letf, int indent_top)
+void Window::SetWinParam(unsigned int _width, unsigned int _height, unsigned int position, int _indent_letf, int _indent_top)
 {
+	indent_letf = _indent_letf;
+	indent_top = _indent_top;
 	height = _height;
 	width = _width;
 	switch (position)
@@ -134,7 +135,7 @@ int Menu::DoMenu()
 	{
 		DrawMenu();
 		FillLine(menu_items[active/ step], 
-			aling ? (GetWidth() - strlen(menu_items[active / step])) / 2 : 3
+			aling ? (GetWidth() - strlen(menu_items[active / step])) / 2 : default_indent
 			, active);
 		Move(key, active, active, 0, step);
 		if (key == 13)return active / step;
@@ -149,16 +150,14 @@ void Menu::DrawMenu()
 	for (int i = 0; i < GetSizeMenu(); i++)
 	{
 		WriteLine(menu_items[i], 
-			aling ? (GetWidth() - strlen(menu_items[i])) / 2 : 3,
+			aling ? (GetWidth() - strlen(menu_items[i])) / 2 : default_indent,
 			i * 2);
 	}
 }
 
 
-
 void Table::FillLine(int _x, int _y)
 {
-
 	for (int i = 0; i < size_row - 1; i++)
 	{
 		GotoXY(GetX() + _x, GetY() + _y + i);
@@ -229,13 +228,13 @@ void Table::DrawTable()
 	if (cols)DrawCols();
 	if (rows)DrawRows();
 }
-void Table::DrawHeadlines(const char** headlines)
+void Table::DrawHeadlines()
 {
 	size_col = width / cols;
 	int pos_x = 0;
 	for (int j = 0; j < cols; j++)
 	{
-		WriteLine(headlines[j], pos_x);
+		WriteLine(headlines[j], pos_x, (-indent_top));
 		pos_x += size_col;
 	}
 

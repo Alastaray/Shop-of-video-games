@@ -9,12 +9,11 @@ class AdminCustomers :public Admin<Customer>
 public:
 	AdminCustomers(const char* _filename, int _limit = 10, int _width = 90) :Admin(_filename, _limit, _width, 5)
 	{
-		headlines[0] = "Id";
-		headlines[1] = "Name";
-		headlines[2] = "Product Name";
-		headlines[3] = "Amount";
-		headlines[4] = "Price";
-		filename = _filename;
+		AddHeadline("Id");
+		AddHeadline("Name");
+		AddHeadline("Product Name");
+		AddHeadline("Amount");
+		AddHeadline("Price");
 	}
 	virtual void DrawAdding();
 protected:
