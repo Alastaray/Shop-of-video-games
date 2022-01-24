@@ -7,7 +7,7 @@
 class AdminCustomers :public Admin<Customer>
 {
 public:
-	AdminCustomers(const char* _filename) :Admin(_filename)
+	AdminCustomers(const char* _filename, int _limit = 10, int _width = 90) :Admin(_filename, _limit, _width, 5)
 	{
 		headlines[0] = "Id";
 		headlines[1] = "Name";
@@ -29,4 +29,4 @@ protected:
 	int Sort(int amount = 0, double purchase_price = 0, bool low_to_high = true);
 
 };
-int CreateReport(AdminProducts& admin_prod, AdminCustomers& admin_cust);
+double CreateReport(AdminProducts& admin_prod, AdminCustomers& admin_cust);

@@ -1,9 +1,4 @@
-#include <iostream>
-#include <windows.h>
 #include "AdminCustomers.h"
-#include "AdminProducts.h"
-using namespace std;
-#pragma warning(disable: 4996)
 
 		
 
@@ -17,7 +12,7 @@ void main()
 		<< "Show customers"
 		<< "Add customer"
 		<< "Delete customer"
-		<< "Create report of income"
+		<< "Show income"
 		<< "Exit";
 	menu.SetMenuParam(5, 5);
 	while (true)
@@ -86,6 +81,7 @@ void main()
 			cout << error.what() << endl
 				<< "Index = " << error.GetValue() << endl
 				<< "Count = " << error.GetCount() << endl;
+			getch();
 		}
 		catch (exception& error)
 		{

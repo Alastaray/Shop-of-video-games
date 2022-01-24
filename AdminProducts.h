@@ -5,7 +5,7 @@
 class AdminProducts :public Admin<Product>
 {
 public:
-	AdminProducts(const char* _filename) :Admin(_filename)
+	AdminProducts(const char* _filename, int _limit = 10, int _width = 90) :Admin(_filename, _limit, _width, 5)
 	{
 		headlines[0] = "Id";
 		headlines[1] = "Name";

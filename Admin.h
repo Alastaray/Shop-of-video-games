@@ -1,15 +1,13 @@
 #pragma once
-#include <iostream>
 #include "Window.h"
 #include "FileManagement.h"
-#include "Others.h"
 
 
 template <class type>
 class Admin : public FileManagement<type>, public Table
 {
 public:
-	Admin(const char* _filename, int _limit = 10, int _width = 90, int _cols = 5);
+	Admin(const char* _filename, int _limit, int _width, int _cols);
 	~Admin()
 	{
 		delete pag_left;
@@ -271,7 +269,7 @@ void Admin<type>::DrawPagination()
 {
 	pag_left->DrawMessage();
 	current_page->DrawMessage(1);
-	pag_right->DrawMessage();
+	pag_right->DrawMessage(1);
 }
 
 template <class type>
