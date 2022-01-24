@@ -154,7 +154,7 @@
     <ClInclude Include="Other.h" />
     <ClInclude Include="fun_console.h" />
     <ClInclude Include="List.h" />
-    <ClInclude Include="FileManagement.h" />
+    <ClInclude Include="FileManager.h" />
     <ClInclude Include="Products and customers.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

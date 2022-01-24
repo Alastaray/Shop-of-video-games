@@ -1,13 +1,13 @@
 #pragma once
 #include "Window.h"
-#include "FileManagement.h"
+#include "FileManager.h"
 
 
 template <class type>
-class Admin : public FileManagement<type>, public Table
+class Admin : public FileManager<type>, public Table
 {
 public:
-	Admin(const char* _filename, int _limit, int _width, int _cols);
+	Admin(const char*, unsigned int, int, int);
 	~Admin()
 	{
 		delete pag_left;
@@ -65,12 +65,10 @@ protected:
 };
 
 template <class type>
-Admin<type>::Admin(const char* _filename, int _limit, int _width, int _cols) : FileManagement<type>(_filename)
+Admin<type>::Admin(const char* _filename, unsigned int _limit, int _width, int _cols) : FileManager<type>(_filename), Table(_width, 0, 0, _cols, 0)
 {
 	headlines[0] = "0";
 	limit = _limit;
-	width = _width;
-	SetCols(_cols);
 	pag_left = new Message("<<", 5, 3, LeftTop);
 	current_page = new Message("0", 5, 3, LeftTop);
 	pag_right = new Message(">>", 5, 3, LeftTop);
@@ -85,7 +83,7 @@ template <class type>
 bool Admin<type>::Show()
 {
 	if(!this->number_st)throw exception("File is empty!");
-	sorted = this->list;
+	sorted = this->file_data;
 	int page = 0,
 		result = 1,
 		number_pages = ceil(sorted.GetCount() / (limit*1.0));
@@ -345,14 +343,14 @@ void Admin<type>::DrawDeleting()
 	while (true)
 	{
 		cls();
-		number_pages = ceil(this->list.GetCount() / (limit * 1.0));
+		number_pages = ceil(this->file_data.GetCount() / (limit * 1.0));
 		if (number_pages <= page)page = 0;
 		if (0 > page)page = number_pages - 1;
 		List<type> l;
-		for (int i = page * limit, j = 0; i < this->list.GetCount(); i++, j++)
+		for (int i = page * limit, j = 0; i < this->file_data.GetCount(); i++, j++)
 		{
 			if (j >= limit)break;
-			l << this->list[i];
+			l << this->file_data[i];
 		}		
 		SetWinParam(width, l.GetCount() * 2 + 1, LeftTop, 5, 2);
 		SetRows(l.GetCount());
@@ -386,7 +384,7 @@ bool Admin<type>::DoDeleting(List<type> _list, int &page)
 		if (key == 27)return false;
 		if (key == 13)
 		{
-			this->list.RemoveAt(SeekElement(this->list, _list[row].GetId()));
+			this->file_data.RemoveAt(SeekElement(this->file_data, _list[row].GetId()));
 			return true;
 		}
 		if (x >= size_col * cols)
@@ -415,7 +413,7 @@ template <class type>
 bool Admin<type>::Edit(int id, int col)
 {
 	if (!col)return false;
-	int index = SeekElement(this->list, id);
+	int index = SeekElement(this->file_data, id);
 	bool result = ChangeData(index, col);
 	if(result)Synchronization(index);
 	return result;
@@ -426,9 +424,9 @@ void Admin<type>::Synchronization(int index)
 {
 	for (int i = 0; i < sorted.GetCount(); i++)
 	{
-		if (this->list[index].GetId() == sorted[i].GetId())
+		if (this->file_data[index].GetId() == sorted[i].GetId())
 		{
-			sorted[i] = this->list[index];
+			sorted[i] = this->file_data[index];
 			break;
 		}
 	}

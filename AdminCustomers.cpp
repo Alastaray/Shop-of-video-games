@@ -23,7 +23,7 @@ void AdminCustomers::DrawAdding()
 	cls();
 	win.DrawFrame("Enter the amount: ", 2, 1);
 	amount = Cin.GetInt(5);
-	index = product.SeekElement(product.GetList(), id);
+	index = product.SeekElement(product.GetFileData(), id);
 
 	if (amount >= product[index].GetAmount())
 	{
@@ -112,8 +112,8 @@ int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& _list, i
 }
 void AdminCustomers::Add(const char* name, const char* prod_name, int amount, double price)
 {
-	static int id = number_st ? list[list.GetCount() - 1].GetId() + 1: 0;
-	list << Customer(id, name, prod_name, amount, price);
+	static int id = number_st ? file_data[file_data.GetCount() - 1].GetId() + 1: 0;
+	file_data << Customer(id, name, prod_name, amount, price);
 	id++;
 }
 int AdminCustomers::Sort(int amount, double price, bool low_to_high)
@@ -121,41 +121,41 @@ int AdminCustomers::Sort(int amount, double price, bool low_to_high)
 	sorted.RemoveAll();
 	if (amount && price)
 	{
-		for (int i = 0; i < list.GetCount(); i++)
+		for (int i = 0; i < file_data.GetCount(); i++)
 		{
-			if (amount >= list[i].GetAmount() &&
-				price >= list[i].GetPrice())
+			if (amount >= file_data[i].GetAmount() &&
+				price >= file_data[i].GetPrice())
 			{
-				if (low_to_high)sorted.AddTail(list[i]);
-				else sorted.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(file_data[i]);
+				else sorted.AddHead(file_data[i]);
 			}
 		}
 	}
 	else if (amount || price)
 	{
-		for (int i = 0; i < list.GetCount(); i++)
+		for (int i = 0; i < file_data.GetCount(); i++)
 		{
-			if (amount >= list[i].GetAmount() ||
-				price >= list[i].GetPrice())
+			if (amount >= file_data[i].GetAmount() ||
+				price >= file_data[i].GetPrice())
 			{
-				if (low_to_high)sorted.AddTail(list[i]);
-				else sorted.AddHead(list[i]);
+				if (low_to_high)sorted.AddTail(file_data[i]);
+				else sorted.AddHead(file_data[i]);
 			}
 		}
 	}
 	else if (!amount && !price)
 	{
-		for (int i = 0; i < list.GetCount(); i++)
+		for (int i = 0; i < file_data.GetCount(); i++)
 		{
-			if (low_to_high)sorted.AddTail(list[i]);
-			else sorted.AddHead(list[i]);
+			if (low_to_high)sorted.AddTail(file_data[i]);
+			else sorted.AddHead(file_data[i]);
 		}
 	}
 	if (sorted.GetCount())return 2;
 	else
 	{
 		DrawSomething("Page not found!");
-		sorted = list;
+		sorted = file_data;
 		return true;
 	}
 }
@@ -164,20 +164,20 @@ int AdminCustomers::Search(const char* val)
 	sorted.RemoveAll();
 	if (val)
 	{
-		for (int i = 0; i < list.GetCount(); i++)
+		for (int i = 0; i < file_data.GetCount(); i++)
 		{
-			if (CompareStr(val, list[i].GetName()) ||
-				atoi(val) == list[i].GetAmount() ||
-				atof(val) == list[i].GetPrice() ||
-				CompareStr(val, list[i].GetProdName()))
-				sorted << list[i];
+			if (CompareStr(val, file_data[i].GetName()) ||
+				atoi(val) == file_data[i].GetAmount() ||
+				atof(val) == file_data[i].GetPrice() ||
+				CompareStr(val, file_data[i].GetProdName()))
+				sorted << file_data[i];
 		}
 	}
 	if (sorted.GetCount())return 2;
 	else
 	{
 		DrawSomething("Page not found!");
-		sorted = list;
+		sorted = file_data;
 		return true;
 	}
 }
@@ -273,16 +273,16 @@ bool AdminCustomers::ChangeData(int index, int whom)
 	switch (whom)
 	{
 	case 1:
-		list[index].SetName(Cin.GetData(GetWidth() / cols, 3, GetX() + size_col * whom));
+		file_data[index].SetName(Cin.GetData(GetWidth() / cols, 3, GetX() + size_col * whom));
 		break;
 	case 2:
-		list[index].SetProdName(Cin.GetData(GetWidth() / cols, 3, GetX() + size_col * whom));
+		file_data[index].SetProdName(Cin.GetData(GetWidth() / cols, 3, GetX() + size_col * whom));
 		break;
 	case 3:
-		list[index].SetAmount(Cin.GetInt(GetWidth() / cols, 1, GetX() + size_col * whom));
+		file_data[index].SetAmount(Cin.GetInt(GetWidth() / cols, 1, GetX() + size_col * whom));
 		break;
 	case 4:
-		list[index].SetPrice(Cin.GetDouble(GetWidth() / cols, 1, GetX() + size_col * whom));
+		file_data[index].SetPrice(Cin.GetDouble(GetWidth() / cols, 1, GetX() + size_col * whom));
 		break;
 	}
 	return Cin.Success();

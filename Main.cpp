@@ -64,8 +64,11 @@ void main()
 			{
 				AdminCustomers admin_cust("customers.txt");
 				AdminProducts admin_prod("products.txt");				
-				char result[20] = {"Income is "};
-				strcat(result, IntToChar(CreateReport(admin_prod, admin_cust)));
+				char result[100] = {"Income is "};
+				char buff[100];
+				double income = CreateReport(admin_prod, admin_cust);
+				sprintf(buff, "%f", income);
+				strcat(result, buff);
 				DrawSomething(result);
 				break;
 			}
@@ -82,6 +85,7 @@ void main()
 				<< "Index = " << error.GetValue() << endl
 				<< "Count = " << error.GetCount() << endl;
 			getch();
+			cls();
 		}
 		catch (exception& error)
 		{

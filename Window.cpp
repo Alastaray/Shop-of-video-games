@@ -53,7 +53,6 @@ void Window::DrawFrame()
 		cout << borders[HorizontalLine];
 	}
 	cout << borders[BotRightAngle] << endl;
-
 }
 void Window::FillLine(int _x, int _y)
 {
