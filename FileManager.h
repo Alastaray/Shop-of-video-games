@@ -32,7 +32,6 @@ public:
 	int GetCount() { return file_data.GetCount(); }
 	int GetNumberSt() { return number_st; }
 	type& operator[](int ind) { return file_data[ind]; }
-	void operator<<(const type& val) { file_data << val; }
 protected:
 	List<type> file_data;
 	const char* filename;

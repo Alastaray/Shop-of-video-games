@@ -7,28 +7,19 @@ template <class type>
 class Admin : public FileManager<type>, public Table
 {
 public:
-	Admin(const char*, unsigned int, int, int);
-	~Admin()
-	{
-		delete pag_left;
-		delete current_page;
-		delete pag_right;
-		delete sort;
-		delete search;
-		delete back;
-	}
+	Admin(const char*, unsigned int, int, int, unsigned int position = 0);
+	~Admin();
 	bool Show();
 	void DrawDeleting();
 	int SeekElement(List<type>&, unsigned int);
 	virtual int DrawSearching() = 0;
 	virtual int DrawSorting() = 0;
-	virtual void DrawAdding() = 0;
 
 	void SetLimit(unsigned int);
 	int GetLimit() { return limit; }
 	List<type>& GetSortedList() { return sorted; }
+
 protected:
-	const char* headlines[5];
 	List <type> sorted;
 	unsigned int limit;
 	Message* pag_left,
@@ -54,20 +45,16 @@ protected:
 
 
 	void CheckXY(int&, int&);
-	void DrawHeadlines();
-
 	bool DoDeleting(List<type>, int&);
 
 	virtual bool ChangeData(int, int) = 0;
 	bool Edit(int, int);
 	void Synchronization(int);
-
 };
 
 template <class type>
-Admin<type>::Admin(const char* _filename, unsigned int _limit, int _width, int _cols) : FileManager<type>(_filename), Table(_width, 0, 0, _cols, 0)
+Admin<type>::Admin(const char* _filename, unsigned int _limit, int _width, int _cols, unsigned int position) : FileManager<type>(_filename), Table(_width, 0, position, _cols, 0)
 {
-	headlines[0] = "0";
 	limit = _limit;
 	pag_left = new Message("<<", 5, 3, LeftTop);
 	current_page = new Message("0", 5, 3, LeftTop);
@@ -78,11 +65,22 @@ Admin<type>::Admin(const char* _filename, unsigned int _limit, int _width, int _
 	this->Read();
 }
 
+template <class type>
+Admin<type>::~Admin()
+{
+	delete pag_left;
+	delete current_page;
+	delete pag_right;
+	delete sort;
+	delete search;
+	delete back;
+}
+
 
 template <class type>
 bool Admin<type>::Show()
 {
-	if(!this->number_st)throw exception("File is empty!");
+	if(!this->GetCount())throw exception("File is empty!");
 	sorted = this->file_data;
 	int page = 0,
 		result = 1,
@@ -109,17 +107,17 @@ bool Admin<type>::Show()
 }
 
 template <class type>
-int Admin<type>::SetTableParam(List<type>& _list, int& page)
+int Admin<type>::SetTableParam(List<type>& list, int& page)
 {
-	if (!_list.GetCount())throw exception("List is empty!");
+	if (!list.GetCount())throw exception("List is empty!");
 	cls();
-	SetWinParam(width, _list.GetCount() * 2 + 1, LeftTop, 5, 2);
-	SetRows(_list.GetCount());
-	return DoTable(_list, page);
+	SetWinParam(width, list.GetCount() * 2 + 1, LeftTop, 5, 2);
+	SetRows(list.GetCount());
+	return DoTable(list, page);
 }
 
 template <class type>
-int Admin<type>::DoTable(List<type>& _list, int& page)
+int Admin<type>::DoTable(List<type>& list, int& page)
 {
 	if (!size_col)throw exception("size_col can't be zero!");
 	if (!size_row)throw exception("size_row can't be zero!");
@@ -130,28 +128,28 @@ int Admin<type>::DoTable(List<type>& _list, int& page)
 	SetPaginationParam(page);
 	while (true)
 	{		
-		DrawData(_list);
+		DrawData(list);
 		DrawButtons();
 		DrawPagination();
 		row = y / size_row;
 		col = x / size_col;
-		DrawActiveCell(_list, row, col, x, y);
+		DrawActiveCell(list, row, col, x, y);
 		Move(key, x, y, size_col, size_row);
 		if (key == 27)return false;
 		if (key == 13)
 		{
-			if(Edit(_list[row].GetId(), col))return true;
+			if(Edit(list[row].GetId(), col))return true;
 		}
 		if (x >= size_col * cols)
 		{
 			x -= size_col;
-			DrawData(_list);
+			DrawData(list);
 			if ((result = DoButtons()) != -1)return result;
 		}	
 		if (y >= size_row * rows)
 		{
 			y -= size_row;
-			DrawData(_list);
+			DrawData(list);
 			if (DoPagination(page))return true;
 		}
 		CheckXY(x, y);
@@ -161,9 +159,9 @@ int Admin<type>::DoTable(List<type>& _list, int& page)
 }
 
 template <class type>
-void Admin<type>::DrawData(List<type>& _list)
+void Admin<type>::DrawData(List<type>& list)
 {
-	DrawHeadlines();
+	if(headlines.GetCount())DrawHeadlines();
 	DrawTable();
 	int pos_y = 0;
 	int pos_x = 0;
@@ -172,7 +170,7 @@ void Admin<type>::DrawData(List<type>& _list)
 		pos_x = 0;
 		for (int j = 0; j < cols; j++)
 		{
-			DrawElement(_list, i, j, pos_x, pos_y);
+			DrawElement(list, i, j, pos_x, pos_y);
 			pos_x += size_col;
 		}
 		pos_y += size_row;
@@ -181,11 +179,11 @@ void Admin<type>::DrawData(List<type>& _list)
 }
 
 template <class type>
-void Admin<type>::DrawActiveCell(List<type>& _list, int row, int col, int x, int y)
+void Admin<type>::DrawActiveCell(List<type>& list, int row, int col, int x, int y)
 {
 	SetColor(activeTxcolor, activeBgcolor);
 	FillLine(x, y);
-	DrawElement(_list, row, col, x, y);
+	DrawElement(list, row, col, x, y);
 	SetColor(txcolor, bgcolor);
 }
 
@@ -216,18 +214,15 @@ int Admin<type>::DoButtons()
 		switch (y)
 		{
 		case 0:
-			search->DrawMessage();
-			back->DrawMessage();
+			DrawButtons();
 			sort->DrawActiveMsg();
 			break;
 		case 1:
-			sort->DrawMessage();
-			back->DrawMessage();
+			DrawButtons();
 			search->DrawActiveMsg();
 			break;
 		case 2:
-			sort->DrawMessage();
-			search->DrawMessage();
+			DrawButtons();
 			back->DrawActiveMsg();
 			break;
 		}
@@ -307,15 +302,6 @@ bool Admin<type>::DoPagination(int& page)
 }
 
 
-template <class type>
-void Admin<type>::DrawHeadlines()
-{
-	if (!CompareStr(headlines[0], "0"))
-	{
-		Table hl(width, 4, LeftTop, 5,0,5);
-		hl.DrawHeadlines(headlines);
-	}
-}
 
 template <class type>
 void Admin<type>::CheckXY(int& x, int& y)
@@ -336,7 +322,7 @@ void Admin<type>::SetLimit(unsigned int _limit)
 template <class type>
 void Admin<type>::DrawDeleting()
 {
-	if (!this->number_st)throw exception("File is empty!");
+	if (!this->GetCount())throw exception("File is empty!");
 	int index,
 		page = 0,
 		number_pages = 0;
@@ -359,7 +345,7 @@ void Admin<type>::DrawDeleting()
 }
 
 template <class type>
-bool Admin<type>::DoDeleting(List<type> _list, int &page)
+bool Admin<type>::DoDeleting(List<type> list, int &page)
 {
 	if (!size_col)throw exception("size_col can't be zero!");
 	if (!size_row)throw exception("size_row can't be zero!");
@@ -370,7 +356,7 @@ bool Admin<type>::DoDeleting(List<type> _list, int &page)
 	back->SetIndents(19, 2);
 	while (true)
 	{
-		DrawData(_list);
+		DrawData(list);
 		DrawPagination();
 		back->DrawMessage();
 		row = y / size_row;
@@ -378,18 +364,18 @@ bool Admin<type>::DoDeleting(List<type> _list, int &page)
 		for (int i = 0; i < cols; i++)
 		{
 			x = size_col * i;
-			DrawActiveCell(_list, y / size_row, x / size_col, x, y);
+			DrawActiveCell(list, y / size_row, x / size_col, x, y);
 		}
 		Move(key, x, y, size_col, size_row);
 		if (key == 27)return false;
 		if (key == 13)
 		{
-			this->file_data.RemoveAt(SeekElement(this->file_data, _list[row].GetId()));
+			this->file_data.RemoveAt(SeekElement(this->file_data, list[row].GetId()));
 			return true;
 		}
 		if (x >= size_col * cols)
 		{
-			DrawData(_list);
+			DrawData(list);
 			back->DrawActiveMsg();
 			Move(key, x, y, size_col, size_row);
 			if (key == 13)return false;
@@ -401,7 +387,7 @@ bool Admin<type>::DoDeleting(List<type> _list, int &page)
 		if (y >= size_row * rows)
 		{
 			y -= size_row;
-			DrawData(_list);
+			DrawData(list);
 			if (DoPagination(page))return -2;
 		}
 		CheckXY(x, y);
@@ -433,14 +419,15 @@ void Admin<type>::Synchronization(int index)
 }
 
 template <class type>
-int Admin<type>::SeekElement(List<type>& _list, unsigned int id)
+int Admin<type>::SeekElement(List<type>& list, unsigned int id)
 {
-	for (int i = 0; i < _list.GetCount(); i++)
+	for (int i = 0; i < list.GetCount(); i++)
 	{
-		if (id == _list[i].GetId())
+		if (id == list[i].GetId())
 		{
 			return i;
 		}
 	}
 	return -1;
 }
+

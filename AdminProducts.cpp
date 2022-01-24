@@ -165,24 +165,24 @@ int AdminProducts::Search(const char* val)
 		return true;
 	}
 }
-void AdminProducts::DrawElement(List<Product>& _list, int row, int col, int x, int y)
+void AdminProducts::DrawElement(List<Product>& list, int row, int col, int x, int y)
 {
 	switch (col)
 	{
 	case 0:
-		WriteLine(_list[row].GetId(), x, y);
+		WriteLine(list[row].GetId(), x, y);
 		break;
 	case 1:
-		WriteLine(_list[row].GetName(), x, y);
+		WriteLine(list[row].GetName(), x, y);
 		break;
 	case 2:
-		WriteLine(_list[row].GetAmount(), x, y);
+		WriteLine(list[row].GetAmount(), x, y);
 		break;
 	case 3:		
-		WriteLine(_list[row].GetPrice(), x, y);
+		WriteLine(list[row].GetPrice(), x, y);
 		break;
 	case 4:
-		WriteLine(_list[row].GetPurchasePrice(), x, y);
+		WriteLine(list[row].GetPurchasePrice(), x, y);
 		break;
 	}
 }

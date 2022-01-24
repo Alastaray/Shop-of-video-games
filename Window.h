@@ -50,12 +50,14 @@ public:
 	void FillLine(const type& val, int indent_letf = 0, int indent_top = 0);
 protected:	
 	char borders[11];
+	int indent_letf, indent_top;
 	unsigned int height, width,
 		px, py,
 		position;
 	unsigned txcolor, bgcolor,
 		activeTxcolor, activeBgcolor;
 };
+
 template <class type>
 void Window::WriteLine(const type& val, int indent_letf, int indent_top)
 {
@@ -93,13 +95,16 @@ public:
 	int GetCols() { return cols; }
 	int GetSizeRow() { return size_row; }
 	int GetSizeCol() { return size_col; }
-	void DrawHeadlines(const char**);
+	void DrawHeadlines();
+	void AddHeadline(const char* headline) { headlines << headline; }
 	void FillLine(int _x = 0, int _y = 0);
+	
 protected:
 	void DrawCols();
 	void DrawRows();
 	int cols, rows,
 		size_col, size_row;
+	List<const char*> headlines;
 };
 
 class Menu :public Window
@@ -108,6 +113,7 @@ public:
 	Menu(unsigned int position, unsigned int _width = 0, unsigned int _height = 0, int indent_letf = 0, int indent_top = 0) :Window(_width, _height, position, indent_letf, indent_top)
 	{
 		aling = true;
+		default_indent = 3;
 	}
 	int DoMenu();
 	void DrawMenu();
@@ -119,6 +125,7 @@ public:
 private:
 	List<const char*>menu_items;
 	bool aling;
+	int default_indent;
 };
 
 class Message :protected Window

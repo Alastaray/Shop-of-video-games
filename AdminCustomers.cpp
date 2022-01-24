@@ -62,7 +62,7 @@ int AdminCustomers::ChooseProduct(AdminProducts& product)
 	}
 	return -1;
 }
-int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& _list, int& page)
+int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& list, int& page)
 {
 	int prod_size_col = product.GetSizeCol(),
 		prod_size_row = product.GetSizeRow(),
@@ -77,7 +77,7 @@ int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& _list, i
 	product.SetPaginationParam(page);
 	while (true)
 	{
-		product.DrawData(_list);
+		product.DrawData(list);
 		product.back->DrawMessage();
 		product.DrawPagination();
 		row = y / prod_size_row;
@@ -85,14 +85,14 @@ int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& _list, i
 		for (int i = 0; i < prod_cols; i++)
 		{
 			x = prod_size_col * i;
-			product.DrawActiveCell(_list, y / prod_size_row, x / prod_size_col, x, y);
+			product.DrawActiveCell(list, y / prod_size_row, x / prod_size_col, x, y);
 		}
 		Move(key, x, y, prod_size_col, prod_size_row);
 		if (key == 27)return -1;
 		if (key == 13)return row;
 		if (x >= prod_size_col * prod_cols)
 		{
-			product.DrawData(_list);
+			product.DrawData(list);
 			product.back->DrawActiveMsg();
 			Move(key, x, y, prod_size_col, prod_size_row);
 			if (key == 13)return -1;
@@ -104,7 +104,7 @@ int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& _list, i
 		if (y >= prod_size_row * prod_rows)
 		{
 			y -= prod_size_row;
-			product.DrawData(_list);
+			product.DrawData(list);
 			if (product.DoPagination(page))return -2;
 		}
 		product.CheckXY(x, y);
@@ -244,25 +244,25 @@ int AdminCustomers::DrawSearching()
 	strcpy(str, Cin.GetData(20));
 	return Search(str);
 }
-void AdminCustomers::DrawElement(List<Customer>& _list, int row, int col, int x, int y)
+void AdminCustomers::DrawElement(List<Customer>& list, int row, int col, int x, int y)
 {
 
 	switch (col)
 	{
 	case 0:
-		WriteLine(_list[row].GetId(), x, y);
+		WriteLine(list[row].GetId(), x, y);
 		break;
 	case 1:
-		WriteLine(_list[row].GetName(), x, y);
+		WriteLine(list[row].GetName(), x, y);
 		break;
 	case 2:
-		WriteLine(_list[row].GetProdName(), x, y);
+		WriteLine(list[row].GetProdName(), x, y);
 		break;
 	case 3:
-		WriteLine(_list[row].GetAmount(), x, y);
+		WriteLine(list[row].GetAmount(), x, y);
 		break;
 	case 4:
-		WriteLine(_list[row].GetPrice(), x, y);
+		WriteLine(list[row].GetPrice(), x, y);
 		break;
 	}
 }
