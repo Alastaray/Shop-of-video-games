@@ -7,12 +7,11 @@ class AdminProducts :public Admin<Product>
 public:
 	AdminProducts(const char* _filename, int _limit = 10, int _width = 90) :Admin(_filename, _limit, _width, 5)
 	{
-		headlines[0] = "Id";
-		headlines[1] = "Name";
-		headlines[2] = "Amount";
-		headlines[3] = "Price";
-		headlines[4] = "Purchase Price";
-		filename = _filename;
+		AddHeadline("Id");
+		AddHeadline("Name");
+		AddHeadline("Amount");
+		AddHeadline("Price");
+		AddHeadline("Purchase Price");
 	}
 	virtual void DrawAdding();
 	void Add(const char*, int, double, double);

@@ -14,7 +14,7 @@ enum position
 	RightBot
 };
 
-enum Borders_name
+enum BordersName
 {
 	TopLeftAngle,
 	TopRightAngle,
@@ -33,15 +33,15 @@ enum Borders_name
 class Window
 {
 public:
-	Window(unsigned int _width, unsigned int _height, unsigned int position, int indent_letf = 0, int indent_top = 0);
-	void SetWinParam(unsigned int _width, unsigned int _height, unsigned int position, int indent_letf = 0, int indent_top = 0);
+	Window(unsigned int, unsigned int, unsigned int, int indent_letf = 0, int indent_top = 0);
+	void SetWinParam(unsigned int, unsigned int, unsigned int, int indent_letf = 0, int indent_top = 0);
 	void DrawFrame();
 	virtual void FillLine(int _x = 0, int _y = 0);
 	int GetWidth() { return width - 2; }
 	int GetHeight() { return height - 2; }
 	int GetX() { return px + 1; }
 	int GetY() { return py + 1; }
-	void SetIndents(int indent_letf, int indent_top);
+	void SetIndents(int, int);
 	template <class type>
 	void WriteLine(const type& val, int indent_letf = 0, int indent_top = 0);
 	template <class type>
@@ -50,12 +50,14 @@ public:
 	void FillLine(const type& val, int indent_letf = 0, int indent_top = 0);
 protected:	
 	char borders[11];
+	int indent_letf, indent_top;
 	unsigned int height, width,
 		px, py,
 		position;
 	unsigned txcolor, bgcolor,
 		activeTxcolor, activeBgcolor;
 };
+
 template <class type>
 void Window::WriteLine(const type& val, int indent_letf, int indent_top)
 {
@@ -81,7 +83,7 @@ void Window::FillLine(const type& val, int indent_letf, int indent_top)
 class Table:public Window
 {
 public:
-	Table(unsigned int _width=0, unsigned int _height=0, unsigned int position=0, unsigned int _cols = 0, unsigned int _rows = 0, int indent_letf = 0, int indent_top = 0) :Window(_width, _height, position, indent_letf, indent_top)
+	Table(unsigned int _width, unsigned int _height, unsigned int position, unsigned int _cols, unsigned int _rows, int indent_letf = 0, int indent_top = 0) :Window(_width, _height, position, indent_letf, indent_top)
 	{
 		SetCols(_cols);
 		SetRows(_rows);
@@ -93,13 +95,16 @@ public:
 	int GetCols() { return cols; }
 	int GetSizeRow() { return size_row; }
 	int GetSizeCol() { return size_col; }
-	void DrawHeadlines(const char**);
+	void DrawHeadlines();
+	void AddHeadline(const char* headline) { headlines << headline; }
 	void FillLine(int _x = 0, int _y = 0);
+	
 protected:
 	void DrawCols();
 	void DrawRows();
 	int cols, rows,
 		size_col, size_row;
+	List<const char*> headlines;
 };
 
 class Menu :public Window
@@ -108,6 +113,7 @@ public:
 	Menu(unsigned int position, unsigned int _width = 0, unsigned int _height = 0, int indent_letf = 0, int indent_top = 0) :Window(_width, _height, position, indent_letf, indent_top)
 	{
 		aling = true;
+		default_indent = 3;
 	}
 	int DoMenu();
 	void DrawMenu();
@@ -119,6 +125,7 @@ public:
 private:
 	List<const char*>menu_items;
 	bool aling;
+	int default_indent;
 };
 
 class Message :protected Window
