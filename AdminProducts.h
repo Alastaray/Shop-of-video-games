@@ -14,12 +14,12 @@ public:
 		AddHeadline("Purchase Price");
 	}
 	virtual void DrawAdding();
-	void Add(const char*, int, double, double);
+	void Add(const char* name, int amount, double purchase_price, double puchase_price);
 protected:
-	virtual void DrawElement(List<Product>&, int, int, int, int);
+	virtual void DrawElement(List<Product>&, int row, int col, int x, int y);
 	virtual int DrawSearching();
 	virtual int DrawSorting();
-	virtual bool ChangeData(int, int);
+	virtual bool ChangeData(int index, int whom);
 	int Search(const char* val = 0);
 	int Sort(int amount = 0, double purchase_price = 0, double price = 0, bool low_to_high = true);
 	

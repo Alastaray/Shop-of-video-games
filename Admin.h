@@ -7,15 +7,15 @@ template <class type>
 class Admin : public FileManager<type>, public Table
 {
 public:
-	Admin(const char*, unsigned int, int, int, unsigned int position = 0);
+	Admin(const char* _filename, unsigned int _limit, int _width, int _cols, unsigned int position = 0);
 	~Admin();
 	bool Show();
 	void DrawDeleting();
-	int SeekElement(List<type>&, unsigned int);
+	int SeekElement(List<type>& list, unsigned int id);
 	virtual int DrawSearching() = 0;
 	virtual int DrawSorting() = 0;
-
-	void SetLimit(unsigned int);
+	virtual void DrawAdding() = 0;
+	void SetLimit(unsigned int _limit);
 	int GetLimit() { return limit; }
 	List<type>& GetSortedList() { return sorted; }
 
@@ -29,27 +29,27 @@ protected:
 		* search,
 		* back;
 
-	int SetTableParam(List<type>&, int&);
-	int DoTable(List<type>&, int&);
-	void DrawData(List<type>&);
-	void DrawActiveCell(List<type>&, int, int, int, int);
-	virtual void DrawElement(List<type>&, int, int, int, int) = 0;
+	int SetTableParam(List<type>& list, int& page);
+	int DoTable(List<type>& list, int& page);
+	void DrawData(List<type>& list);
+	void DrawActiveCell(List<type>& list, int row, int col, int x, int y);
+	virtual void DrawElement(List<type>& list, int row, int col, int x, int y) = 0;
 
-	void SetPaginationParam(int&);
+	void SetPaginationParam(int& page);
 	void DrawPagination();
-	bool DoPagination(int&);
+	bool DoPagination(int& page);
 
 	void SetButtonsParam();
 	void DrawButtons();
 	int DoButtons();
 
 
-	void CheckXY(int&, int&);
-	bool DoDeleting(List<type>, int&);
+	void CheckXY(int& x, int& y);
+	bool DoDeleting(List<type> list, int& page);
 
-	virtual bool ChangeData(int, int) = 0;
-	bool Edit(int, int);
-	void Synchronization(int);
+	virtual bool ChangeData(int index, int whom) = 0;
+	bool Edit(int id, int col);
+	void Synchronization(int index);
 };
 
 template <class type>
@@ -80,7 +80,7 @@ Admin<type>::~Admin()
 template <class type>
 bool Admin<type>::Show()
 {
-	if(!this->GetCount())throw exception("File is empty!");
+	if(!this->GetCount())throw exception((string(this->filename)+" is empty!").c_str());
 	sorted = this->file_data;
 	int page = 0,
 		result = 1,
