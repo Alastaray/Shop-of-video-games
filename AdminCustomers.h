@@ -16,16 +16,16 @@ public:
 		AddHeadline("Price");
 	}
 	virtual void DrawAdding();
+	void ShowIncome(const char* filename);
 protected:
 	virtual int DrawSearching();
 	virtual int DrawSorting();
-	virtual bool ChangeData(int, int);
-	int ChooseProduct(AdminProducts&);
-	int ShowProducts(AdminProducts&, List<Product>&, int&);
-	virtual void DrawElement(List<Customer>&, int, int, int, int);
-	void Add(const char*, const char*, int, double);
+	virtual bool ChangeData(int index, int whom);
+	int ChooseProduct(AdminProducts& products);
+	int ShowProducts(AdminProducts& products, List<Product>& list, int&);
+	virtual void DrawElement(List<Customer>& list, int row, int col, int x, int y);
+	void Add(const char* name, const char* prod_name, int amount, double price);
 	int Search(const char* val = 0);
-	int Sort(int amount = 0, double purchase_price = 0, bool low_to_high = true);
-
+	int Sort(int amount = 0, double purchase_price = 0, bool low_to_high = true);	
 };
-double CreateReport(AdminProducts& admin_prod, AdminCustomers& admin_cust);
+

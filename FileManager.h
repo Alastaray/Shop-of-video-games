@@ -13,15 +13,16 @@ public:
 
 	FileManager(const char* _filename)
 	{
-		filename = new char[strlen(_filename)];
+		filename = new char[strlen(_filename)+1];
 		strcpy(filename, _filename);
 		sizeof_st = sizeof(type);
 		number_st = 0;
+		
 	}
 	~FileManager()
 	{
 		Write();
-		delete filename;
+		delete[] filename;
 	}
 	bool Read(int amount = 0, int offset = 0);
 	void FileDelete();
