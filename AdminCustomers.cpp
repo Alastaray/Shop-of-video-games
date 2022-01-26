@@ -13,7 +13,7 @@ void AdminCustomers::DrawAdding()
 	Window win(35, 5, CenterTop, 0, 7);
 	Input Cin;
 	AdminProducts product("products.txt");
-
+	if (!product.GetCount())throw exception((string(product.filename) + " is empty!").c_str());
 	cls();
 	win.DrawFrame("Enter the name: ", 2, 1);
 	strcpy(name, Cin.GetStr(15, 3));
@@ -38,23 +38,23 @@ void AdminCustomers::DrawAdding()
 
 	DrawSomething("Product was bought!");
 }
-int AdminCustomers::ChooseProduct(AdminProducts& product)
+int AdminCustomers::ChooseProduct(AdminProducts& admin_product)
 {
 	int index,
 		page = 0,
-		number_pages = ceil(product.GetCount() / (limit * 1.0));
+		number_pages = ceil(admin_product.GetCount() / (limit * 1.0));
 	while (true)
 	{
 		cls();
 		List<Product> l;
-		for (int i = page * limit, j = 0; i < product.GetCount(); i++, j++)
+		for (int i = page * limit, j = 0; i < admin_product.GetCount(); i++, j++)
 		{
 			if (j >= limit)break;
-			l << product[i];
+			l << admin_product[i];
 		}
-		product.SetWinParam(width, l.GetCount() * 2 + 1, LeftTop, 5, 2);
-		product.SetRows(l.GetCount());
-		index = ShowProducts(product, l, page);
+		admin_product.SetWinParam(width, l.GetCount() * 2 + 1, LeftTop, 5, 2);
+		admin_product.SetRows(l.GetCount());
+		index = ShowProducts(admin_product, l, page);
 		if (index >= 0)return l[index].GetId();
 		if (index == -1)return index;
 		if (number_pages <= page)page = 0;
@@ -62,38 +62,38 @@ int AdminCustomers::ChooseProduct(AdminProducts& product)
 	}
 	return -1;
 }
-int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& list, int& page)
+int AdminCustomers::ShowProducts(AdminProducts& admin_product, List<Product>& list, int& page)
 {
-	int prod_size_col = product.GetSizeCol(),
-		prod_size_row = product.GetSizeRow(),
-		prod_cols = product.GetCols(),
-		prod_rows = product.GetRows();
+	int prod_size_col = admin_product.GetSizeCol(),
+		prod_size_row = admin_product.GetSizeRow(),
+		prod_cols = admin_product.GetCols(),
+		prod_rows = admin_product.GetRows();
 	if (!prod_size_col)throw exception("prod_size_col can't be zero!");
 	if (!prod_size_row)throw exception("prod_size_row can't be zero!");
 	char key;
 	int x = 0, y = 0,
 		row, col;
-	product.back->SetIndents(19, 2);
-	product.SetPaginationParam(page);
+	admin_product.back->SetIndents(19, 2);
+	admin_product.SetPaginationParam(page);
 	while (true)
 	{
-		product.DrawData(list);
-		product.back->DrawMessage();
-		product.DrawPagination();
+		admin_product.DrawData(list);
+		admin_product.back->DrawMessage();
+		admin_product.DrawPagination();
 		row = y / prod_size_row;
 		col = x / prod_size_col;
 		for (int i = 0; i < prod_cols; i++)
 		{
 			x = prod_size_col * i;
-			product.DrawActiveCell(list, y / prod_size_row, x / prod_size_col, x, y);
+			admin_product.DrawActiveCell(list, y / prod_size_row, x / prod_size_col, x, y);
 		}
 		Move(key, x, y, prod_size_col, prod_size_row);
 		if (key == 27)return -1;
 		if (key == 13)return row;
 		if (x >= prod_size_col * prod_cols)
 		{
-			product.DrawData(list);
-			product.back->DrawActiveMsg();
+			admin_product.DrawData(list);
+			admin_product.back->DrawActiveMsg();
 			Move(key, x, y, prod_size_col, prod_size_row);
 			if (key == 13)return -1;
 			if (key == 72 || key == 'w' || key == 'W')
@@ -104,10 +104,10 @@ int AdminCustomers::ShowProducts(AdminProducts& product, List<Product>& list, in
 		if (y >= prod_size_row * prod_rows)
 		{
 			y -= prod_size_row;
-			product.DrawData(list);
-			if (product.DoPagination(page))return -2;
+			admin_product.DrawData(list);
+			if (admin_product.DoPagination(page))return -2;
 		}
-		product.CheckXY(x, y);
+		admin_product.CheckXY(x, y);
 	}
 }
 void AdminCustomers::Add(const char* name, const char* prod_name, int amount, double price)
@@ -287,23 +287,27 @@ bool AdminCustomers::ChangeData(int index, int whom)
 	}
 	return Cin.Success();
 }
-
-
-double CreateReport(AdminProducts& admin_prod, AdminCustomers& admin_cust)
+void AdminCustomers::ShowIncome(const char* products)
 {
+	AdminProducts admin_prod(products);
 	double costs = 0,
 		profit = 0;
-	for (int i = 0; i < admin_cust.GetCount(); i++)
+	char result[] = "Income is ";
+	char buff[100];
+	for (int i = 0; i < this->GetCount(); i++)
 	{
 		for (int j = 0; j < admin_prod.GetCount(); j++)
 		{
-			if (CompareStr(admin_cust[i].GetProdName(), admin_prod[j].GetName()))
+			if (CompareStr(((*this)[i]).GetProdName(), admin_prod[j].GetName()))
 			{
-				costs += admin_cust[i].GetAmount() * admin_prod[j].GetPurchasePrice();
-				profit += admin_cust[i].GetAmount() * admin_prod[j].GetPrice();
+				
+				costs += ((*this)[i]).GetAmount() * admin_prod[j].GetPurchasePrice();
+				profit += ((*this)[i]).GetAmount() * admin_prod[j].GetPrice();
 				break;
 			}
 		}
 	}
-	return profit - costs;
+	sprintf(buff, "%f", profit - costs);
+	strcat(result, buff);
+	DrawSomething(result);
 }

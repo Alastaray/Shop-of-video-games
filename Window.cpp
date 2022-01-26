@@ -230,15 +230,13 @@ void Table::DrawTable()
 }
 void Table::DrawHeadlines()
 {
-	size_col = width / cols;
 	int pos_x = 0;
 	for (int j = 0; j < cols; j++)
 	{
-		WriteLine(headlines[j], pos_x, (-indent_top));
+		WriteLine(headlines[j], pos_x, (-2));
 		pos_x += size_col;
 	}
-
-};
+}
 void Table::SetCols(unsigned int num_cols)
 {
 	if (num_cols > 0)

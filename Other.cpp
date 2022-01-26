@@ -81,15 +81,8 @@ int Input::GetInt(int max_len, int min_len, int px, int py, int indent_letf, int
 	while (i < max_len)
 	{
 		key = _getch();
-		if (key == 27) { ShowCaret(false);  buff[0] = 0; return 0; }
-		if (key == 13) { if (i >= min_len)break; }
-		if (key == 8)
-		{
-			buff[--i] = 0;
-			GotoXY(GetCurrentX() - 1, GetCurrentY());
-			cout << " ";
-		}
-		if (key >= '0' && key <= '9') {
+		if (!Ñomplement(key, i, min_len))break;
+		if (key >= N0 && key <= N9) {
 			buff[i] = key;
 			i++;
 			buff[i] = 0;
@@ -108,15 +101,8 @@ double Input::GetDouble(int max_len, int min_len, int px, int py, int indent_let
 	while (i < max_len)
 	{
 		key = _getch();
-		if (key == 27) { ShowCaret(false);  buff[0] = 0; return 0; }
-		if (key == 13) { if (i >= min_len)break; }
-		if (key == 8)
-		{
-			buff[--i] = 0;
-			GotoXY(GetCurrentX() - 1, GetCurrentY());
-			cout << " ";
-		}
-		if ((key >= '0' && key <= '9') || (key == '.' && !is_dot))
+		if (!Ñomplement(key, i, min_len))break;
+		if ((key >= N0 && key <= N9) || (key == Dot && !is_dot))
 		{
 			if (key == '.')is_dot = true;
 			buff[i] = key;
@@ -136,21 +122,8 @@ char* Input::GetStr(int max_len, int min_len, int px, int py, int indent_letf, i
 	while (i < max_len)
 	{
 		key = _getch();
-		if (key == 27) { ShowCaret(false);  buff[0] = 0; return buff; }
-		if (key == 13) { if (i >= min_len)break; }
-		if (key == 8)
-		{
-			buff[--i] = 0;
-			GotoXY(GetCurrentX() - 1, GetCurrentY());
-			cout << " ";
-		}
-		if (key == 32)
-		{
-			buff[i] = key;
-			i++;
-			buff[i] = 0;
-		}
-		if ((key >= 'A' && key <= 'Z' && !i) || (key >= 'a' && key <= 'z'))
+		if (!Ñomplement(key, i, min_len,true))break;
+		if ((key >= A && key <= Z && !i) || (key >= a && key <= z))
 		{
 			buff[i] = key;
 			i++;
@@ -170,21 +143,8 @@ char* Input::GetData(int max_len, int min_len, int px, int py, int indent_letf, 
 	while (i < max_len)
 	{
 		key = _getch();
-		if (key == 27) { ShowCaret(false);  buff[0] = 0; return buff; }
-		if (key == 13) { if (i >= min_len)break; }
-		if (key == 8)
-		{
-			buff[--i] = 0;
-			GotoXY(GetCurrentX() - 1, GetCurrentY());
-			cout << " ";
-		}
-		if (key == 32)
-		{
-			buff[i] = key;
-			i++;
-			buff[i] = 0;
-		}
-		if ((key >= 'A' && key <= 'Z' && !i) || (key >= 'a' && key <= 'z') || (key >= '0' && key <= '9') || (key == '.' && !is_dot))
+		if (!Ñomplement(key, i, min_len,true))break;
+		if ((key >= A && key <= Z && !i) || (key >= a && key <= z) || (key >= N0 && key <= N9) || (key == Dot && !is_dot))
 		{
 			if (key == '.')is_dot = true;
 			buff[i] = key;
@@ -209,4 +169,22 @@ void Input::DataPreparation(int max_len, int& px, int& py, int indent_letf, int 
 	for (int i = 0; i < max_len; i++)
 		cout << " ";
 	GotoXY(px, py);
+}
+bool Input::Ñomplement(int key, int& iter, int min_len, bool space)
+{
+	if (key == Esc) { buff[0] = 0; return false; }
+	if (key == Enter) { if (iter >= min_len)return false; }
+	if (key == Backspace)
+	{
+		buff[--iter] = 0;
+		GotoXY(GetCurrentX() - 1, GetCurrentY());
+		cout << " ";
+	}
+	if (key == Space && space)
+	{
+		buff[iter] = key;
+		iter++;
+		buff[iter] = 0;
+	}
+	return true;
 }

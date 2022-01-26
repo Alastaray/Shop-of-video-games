@@ -1,10 +1,29 @@
 #include "AdminCustomers.h"
 
-		
-
+template <class type>
+void DoAdministation(Admin<type>* admin, int key)
+{
+	if (admin)
+	{
+		switch (key)
+		{
+		case 0:
+			admin->Show();
+			break;
+		case 1:
+			admin->DrawAdding();
+			break;
+		case 2:
+			admin->DrawDeleting();
+		}
+		delete admin;
+	}	
+}
 
 void main()
 {
+	const char products[] = "products.txt";
+	const char customers[] = "customers.txt";
 	Menu menu(CenterTop);
 	menu << "Show products"
 		<< "Add product"
@@ -19,57 +38,23 @@ void main()
 	{
 		try
 		{
-			int item = menu.DoMenu();
+			int item = menu.DoMenu();			
 			switch (item)
 			{
 			case 0:
 			case 1:
 			case 2:
-			{
-				AdminProducts admin("products.txt");
-				switch (item)
-				{
-				case 0:
-					admin.Show();
-					break;
-				case 1:
-					admin.DrawAdding();
-					break;
-				case 2:
-					admin.DrawDeleting();
-					break;
-				}
+				DoAdministation(new AdminProducts(products), item);
 				break;
-			}
 			case 3:
 			case 4:
 			case 5:
-			{
-				AdminCustomers admin("customers.txt");
-				switch (item)
-				{
-				case 3:
-					admin.Show();
-					break;
-				case 4:
-					admin.DrawAdding();
-					break;
-				case 5:
-					admin.DrawDeleting();
-					break;
-				}
+				DoAdministation(new AdminCustomers(customers), item - 3);
 				break;
-			}
 			case 6:
-			{
-				AdminCustomers admin_cust("customers.txt");
-				AdminProducts admin_prod("products.txt");				
-				char result[100] = {"Income is "};
-				char buff[100];
-				double income = CreateReport(admin_prod, admin_cust);
-				sprintf(buff, "%f", income);
-				strcat(result, buff);
-				DrawSomething(result);
+			{		
+				AdminCustomers admin_cust(customers);
+				admin_cust.ShowIncome(products);
 				break;
 			}
 			case 7:

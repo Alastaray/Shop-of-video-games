@@ -33,15 +33,15 @@ enum BordersName
 class Window
 {
 public:
-	Window(unsigned int, unsigned int, unsigned int, int indent_letf = 0, int indent_top = 0);
-	void SetWinParam(unsigned int, unsigned int, unsigned int, int indent_letf = 0, int indent_top = 0);
+	Window(unsigned int _width, unsigned int _height, unsigned int position, int indent_letf = 0, int indent_top = 0);
+	void SetWinParam(unsigned int _width, unsigned int _height, unsigned int position, int indent_letf = 0, int indent_top = 0);
 	void DrawFrame();
 	virtual void FillLine(int _x = 0, int _y = 0);
 	int GetWidth() { return width - 2; }
 	int GetHeight() { return height - 2; }
 	int GetX() { return px + 1; }
 	int GetY() { return py + 1; }
-	void SetIndents(int, int);
+	void SetIndents(int indent_letf, int indent_top);
 	template <class type>
 	void WriteLine(const type& val, int indent_letf = 0, int indent_top = 0);
 	template <class type>
@@ -89,8 +89,8 @@ public:
 		SetRows(_rows);
 	}
 	void DrawTable();
-	void SetCols(unsigned int);
-	void SetRows(unsigned int);
+	void SetCols(unsigned int _cols);
+	void SetRows(unsigned int _rows);
 	int GetRows() { return rows; }
 	int GetCols() { return cols; }
 	int GetSizeRow() { return size_row; }
