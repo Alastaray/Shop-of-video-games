@@ -266,23 +266,23 @@ void AdminCustomers::DrawElement(List<Customer>& list, int row, int col, int x, 
 		break;
 	}
 }
-bool AdminCustomers::ChangeData(int index, int whom)
+bool AdminCustomers::ChangeData(int index, int col)
 {
 	if (index < 0)throw exception("Index can't be the negative!");
 	Input Cin;
-	switch (whom)
+	switch (col)
 	{
 	case 1:
-		file_data[index].SetName(Cin.GetData(GetWidth() / cols, 3, GetX() + size_col * whom));
+		file_data[index].SetName(Cin.GetData(GetWidth() / cols, 3, GetX() + size_col * col));
 		break;
 	case 2:
-		file_data[index].SetProdName(Cin.GetData(GetWidth() / cols, 3, GetX() + size_col * whom));
+		file_data[index].SetProdName(Cin.GetData(GetWidth() / cols, 3, GetX() + size_col * col));
 		break;
 	case 3:
-		file_data[index].SetAmount(Cin.GetInt(GetWidth() / cols, 1, GetX() + size_col * whom));
+		file_data[index].SetAmount(Cin.GetInt(GetWidth() / cols, 1, GetX() + size_col * col));
 		break;
 	case 4:
-		file_data[index].SetPrice(Cin.GetDouble(GetWidth() / cols, 1, GetX() + size_col * whom));
+		file_data[index].SetPrice(Cin.GetDouble(GetWidth() / cols, 1, GetX() + size_col * col));
 		break;
 	}
 	return Cin.Success();
@@ -292,7 +292,7 @@ void AdminCustomers::ShowIncome(const char* products)
 	AdminProducts admin_prod(products);
 	double costs = 0,
 		profit = 0;
-	char result[] = "Income is ";
+	char result[100] = "Income is ";
 	char buff[100];
 	for (int i = 0; i < this->GetCount(); i++)
 	{

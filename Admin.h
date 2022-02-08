@@ -17,7 +17,6 @@ public:
 	virtual void DrawAdding() = 0;
 	void SetLimit(unsigned int _limit);
 	int GetLimit() { return limit; }
-	List<type>& GetSortedList() { return sorted; }
 
 protected:
 	List <type> sorted;
@@ -43,13 +42,12 @@ protected:
 	void DrawButtons();
 	int DoButtons();
 
-
 	void CheckXY(int& x, int& y);
-	bool DoDeleting(List<type> list, int& page);
+	bool DoDeleting(List<type>& list, int& page);
 
-	virtual bool ChangeData(int index, int whom) = 0;
+	virtual bool ChangeData(int index, int col) = 0;
 	bool Edit(int id, int col);
-	void Synchronization(int index);
+	void SynchronizeData(int index);
 };
 
 template <class type>
@@ -345,7 +343,7 @@ void Admin<type>::DrawDeleting()
 }
 
 template <class type>
-bool Admin<type>::DoDeleting(List<type> list, int &page)
+bool Admin<type>::DoDeleting(List<type>& list, int &page)
 {
 	if (!size_col)throw exception("size_col can't be zero!");
 	if (!size_row)throw exception("size_row can't be zero!");
@@ -401,12 +399,12 @@ bool Admin<type>::Edit(int id, int col)
 	if (!col)return false;
 	int index = SeekElement(this->file_data, id);
 	bool result = ChangeData(index, col);
-	if(result)Synchronization(index);
+	if(result)SynchronizeData(index);
 	return result;
 }
 
 template <class type>
-void Admin<type>::Synchronization(int index)
+void Admin<type>::SynchronizeData(int index)
 {
 	for (int i = 0; i < sorted.GetCount(); i++)
 	{

@@ -256,23 +256,23 @@ int AdminProducts::DrawSearching()
 	strcpy(str, Cin.GetData(20));
 	return Search(str);
 }
-bool AdminProducts::ChangeData(int index, int whom)
+bool AdminProducts::ChangeData(int index, int col)
 {
 	if (index < 0)throw exception("Index can't be the negative!");
 	Input Cin;
-	switch (whom)
+	switch (col)
 	{
 	case 1:
-		file_data[index].SetName(Cin.GetData(GetWidth() / cols, 3, GetX() + size_col * whom));
+		file_data[index].SetName(Cin.GetData(GetWidth() / cols, 3, GetX() + size_col * col));
 		break;
 	case 2:
-		file_data[index].SetAmount(Cin.GetInt(GetWidth() / cols, 1, GetX() + size_col * whom));
+		file_data[index].SetAmount(Cin.GetInt(GetWidth() / cols, 1, GetX() + size_col * col));
 		break;
 	case 3:
-		file_data[index].SetPurchasePrice(Cin.GetDouble(GetWidth() / cols, 1, GetX() + size_col * whom));
+		file_data[index].SetPurchasePrice(Cin.GetDouble(GetWidth() / cols, 1, GetX() + size_col * col));
 		break;
 	case 4:
-		file_data[index].SetPrice(Cin.GetDouble(GetWidth() / cols, 1, GetX() + size_col * whom));
+		file_data[index].SetPrice(Cin.GetDouble(GetWidth() / cols, 1, GetX() + size_col * col));
 		break;
 	}
 	return Cin.Success();

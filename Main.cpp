@@ -1,11 +1,11 @@
 #include "AdminCustomers.h"
 
 template <class type>
-void DoAdministation(Admin<type>* admin, int key)
+void DoAdministation(Admin<type>* admin, int _case)
 {
 	if (admin)
 	{
-		switch (key)
+		switch (_case)
 		{
 		case 0:
 			admin->Show();
@@ -17,7 +17,8 @@ void DoAdministation(Admin<type>* admin, int key)
 			admin->DrawDeleting();
 		}
 		delete admin;
-	}	
+	}
+	else throw exception("Pointer to admin is null!");
 }
 
 void main()

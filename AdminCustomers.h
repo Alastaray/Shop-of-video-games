@@ -20,7 +20,7 @@ public:
 protected:
 	virtual int DrawSearching();
 	virtual int DrawSorting();
-	virtual bool ChangeData(int index, int whom);
+	virtual bool ChangeData(int index, int col);
 	int ChooseProduct(AdminProducts& products);
 	int ShowProducts(AdminProducts& products, List<Product>& list, int&);
 	virtual void DrawElement(List<Customer>& list, int row, int col, int x, int y);
